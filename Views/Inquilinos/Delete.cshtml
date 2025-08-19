@@ -1,0 +1,97 @@
+@model Inmobiliaria.Models.Entidades.Inquilino
+@{
+    ViewData["Title"] = "Borrar inquilino";
+}
+
+@*  ALERTAS PERSONALIZADAS DE PANTALLA*@
+		<div class="">
+			@if (ViewBag.Id != null)
+			{//alta exitosa
+				
+			}
+			else if (ViewBag.Mensaje != null)
+			{//cartel general
+				
+			}
+			else if (ViewBag.Error != null)
+      
+
+			{//alta exitosa
+       var error= ViewBag.Error;
+       
+				<div class="alert alert-danger alert-dismissible fade show" role="alert">
+					<strong>¡Error!</strong> No se puede borrar el inquilino. Verifique si tiene contratos realizados. @*<br> @ViewBag.Error.*@
+					<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+						<span aria-hidden="true"><span class="lnr lnr-cross-circle"></span></span>
+					</button>
+				</div>
+			}
+			else if (!String.IsNullOrWhiteSpace(ViewBag.Error))
+			{//ocurrió un error
+				<environment names="Development">
+					<div class="alert alert-danger alert-dismissible fade show" role="alert">
+						<strong>¡Error!</strong> Ocurrió: @ViewBag.Error
+						<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+							<span aria-hidden="true"><span class="lnr lnr-cross-circle"></span></span>
+						</button>
+						<a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false"><span class="lnr lnr-plus-circle"></span></a>
+						<div class="collapse multi-collapse" id="multiCollapseExample1">
+							@ViewBag.StackTrace
+						</div>
+					</div>
+				</environment>
+			}			
+		</div>
+@*FIN ALERTAS PERSONALIZADAS*@
+
+
+<h3>Se procedera a eliminar el siguiente inquilino</h3>
+<div>
+    <h4>Inquilino</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Nombre)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Nombre)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Apellido)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Apellido)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Dni)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Dni)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Telefono)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Telefono)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Email)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Email)
+        </dd>
+   
+      
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="submit" value="Eliminar" class="btn btn-danger" /> |
+        <a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
+    </form>
+</div>

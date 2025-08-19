@@ -1,0 +1,83 @@
+@model IEnumerable<Zanche_Martin_InmobiliariaULP.Models.Propietario>
+
+@{
+    ViewData["Title"] = "Propietarios";
+}
+
+<h1>Listado de propietarios</h1>
+<hr />
+<p>
+    <a asp-action="Create" class="btn btn-primary">Nuevo</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Nombre)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Apellido)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Dni)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Telefono)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Email)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Id)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Nombre)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Apellido)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Dni)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Telefono)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Email)
+            </td>
+            <td>
+               @Html.ActionLink("Editar", "Edit", new {  id=item.Id },new {@class="btn btn-success"}) |
+                @Html.ActionLink("Detalles", "Details", new {  id=item.Id },new {@class="btn btn-warning"}) |
+                @* @Html.ActionLink("Borrar", "Delete", new {  id=item.Id  }, new {@class="btn btn-danger"}) *@
+               <a href='Propietarios/Delete/@item.Id' class="btn btn-danger"> Borrar</a>
+
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+
+  <script>
+  function buscar (q) {
+  //your code here
+ 
+  	return $.ajax({//documentación: https://api.jquery.com/jquery.ajax/
+				url: `@Url.Action("Buscar", "Propietarios")/${q}`,
+				//method: "GET",
+				//data: {...},
+			}).done(res => {
+				console.log("Búsqueda: ", res);
+			}).fail(res => {
+				console.log("Error: ", res);
+			});
+}; 
+    </script>
