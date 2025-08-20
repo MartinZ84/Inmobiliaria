@@ -14,9 +14,11 @@ public class Inquilino
   public string? Apellido { get ;set; }
   
   [Display(Name = "DNI")]
+  [RegularExpression(@"^\d{1,10}$", ErrorMessage = "El DNI debe contener solo números.")]
   [Required]
   public string? Dni { get ;set; }
   [Display(Name= "Teléfono")]
+  [RegularExpression(@"^\d{1,20}$", ErrorMessage = "El teléfono debe contener solo números.")]
   [Required]
   public string? Telefono { get ;set; }
   [Required,EmailAddress]

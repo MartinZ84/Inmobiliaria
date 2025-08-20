@@ -11,9 +11,9 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
 	{
 		
 	}
-	public IList<Propietario> ObtenerTodos()
+	public IList<Propietario?> ObtenerTodos()
 	{
-		IList<Propietario> res = new List<Propietario>();
+		IList<Propietario?> res = new List<Propietario?>();
 		using (MySqlConnection connection = new MySqlConnection(connectionString))
 		{
 			string sql = $"SELECT Id, Nombre, Apellido, Dni, Telefono, Email" +

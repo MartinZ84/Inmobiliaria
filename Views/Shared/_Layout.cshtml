@@ -3,43 +3,114 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - Inmobiliaria</title>
-    <script type="importmap"></script>
+    <title>@ViewData["Title"] - Inmobiliaria Z&VC asociados</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/Inmobiliaria.styles.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+ 
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
+        <nav class="navbar navbar-light custom-navbar border-bottom box-shadow">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Inmobiliaria</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Inmobiliaria Z&VC asociados</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav flex-grow-1">
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-                        </li>
-                    </ul>
-                </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                @* <div class="sidebar-header p-3 bg-primary text-white">
+                    <h3><i class="bi bi-building"></i> Inmobiliaria</h3>
+                </div> *@
+                <ul class="nav flex-column components">
+                    <li class="nav-item">
+                        <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">
+                            <i class="bi bi-house-door"></i> Inicio
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" asp-area="" asp-controller="Propietarios" asp-action="Index">
+                            <i class="bi bi-person-badge"></i> Propietarios
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" asp-area="" asp-controller="Inquilinos" asp-action="Index">
+                            <i class="bi bi-people"></i> Inquilinos
+                        </a>
+                    </li>
+                    @* <li class="nav-item">
+                        <a class="nav-link text-white" asp-area="" asp-controller="Inmuebles" asp-action="Index">
+                            <i class="bi bi-building"></i> Inmuebles
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" asp-area="" asp-controller="Contratos" asp-action="Index">
+                            <i class="bi bi-file-earmark-text"></i> Contratos
+                        </a>
+                    </li>
+                    @if (User.IsInRole("Administrador") || User.IsInRole("SuperAdministrador"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Usuarios" asp-action="Index">
+                                <i class="bi bi-person-gear"></i> Usuarios
+                            </a>
+                        </li>
+                    }
+                    <!-- Menú desplegable ejemplo -->
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-white" href="#" id="sidebarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="bi bi-gear"></i> Opciones
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="sidebarDropdown">
+                            <li>
+                                <a class="dropdown-item" asp-controller="Usuarios" asp-action="Perfil">
+                                    <i class="bi bi-person-circle"></i> Perfil
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" asp-controller="Usuarios" asp-action="Logout">
+                                    <i class="bi bi-box-arrow-right"></i> Salir
+                                </a>
+                            </li>
+                        </ul>
+                    </li> *@
+                </ul>
+            </nav>
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 pb-3">
+                @* <div class="d-flex justify-content-end align-items-center mb-3">
+                    <div class="text-dark">
+                        <span>Bienvenido @User.Identity.Name</span>
+                        @if (User.IsInRole("Administrador"))
+                        {<span class="mx-auto">Rol: Administrador</span>}
+                        else if (User.IsInRole("SuperAdministrador"))
+                        {<span class="mx-auto">Rol: SuperAdministrador</span>}
+                        else if (User.IsInRole("Empleado"))
+                        {<span class="mx-auto">Rol: Empleado</span>}
+                    </div>
+                    <div class="dropdown ms-3">
+                        <a class="btn btn-primary dropdown-toggle text-light" href="#" role="button" id="userMenu" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <span class="lnr lnr-user"></span> @User.Identity.Name
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
+                            <a class="dropdown-item text-dark" asp-controller="Usuarios" asp-action="Perfil"><i class="lnr lnr-user"></i> Perfil</a>
+                            <a class="dropdown-item text-dark" asp-controller="Usuarios" asp-action="Logout"><i class="lnr lnr-exit"></i> Salir</a>
+                        </div>
+                    </div>
+                </div> *@
+                @RenderBody()
+            </main>
+        </div>
     </div>
-
-    <footer class="border-top footer text-muted">
+   <footer class="border-top footer text-center fixed-bottom bg-light">
         <div class="container">
-            &copy; 2025 - Inmobiliaria - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2025 - Inmobiliaria Z&VC asociados - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
