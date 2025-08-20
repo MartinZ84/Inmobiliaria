@@ -14,13 +14,13 @@ public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
       {
         
       }
-  	public IList<Inquilino> ObtenerTodos()
+  	public IList<Inquilino?> ObtenerTodos()
 		{
-			IList<Inquilino> res = new List<Inquilino>();
+			IList<Inquilino?> res = new List<Inquilino?>();
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
-				string sql = $"SELECT Id, Nombre, Apellido, Dni, Telefono, Email, Lugar_trabajo "+
-        // Dni_garante,Nombre_garante,Apellido_garante,Telefono_garante" +
+				string sql = $"SELECT Id, Nombre, Apellido, Dni, Telefono, Email "+
+        // , Lugar_trabajo , Dni_garante,Nombre_garante,Apellido_garante,Telefono_garante" +
                     $" FROM Inquilinos";
 				using (MySqlCommand command = new MySqlCommand(sql, connection))
 				{
@@ -52,8 +52,8 @@ public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
 			int res = -1;
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
-				string sql = $"INSERT INTO Inquilinos (Nombre, Apellido, Dni, Telefono, Email, Lugar_Trabajo) "+ 
-        // Dni_Garante, Nombre_Garante, Apellido_Garante, Telefono_Garante) " +
+				string sql = $"INSERT INTO Inquilinos (Nombre, Apellido, Dni, Telefono, Email ) "+ 
+        // , Lugar_Trabajo,Dni_Garante, Nombre_Garante, Apellido_Garante, Telefono_Garante) " +
 					$"VALUES (@{nameof(i.Nombre)}, @{nameof(i.Apellido)}, @{nameof(i.Dni)}, @{nameof(i.Telefono)}, @{nameof(i.Email)} );"+
           // @{nameof(i.Dni_Garante)}, @{nameof(i.Nombre_Garante)} ,@{nameof(i.Apellido_Garante)}, @{nameof(i.Telefono_Garante)} );" +
 					"SELECT LAST_INSERT_ID();";//devuelve el id insertado (LAST_INSERT_ID para mysql)
@@ -80,8 +80,8 @@ public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
 			int res = -1;
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
-				string sql = $"UPDATE Inquilinos SET Nombre=@nombre, Apellido=@apellido, Dni=@dni, Telefono=@telefono, Email=@email, Lugar_Trabajo=@lugar_trabajo " + 
-        // Dni_Garante=@dni_garante, Nombre_Garante=@nombre_garante, Apellido_Garante=@apellido_garante, Telefono_Garante=@telefono_garante " +
+				string sql = $"UPDATE Inquilinos SET Nombre=@nombre, Apellido=@apellido, Dni=@dni, Telefono=@telefono, Email=@email " + 
+        // , Lugar_Trabajo=@lugar_trabajo ,Dni_Garante=@dni_garante, Nombre_Garante=@nombre_garante, Apellido_Garante=@apellido_garante, Telefono_Garante=@telefono_garante " +
 					$"WHERE Id = @id";        
      
 				using (MySqlCommand command = new MySqlCommand(sql, connection))
@@ -108,13 +108,13 @@ public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
 			Inquilino? i = null;
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
-				string sql = $"SELECT Id, Nombre, Apellido, Dni, Telefono, Email, Lugar_trabajo " + 
-        // Dni_garante,Nombre_garante,Apellido_garante,Telefono_garante " +
+				string sql = $"SELECT Id, Nombre, Apellido, Dni, Telefono, Email " + 
+        // , Lugar_trabajo, Dni_garante,Nombre_garante,Apellido_garante,Telefono_garante " +
                     $" FROM Inquilinos" + $" WHERE id=@id";
 				using (MySqlCommand command = new MySqlCommand(sql, connection))
 				{
 					// command.CommandType = CommandType.Text;
-          command.Parameters.AddWithValue($"@{nameof(id)}", id);
+        			command.Parameters.AddWithValue($"@{nameof(id)}", id);
 					connection.Open();
 					var reader = command.ExecuteReader();
 					if  (reader.Read())

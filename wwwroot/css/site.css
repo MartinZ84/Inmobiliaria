@@ -29,3 +29,77 @@ body {
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
   text-align: start;
 }
+
+/* Opcional: mejora visual del sidebar */
+.sidebar {
+    background: #2c3e50;
+    border-right: 1px solid #dee2e6;
+    color: #fff;
+    min-height: 100vh;
+    padding: 0;
+}
+.sidebar-header {
+    background: #007bff;
+}
+.sidebar .nav-link {
+    color: #fff;
+    font-size: 1.1em;
+    padding: 10px 20px;
+    transition: 0.3s;
+}
+.sidebar .nav-link:hover, .sidebar .nav-link.active {
+    background: #fff;
+    color: #007bff;
+    text-decoration: none;
+}
+.sidebar .dropdown-menu {
+    background: #2c3e50;
+    border: none;
+}
+.sidebar .dropdown-item {
+    color: #fff;
+}
+.sidebar .dropdown-item:hover {
+    background: #007bff;
+    color: #fff;
+}
+@media (max-width: 767.98px) {
+    .sidebar {
+        min-height: auto;
+        position: relative;
+    }
+}
+
+/* Cambia la fuente y el color del navbar */
+.custom-navbar {
+    background: linear-gradient(90deg, #007bff 0%, #00c6ff 100%);
+    font-family: 'Segoe UI', 'Arial', sans-serif;
+}
+
+.custom-navbar .navbar-brand {
+    color: #fff !important;
+    font-weight: bold;
+    letter-spacing: 2px;
+    font-size: 1.5rem;
+}
+
+.custom-navbar .navbar-toggler {
+    border-color: #fff;
+}
+
+.custom-navbar .navbar-toggler-icon {
+    background-image: url("data:image/svg+xml;charset=utf8,%3Csvg viewBox='0 0 30 30' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath stroke='rgba(255,255,255,0.7)' stroke-width='2' stroke-linecap='round' stroke-miterlimit='10' d='M4 7h22M4 15h22M4 23h22'/%3E%3C/svg%3E");
+}
+
+main {
+    margin-bottom: 70px; /* Ajusta según la altura del footer */
+}
+
+/* Cambia el color de fondo y texto al pasar el mouse o cuando está activo */
+.sidebar .nav-link:hover,
+.sidebar .nav-link.active,
+.sidebar .nav-link:focus {
+    background: #fff !important;
+    color: #212529 !important; /* negro Bootstrap */
+    text-decoration: none;
+}

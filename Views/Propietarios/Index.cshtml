@@ -4,7 +4,7 @@
     ViewData["Title"] = "Propietarios";
 }
 
-<h1>Listado de propietarios</h1>
+<h1 class="mt-4">Listado de Propietarios</h1>
 <hr />
 <p>
     <a asp-action="Create" class="btn btn-primary">Nuevo</a>
@@ -30,7 +30,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Email)
             </th>
-            <th></th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
@@ -55,11 +55,31 @@
                 @Html.DisplayFor(modelItem => item.Email)
             </td>
             <td>
-               @Html.ActionLink("Editar", "Edit", new {  id=item.Id },new {@class="btn btn-success"}) |
-                @Html.ActionLink("Detalles", "Details", new {  id=item.Id },new {@class="btn btn-warning"}) |
-                @* @Html.ActionLink("Borrar", "Delete", new {  id=item.Id  }, new {@class="btn btn-danger"}) *@
-               <a href='Propietarios/Delete/@item.Id' class="btn btn-danger"> Borrar</a>
-
+                <div class="dropdown">
+                    <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="accionesMenu_@item.Id" data-bs-toggle="dropdown" aria-expanded="false" title="Acciones">
+                        <i class="bi bi-three-dots"></i>
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="accionesMenu_@item.Id">
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center gap-2" asp-action="Edit" asp-route-id="@item.Id">
+                                <i class="bi bi-pencil text-success"></i>
+                                <span>Editar</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center gap-2" asp-action="Details" asp-route-id="@item.Id">
+                                <i class="bi bi-info-circle text-warning"></i>
+                                <span>Detalles</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center gap-2" asp-action="Delete" asp-route-id="@item.Id">
+                                <i class="bi bi-trash text-danger"></i>
+                                <span>Borrar</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
             </td>
         </tr>
 }
