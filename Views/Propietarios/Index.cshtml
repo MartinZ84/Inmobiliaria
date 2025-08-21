@@ -4,8 +4,12 @@
     ViewData["Title"] = "Propietarios";
 }
 
+
+
 <h1 class="mt-4">Listado de Propietarios</h1>
 <hr />
+
+@await Html.PartialAsync("_AutoDismissAlert")
 <p>
     <a asp-action="Create" class="btn btn-primary">Nuevo</a>
 </p>
