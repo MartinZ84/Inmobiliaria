@@ -1,7 +1,24 @@
+using System.Globalization;
+using Inmobiliaria.Models.Repositorio;
+using Microsoft.AspNetCore.Localization;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddLogging();
+builder.Services.AddScoped<RepositorioPropietario>();
+builder.Services.AddScoped<RepositorioInquilino>();
+
+
+// 2. Configurar localización ANTES de Build()
+builder.Services.Configure<RequestLocalizationOptions>(options =>
+{
+    var supportedCultures = new[] { "es-ES", "es-MX", "es" };
+    options.DefaultRequestCulture = new RequestCulture("es-ES");
+    options.SupportedCultures = supportedCultures.Select(c => new CultureInfo(c)).ToList();
+    options.SupportedUICultures = supportedCultures.Select(c => new CultureInfo(c)).ToList();
+});
 
 var app = builder.Build();
 

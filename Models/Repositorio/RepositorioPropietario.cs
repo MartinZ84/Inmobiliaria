@@ -7,10 +7,20 @@ namespace Inmobiliaria.Models.Repositorio;
 public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
 {
 	// string connectionString="Server=localhost;User=root;Password=;Database=inmozanche;SslMode=none";
-	public RepositorioPropietario(IConfiguration configuration) : base(configuration)
+
+
+	public RepositorioPropietario(IConfiguration configuration, ILogger<RepositorioPropietario> logger)
+	  : base(configuration)
 	{
-		
+		_logger = logger;
 	}
+
+    public RepositorioPropietario(IConfiguration configuration) : base(configuration)
+    {
+    }
+
+    private readonly ILogger<RepositorioPropietario> _logger;
+
 	public IList<Propietario?> ObtenerTodos()
 	{
 		IList<Propietario?> res = new List<Propietario?>();
@@ -46,6 +56,8 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
 	public int Alta(Propietario p)
 	{
 		int res = -1;
+
+	
 		using (MySqlConnection connection = new MySqlConnection(connectionString))
 		{
 			string sql = $"INSERT INTO Propietarios (Nombre, Apellido, Dni, Telefono, Email) " +
@@ -202,7 +214,7 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
 						Dni = reader.GetString("Dni"),
 						Telefono = reader.GetString("Telefono"),
 						Email = reader.GetString("Email"),
-					
+
 					};
 					res.Add(p);
 				}
@@ -262,7 +274,7 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
 						Dni = reader.GetString("Dni"),
 						Telefono = reader.GetString("Telefono"),
 						Email = reader.GetString("Email")
-						
+
 					};
 					res.Add(p);
 				}
@@ -271,37 +283,65 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
 		}
 		return res;
 	}
-		
-		public Propietario ObtenerPorEmail(string email)
+
+	public Propietario ObtenerPorEmail(string email)
+	{
+		Propietario p = null;
+		using (MySqlConnection connection = new MySqlConnection(connectionString))
 		{
-			Propietario p = null;
-			using (MySqlConnection connection = new MySqlConnection(connectionString))
-			{
-				string sql = @"SELECT IdPropietario, Nombre, Apellido, Dni, Telefono, Email, Clave 
+			string sql = @"SELECT IdPropietario, Nombre, Apellido, Dni, Telefono, Email, Clave 
 					FROM Propietarios
 					WHERE Email=@email";
+			using (MySqlCommand command = new MySqlCommand(sql, connection))
+			{
+				command.CommandType = CommandType.Text;
+				command.Parameters.Add("@email", MySqlDbType.VarChar).Value = email;
+				connection.Open();
+				var reader = command.ExecuteReader();
+				if (reader.Read())
+				{
+					p = new Propietario
+					{
+						Id = reader.GetInt32(nameof(Propietario.Id)),
+						Nombre = reader.GetString("Nombre"),
+						Apellido = reader.GetString("Apellido"),
+						Dni = reader.GetString("Dni"),
+						Telefono = reader.GetString("Telefono"),
+						Email = reader.GetString("Email")
+
+					};
+				}
+				connection.Close();
+			}
+		}
+		return p;
+	}
+
+	public string? ExisteDniPropietario(string dni)
+	{
+		bool existe = false;
+		try
+		{
+			using (MySqlConnection connection = new MySqlConnection(connectionString))
+			{
+				string sql = "SELECT EXISTS(SELECT 1 FROM Propietarios WHERE DNI = @dni)";
 				using (MySqlCommand command = new MySqlCommand(sql, connection))
 				{
-					command.CommandType = CommandType.Text;
-					command.Parameters.Add("@email", MySqlDbType.VarChar).Value = email;
+					command.Parameters.AddWithValue("@dni", dni);
 					connection.Open();
-					var reader = command.ExecuteReader();
-					if (reader.Read())
-					{
-						p = new Propietario
-						{
-							Id = reader.GetInt32(nameof(Propietario.Id)),
-							Nombre = reader.GetString("Nombre"),
-							Apellido = reader.GetString("Apellido"),
-							Dni = reader.GetString("Dni"),
-							Telefono = reader.GetString("Telefono"),
-							Email = reader.GetString("Email")
-							
-						};
-					}
+					var result = command.ExecuteScalar();
+					existe = result != null && Convert.ToBoolean(result);
 					connection.Close();
 				}
 			}
-			return p;
 		}
+		catch (Exception ex)
+		{
+			_logger.LogError($"Error al verificar DNI: {dni}", ex);
+			// No lanza excepción, retorna false por defecto
+			// Esto significa "no existe" en caso de error
+			return $"Error al verificar DNI: {dni}";
+		}
+		return existe ? $" El DNI {dni} ya existente en otro propietario" : null;
+	}
 }
