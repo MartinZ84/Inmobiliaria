@@ -15,11 +15,11 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
 		_logger = logger;
 	}
 
-    public RepositorioPropietario(IConfiguration configuration) : base(configuration)
-    {
-    }
+	public RepositorioPropietario(IConfiguration configuration) : base(configuration)
+	{
+	}
 
-    private readonly ILogger<RepositorioPropietario> _logger;
+	private readonly ILogger<RepositorioPropietario> _logger;
 
 	public IList<Propietario?> ObtenerTodos()
 	{
@@ -57,7 +57,7 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
 	{
 		int res = -1;
 
-	
+
 		using (MySqlConnection connection = new MySqlConnection(connectionString))
 		{
 			string sql = $"INSERT INTO Propietarios (Nombre, Apellido, Dni, Telefono, Email) " +
@@ -124,12 +124,13 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
 				{
 					p = new Propietario
 					{
-						Id = reader.GetInt32(0),
-						Nombre = reader.GetString(1),
-						Apellido = reader.GetString(2),
-						Dni = reader.GetString(3),
-						Telefono = reader.GetString(4),
-						Email = reader.GetString(5),
+						Id = reader.GetInt32(nameof(Propietario.Id)),
+						Nombre = reader.GetString(nameof(Propietario.Nombre)),
+						Apellido = reader.GetString(nameof(Propietario.Apellido)),
+						Dni = reader.GetString(nameof(Propietario.Dni)),
+						Telefono = reader.GetString(nameof(Propietario.Telefono)),
+						Email = reader.GetString(nameof(Propietario.Email)),
+
 					};
 				}
 				connection.Close();
@@ -155,12 +156,12 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
 				{
 					p = new Propietario
 					{
-						Id = reader.GetInt32(0),
-						Nombre = reader.GetString(1),
-						Apellido = reader.GetString(2),
-						Dni = reader.GetString(3),
-						Telefono = reader.GetString(4),
-						Email = reader.GetString(5),
+						Id = reader.GetInt32(nameof(Propietario.Id)),
+						Nombre = reader.GetString(nameof(Propietario.Nombre)),
+						Apellido = reader.GetString(nameof(Propietario.Apellido)),
+						Dni = reader.GetString(nameof(Propietario.Dni)),
+						Telefono = reader.GetString(nameof(Propietario.Telefono)),
+						Email = reader.GetString(nameof(Propietario.Email)),
 					};
 				}
 				connection.Close();
@@ -344,4 +345,67 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
 		}
 		return existe ? $" El DNI {dni} ya existente en otro propietario" : null;
 	}
+	
+	
+public List<Propietario> BuscarPropietariosConValidacion(string? dni = null, string? nombre = null, 
+    string? apellido = null, string? email = null)
+{
+    // Validar que al menos un criterio esté presente
+    bool tieneCriterios = !string.IsNullOrWhiteSpace(dni) || 
+                         !string.IsNullOrWhiteSpace(nombre) || 
+                         !string.IsNullOrWhiteSpace(apellido) || 
+                         !string.IsNullOrWhiteSpace(email);
+
+    if (!tieneCriterios)
+    {
+        return new List<Propietario>(); // Retorna lista vacía si no hay criterios
+    }
+
+    List<Propietario> propietarios = new List<Propietario>();
+    
+    using (MySqlConnection connection = new MySqlConnection(connectionString))
+    {
+        string sql = @"SELECT Id, nombre, apellido, dni, telefono, email 
+                      FROM Propietarios 
+                      WHERE (@dni IS NULL OR Dni LIKE CONCAT('%', @dni, '%'))
+                        AND (@nombre IS NULL OR Nombre LIKE CONCAT('%', @nombre, '%'))
+                        AND (@apellido IS NULL OR Apellido LIKE CONCAT('%', @apellido, '%'))
+                        AND (@email IS NULL OR Email LIKE CONCAT('%', @email, '%'))
+                      ORDER BY Apellido, Nombre
+                      LIMIT 200"; // Límite fijo para evitar sobrecarga
+
+        using (MySqlCommand command = new MySqlCommand(sql, connection))
+        {
+            command.CommandType = CommandType.Text;
+            
+            command.Parameters.Add("@dni", MySqlDbType.VarChar).Value = 
+                string.IsNullOrWhiteSpace(dni) ? DBNull.Value : dni.Trim();
+            command.Parameters.Add("@nombre", MySqlDbType.VarChar).Value = 
+                string.IsNullOrWhiteSpace(nombre) ? DBNull.Value : nombre.Trim();
+            command.Parameters.Add("@apellido", MySqlDbType.VarChar).Value = 
+                string.IsNullOrWhiteSpace(apellido) ? DBNull.Value : apellido.Trim();
+            command.Parameters.Add("@email", MySqlDbType.VarChar).Value = 
+                string.IsNullOrWhiteSpace(email) ? DBNull.Value : email.Trim();
+            
+            connection.Open();
+            using (var reader = command.ExecuteReader())
+            {
+                while (reader.Read())
+                {
+                    propietarios.Add(new Propietario
+					{					
+						Id = reader.GetInt32(nameof(Propietario.Id)),
+						Nombre = reader.GetString(nameof(Propietario.Nombre)),
+						Apellido = reader.GetString(nameof(Propietario.Apellido)),
+						Dni = reader.GetString(nameof(Propietario.Dni)),
+						Telefono = reader.GetString(nameof(Propietario.Telefono)),
+						Email = reader.GetString(nameof(Propietario.Email)),
+                    });
+                }
+            }
+        }
+    }
+    
+    return propietarios;
+}
 }

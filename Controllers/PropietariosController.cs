@@ -14,11 +14,60 @@ namespace Inmobiliaria.Controllers
     }
     // GET: Propietarios
     // [Authorize(Policy = "Empleado")]
-    public ActionResult Index()
+    // public ActionResult Index()
+    // {
+    //   var lista = repositorio.ObtenerTodos();
+    //   return View(lista);
+    // }
+
+    // Método Index actualizado para manejar filtros
+public ActionResult Index(string? dni = null, string? nombre = null, 
+    string? apellido = null, string? email = null)
+{
+    try
     {
-      var lista = repositorio.ObtenerTodos();
-      return View(lista);
+        IList<Propietario> propietarios;
+        
+        // Si hay filtros, usar el método de búsqueda
+        if (!string.IsNullOrWhiteSpace(dni) || !string.IsNullOrWhiteSpace(nombre) || 
+            !string.IsNullOrWhiteSpace(apellido) || !string.IsNullOrWhiteSpace(email))
+        {
+            propietarios = repositorio.BuscarPropietariosConValidacion(dni, nombre, apellido, email);
+            
+            // Mensaje informativo si no hay resultados
+            if (propietarios.Count == 0)
+            {
+                TempData["InfoMessage"] = "No se encontraron propietarios con los criterios especificados.";
+                TempData["AlertType"] = "info";
+            }
+            else if (propietarios.Count >= 200)
+            {
+                TempData["WarningMessage"] = "Se encontraron muchos resultados (200+). Considere refinar su búsqueda.";
+                TempData["AlertType"] = "warning";
+            }
+        }
+        else
+        {
+            // Sin filtros, obtener todos los propietarios
+            propietarios = repositorio.ObtenerTodos();
+        }
+
+        // Pasar los filtros a la vista para mantenerlos en el formulario
+        ViewBag.Dni = dni;
+        ViewBag.Nombre = nombre;
+        ViewBag.Apellido = apellido;
+        ViewBag.Email = email;
+
+        return View(propietarios);
     }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error en Index: {ex}");
+        TempData["ErrorMessage"] = "Ocurrió un error al cargar los propietarios.";
+        TempData["AlertType"] = "danger";
+        return View(new List<Propietario>());
+    }
+}
 
     // GET: Propietarios/Details/5
     // [Authorize(Policy = "Empleado")]
@@ -38,44 +87,44 @@ namespace Inmobiliaria.Controllers
     // POST: Propietarios/Create
 
     [HttpPost]
-[ValidateAntiForgeryToken]
-public ActionResult Create(Propietario p)
-{
-    try
+    [ValidateAntiForgeryToken]
+    public ActionResult Create(Propietario p)
     {
+      try
+      {
         // Verifica si el DNI ya existe
         string? errorDni = repositorio.ExisteDniPropietario(p.Dni);
-        
+
         if (!string.IsNullOrEmpty(errorDni))
         {
-            TempData["ErrorMessage"] = errorDni;
-            TempData["AlertType"] = "danger"; // Para Bootstrap alert-danger
-            return View(p);
+          TempData["ErrorMessage"] = errorDni;
+          TempData["AlertType"] = "danger"; // Para Bootstrap alert-danger
+          return View(p);
         }
-        
+
         // Si el DNI es válido, procede a guardar
         int res = repositorio.Alta(p);
         if (res > 0)
         {
-            TempData["SuccessMessage"] = "Propietario creado exitosamente";
-            TempData["AlertType"] = "success";
-            return RedirectToAction(nameof(Index));
+          TempData["SuccessMessage"] = "Propietario creado exitosamente";
+          TempData["AlertType"] = "success";
+          return RedirectToAction(nameof(Index));
         }
         else
         {
-            TempData["ErrorMessage"] = "Error al crear el propietario";
-            TempData["AlertType"] = "danger";
-            return View(p);
+          TempData["ErrorMessage"] = "Error al crear el propietario";
+          TempData["AlertType"] = "danger";
+          return View(p);
         }
-    }
-    catch (Exception e)
-    {
+      }
+      catch (Exception e)
+      {
         TempData["ErrorMessage"] = "Error inesperado al procesar la solicitud";
         TempData["AlertType"] = "danger";
         Console.WriteLine(e);
         return View(p);
+      }
     }
-}
 
     // GET: Propietarios/Edit/5
     // [Authorize(Policy = "Empleado")]
@@ -107,11 +156,28 @@ public ActionResult Create(Propietario p)
       try
       {
 
-        // propEdit = repositorio.ObtenerPorId(id);
-        // propEdit.Nombre=p.Nombre;
-        // propEdit.Apellido=p.Apellido;
-        // propEdit.Dni=p.Dni;
-        // propEdit.Email=p.Email;
+
+        // Obtener el inquilino original de la base de datos
+        var propietariooOriginal = repositorio.ObtenerPorId(id);
+        if (propietariooOriginal == null)
+        {
+          TempData["ErrorMessage"] = "El inquilino no existe.";
+          TempData["AlertType"] = "danger";
+          return RedirectToAction(nameof(Index));
+        }
+
+        // Validar DNI solo si cambió
+        if (p.Dni != propietariooOriginal.Dni)
+        {
+          string? errorDni = repositorio.ExisteDniPropietario(p.Dni);
+          if (!string.IsNullOrEmpty(errorDni))
+          {
+            TempData["ErrorMessage"] = errorDni;
+            TempData["AlertType"] = "danger";
+            return View(p);
+          }
+        }
+
         repositorio.Modificacion(p);
         TempData["Mensaje"] = "Datos guardados correctamente";
 
@@ -183,5 +249,44 @@ public ActionResult Create(Propietario p)
         return Json(new { Error = ex.Message });
       }
     }
+
+    public ActionResult Buscar(string? dni, string? nombre, string? apellido, string? email)
+    {
+      try
+      {
+        var propietarios = repositorio.BuscarPropietariosConValidacion(dni, nombre, apellido, email);
+
+        if (propietarios.Count == 0)
+        {
+          if (string.IsNullOrWhiteSpace(dni) && string.IsNullOrWhiteSpace(nombre) &&
+              string.IsNullOrWhiteSpace(apellido) && string.IsNullOrWhiteSpace(email))
+          {
+            TempData["InfoMessage"] = "Debe especificar al menos un criterio de búsqueda.";
+          }
+          else
+          {
+            TempData["InfoMessage"] = "No se encontraron propietarios con los criterios especificados.";
+          }
+        }
+        else if (propietarios.Count >= 200)
+        {
+          TempData["WarningMessage"] = "Se encontraron muchos resultados (200+). Considere refinar su búsqueda.";
+        }
+
+        ViewBag.Dni = dni;
+        ViewBag.Nombre = nombre;
+        ViewBag.Apellido = apellido;
+        ViewBag.Email = email;
+
+        return View(propietarios);
+      }
+      catch (Exception ex)
+      {
+        Console.WriteLine($"Error en búsqueda: {ex}");
+        TempData["ErrorMessage"] = "Ocurrió un error durante la búsqueda.";
+        return View(new List<Propietario>());
+      }
+    }
+
   }
 }

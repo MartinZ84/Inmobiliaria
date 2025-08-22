@@ -103,3 +103,33 @@ main {
     color: #212529 !important; /* negro Bootstrap */
     text-decoration: none;
 }
+
+
+.card-header .btn-link {
+    color: #495057;
+    font-weight: 500;
+}
+
+.card-header .btn-link:hover {
+    color: #007bff;
+    text-decoration: none !important;
+}
+
+.table-responsive {
+    border-radius: 0.375rem;
+    box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+}
+
+.border-primary {
+    border-color: #007bff !important;
+}
+
+@media (max-width: 768px) {
+    .col-md-10, .col-md-2 {
+        margin-bottom: 1rem;
+    }
+    
+    .col-md-2 .btn {
+        width: 100%;
+    }
+}

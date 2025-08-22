@@ -1,4 +1,4 @@
-@model IEnumerable<Inmobiliaria.Models.Entidades.Inquilino>
+@* @model IEnumerable<Inmobiliaria.Models.Entidades.Inquilino>
 
 @{
     ViewData["Title"] = "Inquilinos";
@@ -33,21 +33,7 @@
             <th>
                 @Html.DisplayNameFor(model => model.Email)
             </th>
-            @* <th>
-                @Html.DisplayNameFor(model => model.Lugar_Trabajo)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Dni_Garante)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Nombre_Garante)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Apellido_Garante)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Telefono_Garante)
-            </th> *@
+        
             <th>Acciones</th>
         </tr>
     </thead>
@@ -104,4 +90,217 @@
         </tr>
 }
     </tbody>
-</table>
+</table> *@
+
+
+
+
+@model IEnumerable<Inmobiliaria.Models.Entidades.Inquilino>
+
+@{
+    ViewData["Title"] = "Inquilinos";
+}
+
+<h1 class="mt-4">Listado de Inquilinos</h1>
+<hr />
+
+@await Html.PartialAsync("_AutoDismissAlert")
+
+<!-- Sección de filtros y botón crear -->
+<div class="row mb-3">
+    <div class="col-md-10">
+        <!-- Formulario de filtros -->
+        <form method="get" asp-action="Index" id="formFiltros">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <button class="btn btn-link p-0 text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#filtrosCollapse" aria-expanded="false" aria-controls="filtrosCollapse">
+                            <i class="bi bi-funnel me-2"></i>Filtros de búsqueda
+                            <i class="bi bi-chevron-down ms-1"></i>
+                        </button>
+                    </h6>
+                </div>
+                <div class="collapse" id="filtrosCollapse">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="dni" class="form-label">DNI</label>
+                                <input type="text" class="form-control" id="dni" name="dni" value="@ViewBag.Dni" placeholder="Buscar por DNI">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="nombre" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="nombre" name="nombre" value="@ViewBag.Nombre" placeholder="Buscar por nombre">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="apellido" class="form-label">Apellido</label>
+                                <input type="text" class="form-control" id="apellido" name="apellido" value="@ViewBag.Apellido" placeholder="Buscar por apellido">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="email" class="form-label">Email</label>
+                                <input type="text" class="form-control" id="email" name="email" value="@ViewBag.Email" placeholder="Buscar por email">
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-outline-primary me-2">
+                                    <i class="bi bi-search me-1"></i>Buscar
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" id="btnLimpiar">
+                                    <i class="bi bi-eraser me-1"></i>Limpiar
+                                </button>
+                                <small class="text-muted ms-3">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Puede usar uno o varios criterios de búsqueda
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-2 d-flex align-items-start">
+        <a asp-action="Create" class="btn btn-primary w-100">
+            <i class="bi bi-plus-circle me-1"></i>Nuevo
+        </a>
+    </div>
+</div>
+
+<!-- Información de resultados -->
+@* @if (Model != null && Model.Any())
+{
+    <div class="alert alert-info d-flex align-items-center" role="alert">
+        <i class="bi bi-info-circle me-2"></i>
+        <div>
+            Se encontraron <strong>@Model.Count()</strong> propietario(s)
+            @if (!string.IsNullOrEmpty(ViewBag.Dni?.ToString()) || 
+                 !string.IsNullOrEmpty(ViewBag.Nombre?.ToString()) || 
+                 !string.IsNullOrEmpty(ViewBag.Apellido?.ToString()) || 
+                 !string.IsNullOrEmpty(ViewBag.Email?.ToString()))
+            {
+                <span>con los criterios especificados</span>
+            }
+        </div>
+    </div>
+} *@
+
+<!-- Tabla de resultados -->
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Id)</th>
+                <th>@Html.DisplayNameFor(model => model.Nombre)</th>
+                <th>@Html.DisplayNameFor(model => model.Apellido)</th>
+                <th>@Html.DisplayNameFor(model => model.Dni)</th>
+                <th>@Html.DisplayNameFor(model => model.Telefono)</th>
+                <th>@Html.DisplayNameFor(model => model.Email)</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Nombre)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Apellido)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Dni)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Telefono)</td>
+                        <td>@Html.DisplayFor(modelItem => item.Email)</td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" id="accionesMenu_@item.Id" data-bs-toggle="dropdown" aria-expanded="false" title="Acciones">
+                                    <i class="bi bi-three-dots"></i>
+                                </button>
+                                <ul class="dropdown-menu" aria-labelledby="accionesMenu_@item.Id">
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-2" asp-action="Edit" asp-route-id="@item.Id">
+                                            <i class="bi bi-pencil text-success"></i>
+                                            <span>Editar</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-2" asp-action="Details" asp-route-id="@item.Id">
+                                            <i class="bi bi-info-circle text-warning"></i>
+                                            <span>Detalles</span>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item d-flex align-items-center gap-2" asp-action="Delete" asp-route-id="@item.Id">
+                                            <i class="bi bi-trash text-danger"></i>
+                                            <span>Borrar</span>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="7" class="text-center text-muted py-4">
+                        <i class="bi bi-search me-2"></i>
+                        @if (!string.IsNullOrEmpty(ViewBag.Dni?.ToString()) || 
+                             !string.IsNullOrEmpty(ViewBag.Nombre?.ToString()) || 
+                             !string.IsNullOrEmpty(ViewBag.Apellido?.ToString()) || 
+                             !string.IsNullOrEmpty(ViewBag.Email?.ToString()))
+                        {
+                            <span>No se encontraron propietarios con los criterios especificados.</span>
+                        }
+                        else
+                        {
+                            <span>No hay propietarios registrados.</span>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+
+// Funcionalidad adicional para los filtros
+$(document).ready(function() {
+    // Botón limpiar filtros
+    $('#btnLimpiar').click(function() {
+        $('#dni, #nombre, #apellido, #email').val('');
+        @* window.location.href = '@Url.Action("Index", "Propietarios")'; *@
+    });
+    
+
+    // Mostrar filtros si hay criterios de búsqueda activos
+    @if (!string.IsNullOrEmpty(ViewBag.Dni?.ToString()) || 
+         !string.IsNullOrEmpty(ViewBag.Nombre?.ToString()) || 
+         !string.IsNullOrEmpty(ViewBag.Apellido?.ToString()) || 
+         !string.IsNullOrEmpty(ViewBag.Email?.ToString()))
+    {
+        <text>
+        $('#filtrosCollapse').addClass('show');
+        </text>
+    }
+
+    // Búsqueda en tiempo real (opcional)
+    let searchTimeout;
+    $('#dni, #nombre, #apellido, #email').on('input', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(function() {
+            // Aquí podrías implementar búsqueda automática si lo deseas
+            // $('#formFiltros').submit();
+        }, 1000); // Espera 1 segundo después de dejar de escribir
+    });
+
+    // Resaltar campos con filtros activos
+    $('#dni, #nombre, #apellido, #email').each(function() {
+        if ($(this).val()) {
+            $(this).addClass('border-primary');
+        }
+    });
+});
+</script>
+
