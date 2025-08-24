@@ -111,6 +111,8 @@
 
 @{
     ViewData["Title"] = "Propietarios";
+    var Pagina = ViewBag.Pagina ?? 1;
+    var TotalPaginas = ViewBag.TotalPaginas ?? 1;
 }
 
 <h1 class="mt-4">Listado de Propietarios</h1>
@@ -273,6 +275,94 @@
             }
         </tbody>
     </table>
+
+    <!-- Paginación -->
+@* <nav aria-label="Page navigation">
+	<ul class="pagination">
+		<!-- Botón "Anterior" -->
+		@if (Pagina > 1)
+		{
+			<li class="page-item">
+				<a class="page-link" href="~/Propietarios/Index?pagina=@(Pagina - 1)" aria-label="Anterior">
+					<i class="fa-solid fa-angles-left">Anterior</i>
+				</a>
+			</li>
+		}
+		else
+		{
+			<li class="page-item disabled">
+				<span class="page-link"><i class="fa-solid fa-angles-left">Anterior</i></span>
+			</li>
+		}
+
+		<!-- Números de página -->
+		@for (int i = 1; i <= TotalPaginas; i++)
+		{
+			<li class="page-item @(i == Pagina ? "active" : "")">
+				<a class="page-link" href="~/Propietarios/Index?pagina=@i">@i</a>
+			</li>
+		}
+		<!-- Botón "Siguiente" -->
+		@if (Pagina < TotalPaginas)
+		{
+			<li class="page-item">
+				<a class="page-link" href="~/Propietarios/Index?pagina=@(Pagina + 1)" aria-label="Siguiente">
+					<i class="fa-solid fa-angles-right">Siguiente</i>
+				</a>
+			</li>
+		}
+		else
+		{
+			<li class="page-item disabled">
+				<span class="page-link"><i class="fa-solid fa-angles-right">Siguiente</i></span>
+			</li>
+		}
+	</ul>
+</nav> *@
+<!-- Paginación con persistencia de filtros -->
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        <!-- Botón "Anterior" -->
+        @if (Pagina > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" href="~/Propietarios/Index?pagina=@(Pagina - 1)&dni=@ViewBag.Dni&nombre=@ViewBag.Nombre&apellido=@ViewBag.Apellido&email=@ViewBag.Email" aria-label="Anterior">
+                    <i class="fa-solid fa-angles-left">Anterior</i>
+                </a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                <span class="page-link"><i class="fa-solid fa-angles-left">Anterior</i></span>
+            </li>
+        }
+
+        <!-- Números de página -->
+        @for (int i = 1; i <= TotalPaginas; i++)
+        {
+            <li class="page-item @(i == Pagina ? "active" : "")">
+                <a class="page-link" href="~/Propietarios/Index?pagina=@i&dni=@ViewBag.Dni&nombre=@ViewBag.Nombre&apellido=@ViewBag.Apellido&email=@ViewBag.Email">@i</a>
+            </li>
+        }
+        
+        <!-- Botón "Siguiente" -->
+        @if (Pagina < TotalPaginas)
+        {
+            <li class="page-item">
+                <a class="page-link" href="~/Propietarios/Index?pagina=@(Pagina + 1)&dni=@ViewBag.Dni&nombre=@ViewBag.Nombre&apellido=@ViewBag.Apellido&email=@ViewBag.Email" aria-label="Siguiente">
+                    <i class="fa-solid fa-angles-right">Siguiente</i>
+                </a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                <span class="page-link"><i class="fa-solid fa-angles-right">Siguiente</i></span>
+            </li>
+        }
+    </ul>
+</nav>
 </div>
 
 <script>

@@ -22,36 +22,42 @@ namespace Inmobiliaria.Controllers
 
     // Método Index actualizado para manejar filtros
 public ActionResult Index(string? dni = null, string? nombre = null, 
-    string? apellido = null, string? email = null)
+    string? apellido = null, string? email = null, int pagina=1)
 {
     try
     {
         IList<Propietario> propietarios;
-        
+        var tamaño = 5;
         // Si hay filtros, usar el método de búsqueda
-        if (!string.IsNullOrWhiteSpace(dni) || !string.IsNullOrWhiteSpace(nombre) || 
+        if (!string.IsNullOrWhiteSpace(dni) || !string.IsNullOrWhiteSpace(nombre) ||
             !string.IsNullOrWhiteSpace(apellido) || !string.IsNullOrWhiteSpace(email))
         {
-            propietarios = repositorio.BuscarPropietariosConValidacion(dni, nombre, apellido, email);
-            
-            // Mensaje informativo si no hay resultados
-            if (propietarios.Count == 0)
-            {
-                TempData["InfoMessage"] = "No se encontraron propietarios con los criterios especificados.";
-                TempData["AlertType"] = "info";
-            }
-            else if (propietarios.Count >= 200)
-            {
-                TempData["WarningMessage"] = "Se encontraron muchos resultados (200+). Considere refinar su búsqueda.";
-                TempData["AlertType"] = "warning";
-            }
+          propietarios = repositorio.BuscarPropietariosConValidacion(dni, nombre, apellido, email);
+          var total = propietarios.Count;
+          ViewBag.Pagina = pagina;
+          ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
+          // Mensaje informativo si no hay resultados
+          if (total == 0)
+          {
+            TempData["InfoMessage"] = "No se encontraron propietarios con los criterios especificados.";
+            TempData["AlertType"] = "info";
+          }
+          else if (total >= 200)
+          {
+            TempData["WarningMessage"] = "Se encontraron muchos resultados (200+). Considere refinar su búsqueda.";
+            TempData["AlertType"] = "warning";
+          }
         }
         else
         {
-            // Sin filtros, obtener todos los propietarios
-            propietarios = repositorio.ObtenerTodos();
+          // Sin filtros, obtener todos los propietarios
+          // propietarios = repositorio.ObtenerTodos();
+          propietarios = repositorio.ObtenerLista(pagina, 5);
+          ViewBag.Pagina = pagina;
+				  var total = repositorio.ObtenerCantidad();
+				  ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
         }
-
+     
         // Pasar los filtros a la vista para mantenerlos en el formulario
         ViewBag.Dni = dni;
         ViewBag.Nombre = nombre;
