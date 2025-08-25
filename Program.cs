@@ -9,6 +9,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddLogging();
 builder.Services.AddScoped<RepositorioPropietario>();
 builder.Services.AddScoped<RepositorioInquilino>();
+builder.Services.AddScoped<RepositorioInmueble>();
 
 
 // 2. Configurar localización ANTES de Build()
