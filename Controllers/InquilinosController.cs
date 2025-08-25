@@ -20,18 +20,20 @@ namespace Inmobiliaria.Controllers
     // }
     
 public ActionResult Index(string? dni = null, string? nombre = null, 
-    string? apellido = null, string? email = null)
+    string? apellido = null, string? email = null, int pagina=1)
 {
     try
     {
         IList<Inquilino> inquilinos;
-
+        var tamaño = 5;
         // Si hay filtros, usar el método de búsqueda
         if (!string.IsNullOrWhiteSpace(dni) || !string.IsNullOrWhiteSpace(nombre) || 
             !string.IsNullOrWhiteSpace(apellido) || !string.IsNullOrWhiteSpace(email))
         {
             inquilinos = repositorio.BuscarInquilinosConValidacion(dni, nombre, apellido, email);
-            
+            var total = inquilinos.Count;
+            ViewBag.Pagina = pagina;
+            ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
             // Mensaje informativo si no hay resultados
             if (inquilinos.Count == 0)
             {
@@ -46,8 +48,11 @@ public ActionResult Index(string? dni = null, string? nombre = null,
         }
         else
         {
-            // Sin filtros, obtener todos los inquilinos
-            inquilinos = repositorio.ObtenerTodos();
+            // Sin filtros, obtener todos los inquilinos           
+            inquilinos = repositorio.ObtenerLista(pagina, 5);
+            ViewBag.Pagina = pagina;
+				    var total = repositorio.ObtenerCantidad();
+				    ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
         }
 
         // Pasar los filtros a la vista para mantenerlos en el formulario

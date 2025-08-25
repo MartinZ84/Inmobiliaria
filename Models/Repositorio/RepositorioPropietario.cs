@@ -53,6 +53,8 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
 		return res;
 	}
 
+	
+
 	public int Alta(Propietario p)
 	{
 		int res = -1;
@@ -188,17 +190,15 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
 		return res;
 	}
 
-	public IList<Propietario> ObtenerLista(int paginaNro = 1, int tamPagina = 10)
+	public IList<Propietario> ObtenerLista(int paginaNro = 1, int tamPagina = 5)
 	{
 		IList<Propietario> res = new List<Propietario>();
 		using (MySqlConnection connection = new MySqlConnection(connectionString))
 		{
 			string sql = @$"
-					SELECT IdPropietario, Nombre, Apellido, Dni, Telefono, Email, Clave
+					SELECT Id, Nombre, Apellido, Dni, Telefono, Email
 					FROM Propietarios
-					ORDER BY IdPropietario
-					OFFSET {(paginaNro - 1) * tamPagina} ROW
-					FETCH NEXT {tamPagina} ROWS ONLY
+					LIMIT {tamPagina} OFFSET {(paginaNro - 1) * tamPagina}
 				";
 			using (MySqlCommand command = new MySqlCommand(sql, connection))
 			{
@@ -231,7 +231,7 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
 		using (MySqlConnection connection = new MySqlConnection(connectionString))
 		{
 			string sql = @$"
-					SELECT COUNT(IdPropietario)
+					SELECT COUNT(Id)
 					FROM Propietarios
 				";
 			using (MySqlCommand command = new MySqlCommand(sql, connection))
