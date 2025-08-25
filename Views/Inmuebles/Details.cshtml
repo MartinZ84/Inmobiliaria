@@ -1,0 +1,300 @@
+@model Inmobiliaria.Models.Entidades.Inmueble;
+
+
+@{
+    ViewData["Title"] = "Detalles del Inmueble";
+}
+
+<div class="container-fluid">
+    <div class="row mb-3">
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a asp-action="Index">Inmuebles</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Detalles</li>
+                </ol>
+            </nav>
+        </div>
+    </div>
+
+    <div class="row">
+        <!-- Columna de imágenes -->
+        <div class="col-lg-8">
+            @if (Model.ListaImagenes.Any())
+            {
+                <!-- Carrusel principal -->
+                <div id="carouselInmueble" class="carousel slide mb-3" data-bs-ride="carousel">
+                    <div class="carousel-indicators">
+                        @for (int i = 0; i < Model.ListaImagenes.Count; i++)
+                        {
+                            <button type="button" data-bs-target="#carouselInmueble" data-bs-slide-to="@i" 
+                                    class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")" 
+                                    aria-label="Slide @(i + 1)"></button>
+                        }
+                    </div>
+                    <div class="carousel-inner rounded">
+                        @for (int i = 0; i < Model.ListaImagenes.Count; i++)
+                        {
+                            <div class="carousel-item @(i == 0 ? "active" : "")">
+                                <img src="@Model.ListaImagenes[i]" class="d-block w-100" alt="Imagen @(i + 1)"
+                                     style="height: 400px; object-fit: cover;">
+                            </div>
+                        }
+                    </div>
+                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselInmueble" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Anterior</span>
+                    </button>
+                    <button class="carousel-control-next" type="button" data-bs-target="#carouselInmueble" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Siguiente</span>
+                    </button>
+                </div>
+
+                <!-- Miniaturas -->
+                @if (Model.ListaImagenes.Count > 1)
+                {
+                    <div class="row g-2 mb-3">
+                        @for (int i = 0; i < Model.ListaImagenes.Count; i++)
+                        {
+                            <div class="col-2">
+                                <img src="@Model.ListaImagenes[i]" 
+                                     class="img-thumbnail miniatura-imagen @(i == 0 ? "active" : "")" 
+                                     alt="Miniatura @(i + 1)"
+                                     style="height: 80px; object-fit: cover; cursor: pointer;"
+                                     data-slide-to="@i"
+                                     onclick="cambiarImagenPrincipal(@i)">
+                            </div>
+                        }
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="text-center py-5 bg-light rounded">
+                    <i class="bi bi-image display-1 text-muted"></i>
+                    <p class="text-muted mt-3">No hay imágenes disponibles</p>
+                </div>
+            }
+        </div>
+
+        <!-- Columna de información -->
+        <div class="col-lg-4">
+            <div class="card sticky-top" style="top: 20px;">
+                <div class="card-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h4 class="mb-0">
+                            @if (Model.EstaDisponible)
+                            {
+                                <span class="badge bg-success me-2">Disponible</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger me-2">No Disponible</span>
+                            }
+                            <span class="badge bg-primary">@Model.Tipo</span>
+                        </h4>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <!-- Precio destacado -->
+                    <div class="text-center mb-4">
+                        <h2 class="text-success mb-0">
+                            <i class="bi bi-currency-dollar"></i>@Model.Precio.ToString("N0")
+                        </h2>
+                        <small class="text-muted">Precio mensual</small>
+                    </div>
+
+                    <!-- Información principal -->
+                    <div class="mb-4">
+                        <h5 class="text-primary">
+                            <i class="bi bi-geo-alt"></i> Ubicación
+                        </h5>
+                        <p class="mb-0">@Model.Direccion</p>
+                    </div>
+
+                    <!-- Características -->
+                    <div class="mb-4">
+                        <h5 class="text-primary">
+                            <i class="bi bi-house-door"></i> Características
+                        </h5>
+                        <div class="row g-3">
+                            <div class="col-6">
+                                <div class="text-center p-2 bg-light rounded">
+                                    <i class="bi bi-door-open text-primary fs-4"></i>
+                                    <div><strong>@Model.Ambientes</strong></div>
+                                    <small class="text-muted">Ambientes</small>
+                                </div>
+                            </div>
+                            @if (Model.Superficie.HasValue)
+                            {
+                                <div class="col-6">
+                                    <div class="text-center p-2 bg-light rounded">
+                                        <i class="bi bi-rulers text-primary fs-4"></i>
+                                        <div><strong>@Model.Superficie m²</strong></div>
+                                        <small class="text-muted">Superficie</small>
+                                    </div>
+                                </div>
+                            }
+                            <div class="col-6">
+                                <div class="text-center p-2 bg-light rounded">
+                                    <i class="bi bi-building text-primary fs-4"></i>
+                                    <div><strong>@Model.Uso</strong></div>
+                                    <small class="text-muted">Uso</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información del propietario -->
+                    <div class="mb-4">
+                        <h5 class="text-primary">
+                            <i class="bi bi-person"></i> Propietario
+                        </h5>
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <i class="bi bi-person-circle fs-1 text-muted"></i>
+                            </div>
+                            <div>
+                                <strong>@Model.Propietario?.Nombre @Model.Propietario?.Apellido</strong><br>
+                                <small class="text-muted">
+                                    <i class="bi bi-credit-card-2-front"></i> DNI: @Model.Propietario?.Dni<br>
+                                    <i class="bi bi-telephone"></i> @Model.Propietario?.Telefono<br>
+                                    <i class="bi bi-envelope"></i> @Model.Propietario?.Email
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Información adicional -->
+                    @if (Model.Latitud.HasValue && Model.Longitud.HasValue)
+                    {
+                        <div class="mb-4">
+                            <h5 class="text-primary">
+                                <i class="bi bi-geo"></i> Coordenadas
+                            </h5>
+                            <small class="text-muted">
+                                Lat: @Model.Latitud, Lng: @Model.Longitud
+                            </small>
+                        </div>
+                    }
+
+                    <!-- Acciones -->
+                    <div class="d-grid gap-2">
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                            <i class="bi bi-pencil"></i> Editar Inmueble
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger">
+                            <i class="bi bi-trash"></i> Eliminar Inmueble
+                        </a>
+                        <a asp-action="Index" class="btn btn-outline-secondary">
+                            <i class="bi bi-arrow-left"></i> Volver al Listado
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Información detallada -->
+    <div class="row mt-4">
+        <div class="col-12">
+            <div class="card">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-info-circle"></i> Información Detallada
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">ID:</dt>
+                                <dd class="col-sm-8">@Model.Id</dd>
+
+                                <dt class="col-sm-4">Dirección:</dt>
+                                <dd class="col-sm-8">@Model.Direccion</dd>
+
+                                <dt class="col-sm-4">Tipo:</dt>
+                                <dd class="col-sm-8">@Model.Tipo</dd>
+
+                                <dt class="col-sm-4">Uso:</dt>
+                                <dd class="col-sm-8">@Model.Uso</dd>
+                            </dl>
+                        </div>
+                        <div class="col-md-6">
+                            <dl class="row">
+                                <dt class="col-sm-4">Ambientes:</dt>
+                                <dd class="col-sm-8">@Model.Ambientes</dd>
+
+                                <dt class="col-sm-4">Superficie:</dt>
+                                <dd class="col-sm-8">@(Model.Superficie?.ToString() ?? "No especificada") m²</dd>
+
+                                <dt class="col-sm-4">Precio:</dt>
+                                <dd class="col-sm-8">$@Model.Precio.ToString("N0")</dd>
+
+                                <dt class="col-sm-4">Estado:</dt>
+                                <dd class="col-sm-8">
+                                    @if (Model.EstaDisponible)
+                                    {
+                                        <span class="badge bg-success">@Model.Estado</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge bg-danger">@Model.Estado</span>
+                                    }
+                                </dd>
+                            </dl>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function cambiarImagenPrincipal(index) {
+    // Cambiar imagen activa en el carrusel
+    var carousel = new bootstrap.Carousel(document.getElementById('carouselInmueble'));
+    carousel.to(index);
+    
+    // Actualizar miniatura activa
+    document.querySelectorAll('.miniatura-imagen').forEach(function(img, i) {
+        if (i === index) {
+            img.classList.add('active');
+            img.style.borderColor = '#0d6efd';
+            img.style.borderWidth = '2px';
+        } else {
+            img.classList.remove('active');
+            img.style.borderColor = '';
+            img.style.borderWidth = '';
+        }
+    });
+}
+
+// Sincronizar miniaturas con carrusel
+document.addEventListener('DOMContentLoaded', function() {
+    var carousel = document.getElementById('carouselInmueble');
+    if (carousel) {
+        carousel.addEventListener('slide.bs.carousel', function(event) {
+            cambiarImagenPrincipal(event.to);
+        });
+    }
+});
+</script>
+
+<style>
+.miniatura-imagen.active {
+    border: 2px solid #0d6efd !important;
+}
+
+.miniatura-imagen {
+    transition: all 0.3s ease;
+}
+
+.miniatura-imagen:hover {
+    transform: scale(1.05);
+    border: 2px solid #6c757d !important;
+}
+</style>

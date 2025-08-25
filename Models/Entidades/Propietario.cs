@@ -25,5 +25,5 @@ public class Propietario
   [Required(ErrorMessage = "El email es requerido"), EmailAddress(ErrorMessage = "El formato del email no es válido")]
   public string? Email { get; set; }
 
-
+   public string NombreCompleto => $"{Nombre} {Apellido} - DNI: {Dni}";
 }
