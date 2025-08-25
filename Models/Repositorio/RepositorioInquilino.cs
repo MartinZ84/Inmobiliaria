@@ -194,25 +194,25 @@ public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
 	}
 
 
-public List<Inquilino> BuscarInquilinosConValidacion(string? dni = null, string? nombre = null, 
-    string? apellido = null, string? email = null)
-{
-    // Validar que al menos un criterio esté presente
-    bool tieneCriterios = !string.IsNullOrWhiteSpace(dni) || 
-                         !string.IsNullOrWhiteSpace(nombre) || 
-                         !string.IsNullOrWhiteSpace(apellido) || 
-                         !string.IsNullOrWhiteSpace(email);
+	public List<Inquilino> BuscarInquilinosConValidacion(string? dni = null, string? nombre = null,
+		string? apellido = null, string? email = null)
+	{
+		// Validar que al menos un criterio esté presente
+		bool tieneCriterios = !string.IsNullOrWhiteSpace(dni) ||
+							 !string.IsNullOrWhiteSpace(nombre) ||
+							 !string.IsNullOrWhiteSpace(apellido) ||
+							 !string.IsNullOrWhiteSpace(email);
 
-    if (!tieneCriterios)
-    {
-        return new List<Inquilino>(); // Retorna lista vacía si no hay criterios
-    }
+		if (!tieneCriterios)
+		{
+			return new List<Inquilino>(); // Retorna lista vacía si no hay criterios
+		}
 
-    List<Inquilino> inquilinos = new List<Inquilino>();
+		List<Inquilino> inquilinos = new List<Inquilino>();
 
-    using (MySqlConnection connection = new MySqlConnection(connectionString))
-    {
-        string sql = @"SELECT Id, nombre, apellido, dni, telefono, email 
+		using (MySqlConnection connection = new MySqlConnection(connectionString))
+		{
+			string sql = @"SELECT Id, nombre, apellido, dni, telefono, email 
                       FROM Inquilinos 
                       WHERE (@dni IS NULL OR Dni LIKE CONCAT('%', @dni, '%'))
                         AND (@nombre IS NULL OR Nombre LIKE CONCAT('%', @nombre, '%'))
@@ -221,38 +221,97 @@ public List<Inquilino> BuscarInquilinosConValidacion(string? dni = null, string?
                       ORDER BY Apellido, Nombre
                       LIMIT 200"; // Límite fijo para evitar sobrecarga
 
-        using (MySqlCommand command = new MySqlCommand(sql, connection))
-        {
-            command.CommandType = CommandType.Text;
-            
-            command.Parameters.Add("@dni", MySqlDbType.VarChar).Value = 
-                string.IsNullOrWhiteSpace(dni) ? DBNull.Value : dni.Trim();
-            command.Parameters.Add("@nombre", MySqlDbType.VarChar).Value = 
-                string.IsNullOrWhiteSpace(nombre) ? DBNull.Value : nombre.Trim();
-            command.Parameters.Add("@apellido", MySqlDbType.VarChar).Value = 
-                string.IsNullOrWhiteSpace(apellido) ? DBNull.Value : apellido.Trim();
-            command.Parameters.Add("@email", MySqlDbType.VarChar).Value = 
-                string.IsNullOrWhiteSpace(email) ? DBNull.Value : email.Trim();
-            
-            connection.Open();
-            using (var reader = command.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    inquilinos.Add(new Inquilino
-					{					
-						Id = reader.GetInt32(nameof(Inquilino.Id)),
+			using (MySqlCommand command = new MySqlCommand(sql, connection))
+			{
+				command.CommandType = CommandType.Text;
+
+				command.Parameters.Add("@dni", MySqlDbType.VarChar).Value =
+					string.IsNullOrWhiteSpace(dni) ? DBNull.Value : dni.Trim();
+				command.Parameters.Add("@nombre", MySqlDbType.VarChar).Value =
+					string.IsNullOrWhiteSpace(nombre) ? DBNull.Value : nombre.Trim();
+				command.Parameters.Add("@apellido", MySqlDbType.VarChar).Value =
+					string.IsNullOrWhiteSpace(apellido) ? DBNull.Value : apellido.Trim();
+				command.Parameters.Add("@email", MySqlDbType.VarChar).Value =
+					string.IsNullOrWhiteSpace(email) ? DBNull.Value : email.Trim();
+
+				connection.Open();
+				using (var reader = command.ExecuteReader())
+				{
+					while (reader.Read())
+					{
+						inquilinos.Add(new Inquilino
+						{
+							Id = reader.GetInt32(nameof(Inquilino.Id)),
+							Nombre = reader.GetString(nameof(Inquilino.Nombre)),
+							Apellido = reader.GetString(nameof(Inquilino.Apellido)),
+							Dni = reader.GetString(nameof(Inquilino.Dni)),
+							Telefono = reader.GetString(nameof(Propietario.Telefono)),
+							Email = reader.GetString(nameof(Propietario.Email)),
+						});
+					}
+				}
+			}
+		}
+
+		return inquilinos;
+	}
+
+	public IList<Inquilino> ObtenerLista(int paginaNro = 1, int tamPagina = 5)
+	{
+		IList<Inquilino> res = new List<Inquilino>();
+		using (MySqlConnection connection = new MySqlConnection(connectionString))
+		{
+			string sql = @$"
+					SELECT Id, Nombre, Apellido, Dni, Telefono, Email
+					FROM Inquilinos
+					LIMIT {tamPagina} OFFSET {(paginaNro - 1) * tamPagina}
+				";
+			using (MySqlCommand command = new MySqlCommand(sql, connection))
+			{
+				command.CommandType = CommandType.Text;
+				connection.Open();
+				var reader = command.ExecuteReader();
+				while (reader.Read())
+				{
+					Inquilino p = new Inquilino
+					{
+						Id = reader.GetInt32(nameof(Inquilino.Id)),//más seguro
 						Nombre = reader.GetString(nameof(Inquilino.Nombre)),
 						Apellido = reader.GetString(nameof(Inquilino.Apellido)),
 						Dni = reader.GetString(nameof(Inquilino.Dni)),
-						Telefono = reader.GetString(nameof(Propietario.Telefono)),
-						Email = reader.GetString(nameof(Propietario.Email)),
-                    });
-                }
-            }
-        }
-    }
+						Telefono = reader.GetString(nameof(Inquilino.Telefono)),
+						Email = reader.GetString(nameof(Inquilino.Email)),
 
-    return inquilinos;
-}
+					};
+					res.Add(p);
+				}
+				connection.Close();
+			}
+		}
+		return res;
+	}
+
+		public int ObtenerCantidad()
+	{
+		int res = 0;
+		using (MySqlConnection connection = new MySqlConnection(connectionString))
+		{
+			string sql = @$"
+					SELECT COUNT(Id)
+					FROM Inquilinos
+				";
+			using (MySqlCommand command = new MySqlCommand(sql, connection))
+			{
+				command.CommandType = CommandType.Text;
+				connection.Open();
+				var reader = command.ExecuteReader();
+				if (reader.Read())
+				{
+					res = reader.GetInt32(0);
+				}
+				connection.Close();
+			}
+		}
+		return res;
+	}
 }
