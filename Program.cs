@@ -32,6 +32,10 @@ if (!app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+
+// Archivos estáticos: wwwroot
+app.UseStaticFiles();
+
 app.UseRouting();
 
 app.UseAuthorization();

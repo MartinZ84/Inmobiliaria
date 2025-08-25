@@ -78,9 +78,21 @@ namespace Inmobiliaria.Models.Entidades
             get
             {
                 var imagenes = ListaImagenes;
-                return imagenes.Any() ? imagenes.First() : "/images/no-image.jpg";
+                return imagenes.Any() ? imagenes.First() : "/images/no-image.png";
+            }
+            set
+            {
+                if (ListaImagenes.Count > 0)
+                {
+                    ListaImagenes[0] = value;
+                }
             }
         }
+
+            // Nueva propiedad calculada para la vista
+    public string PrimeraImagenDisplay => string.IsNullOrWhiteSpace(PrimeraImagen) 
+                                           ? "/images/no-image.png"  // placeholder
+                                           : PrimeraImagen.Trim();
 
         // Método helper para verificar disponibilidad
         public bool EstaDisponible => Estado.Equals("Disponible", StringComparison.OrdinalIgnoreCase);

@@ -1,5 +1,4 @@
 @model IEnumerable<Inmobiliaria.Models.Entidades.Inmueble>
-
 @{
     ViewData["Title"] = "Inmuebles";
 }
@@ -9,62 +8,63 @@
 
 @await Html.PartialAsync("_AutoDismissAlert")
 
-<!-- Sección de filtros y botón crear -->
 <div class="row mb-3">
     <div class="col-md-10">
-        <!-- Formulario de filtros -->
         <form method="get" asp-action="Index" id="formFiltros">
             <div class="card">
                 <div class="card-header">
                     <h6 class="mb-0">
-                        <button class="btn btn-link p-0 text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#filtrosCollapse" aria-expanded="false" aria-controls="filtrosCollapse">
+                        <button class="btn btn-link p-0 text-decoration-none" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#filtrosCollapse" aria-expanded="false" aria-controls="filtrosCollapse">
                             <i class="bi bi-funnel me-2"></i>Filtros de búsqueda
                             <i class="bi bi-chevron-down ms-1"></i>
                         </button>
                     </h6>
                 </div>
+
                 <div class="collapse" id="filtrosCollapse">
                     <div class="card-body">
                         <div class="row g-3">
                             <div class="col-md-4">
                                 <label for="direccion" class="form-label">Dirección</label>
-                                <input type="text" class="form-control" id="direccion" name="direccion" value="@ViewBag.Direccion" placeholder="Buscar por dirección">
+                                <input type="text" class="form-control" id="direccion" name="direccion"
+                                    value="@ViewBag.Direccion" placeholder="Buscar por dirección">
                             </div>
+
                             <div class="col-md-2">
                                 <label for="tipo" class="form-label">Tipo</label>
-                                <select class="form-control" id="tipo" name="tipo">
+                                <select class="form-control" id="tipo" name="tipo" asp-items="ViewBag.Tipos">
                                     <option value="">Todos</option>
-                                    @* <option value="Casa" @(ViewBag.Tipo == "Casa" ? "selected" : "")>Casa</option>
-                                    <option value="Departamento" @(ViewBag.Tipo == "Departamento" ? "selected" : "")>Departamento</option>
-                                    <option value="Local" @(ViewBag.Tipo == "Local" ? "selected" : "")>Local</option>
-                                    <option value="Oficina" @(ViewBag.Tipo == "Oficina" ? "selected" : "")>Oficina</option> *@
                                 </select>
                             </div>
+
                             <div class="col-md-2">
                                 <label for="uso" class="form-label">Uso</label>
-                                <select class="form-control" id="uso" name="uso">
+                                <select class="form-control" id="uso" name="uso" asp-items="ViewBag.Usos">
                                     <option value="">Todos</option>
-                                    @* <option value="Residencial" @(ViewBag.Uso == "Residencial" ? "selected" : "")>Residencial</option>
-                                    <option value="Comercial" @(ViewBag.Uso == "Comercial" ? "selected" : "")>Comercial</option> *@
                                 </select>
                             </div>
+
                             <div class="col-md-2">
                                 <label for="estado" class="form-label">Estado</label>
-                                <select class="form-control" id="estado" name="estado">
+                                <select class="form-control" id="estado" name="estado" asp-items="ViewBag.Estados">
                                     <option value="">Todos</option>
-                                    @* <option value="Disponible" @(ViewBag.Estado == "Disponible" ? "selected" : "")>Disponible</option>
-                                    <option value="No disponible" @(ViewBag.Estado == "No disponible" ? "selected" : "")>No disponible</option> *@
                                 </select>
                             </div>
+
                             <div class="col-md-2">
                                 <label for="precioMin" class="form-label">Precio Mín.</label>
-                                <input type="number" class="form-control" id="precioMin" name="precioMin" value="@ViewBag.PrecioMin" placeholder="Desde">
+                                <input type="number" class="form-control" id="precioMin" name="precioMin"
+                                    value="@ViewBag.PrecioMin" placeholder="Desde">
                             </div>
+
                             <div class="col-md-2">
                                 <label for="precioMax" class="form-label">Precio Máx.</label>
-                                <input type="number" class="form-control" id="precioMax" name="precioMax" value="@ViewBag.PrecioMax" placeholder="Hasta">
+                                <input type="number" class="form-control" id="precioMax" name="precioMax"
+                                    value="@ViewBag.PrecioMax" placeholder="Hasta">
                             </div>
                         </div>
+
                         <div class="row mt-3">
                             <div class="col-12">
                                 <button type="submit" class="btn btn-outline-primary me-2">
@@ -76,10 +76,6 @@
                                 <a href="@Url.Action("Disponibles")" class="btn btn-outline-success me-2">
                                     <i class="bi bi-check-circle me-1"></i>Solo Disponibles
                                 </a>
-                                <small class="text-muted ms-3">
-                                    <i class="bi bi-info-circle me-1"></i>
-                                    Puede usar uno o varios criterios de búsqueda
-                                </small>
                             </div>
                         </div>
                     </div>
@@ -87,6 +83,7 @@
             </div>
         </form>
     </div>
+
     <div class="col-md-2 d-flex align-items-start">
         <a asp-action="Create" class="btn btn-primary w-100">
             <i class="bi bi-plus-circle me-1"></i>Nuevo Inmueble
@@ -100,15 +97,92 @@
     {
         @foreach (var inmueble in Model)
         {
+            @* <div class="col-lg-4 col-md-6 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <div class="position-relative">
+                        <img src="@(string.IsNullOrEmpty(inmueble.PrimeraImagen) ? "/images/no-image.png" : inmueble.PrimeraImagen)"
+                            class="card-img-top" alt="@inmueble.Direccion" style="height:200px; object-fit:cover;">
+
+                        <span class="position-absolute top-0 end-0 m-2">
+                            @if (inmueble.EstaDisponible)
+                            {
+                                <span class="badge bg-success">Disponible</span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-danger">No Disponible</span>
+                            }
+                        </span>
+                        <span class="position-absolute top-0 start-0 m-2">
+                            <span class="badge bg-primary">@inmueble.Tipo</span>
+                        </span>
+                        @if (inmueble.ListaImagenes.Count > 1)
+                        {
+                            <span class="position-absolute bottom-0 end-0 m-2">
+                                <span class="badge bg-dark bg-opacity-75">
+                                    <i class="bi bi-images"></i> @inmueble.ListaImagenes.Count
+                                </span>
+                            </span>
+                        }
+                    </div>
+
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">
+                            <i class="bi bi-geo-alt text-danger"></i> @inmueble.Direccion
+                        </h5>
+                        <div class="mb-2">
+                            <small class="text-muted">
+                                <i class="bi bi-house"></i> @inmueble.Uso |
+                                <i class="bi bi-door-open"></i> @inmueble.Ambientes amb.
+                                @if (inmueble.Superficie.HasValue)
+                                {
+                                    <span> | <i class="bi bi-rulers"></i> @inmueble.Superficie m²</span>
+                                }
+                            </small>
+                        </div>
+                        <p class="card-text">
+                            <small class="text-muted">
+                                <i class="bi bi-person"></i> @inmueble.Propietario?.Nombre @inmueble.Propietario?.Apellido
+                            </small>
+                        </p>
+                        <div class="mt-auto">
+                            <h4 class="text-success mb-3">
+                                <i class="bi bi-currency-dollar"></i> @inmueble.Precio.ToString("N0")
+                            </h4>
+                            <div class="d-flex gap-2">
+                                <a asp-action="Details" asp-route-id="@inmueble.Id" class="btn btn-primary btn-sm flex-fill">
+                                    <i class="bi bi-eye"></i> Ver Detalles
+                                </a>
+                                <div class="dropdown">
+                                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button"
+                                        data-bs-toggle="dropdown">
+                                        <i class="bi bi-three-dots"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li>
+                                            <a class="dropdown-item" asp-action="Edit" asp-route-id="@inmueble.Id">
+                                                <i class="bi bi-pencil text-success"></i> Editar
+                                            </a>
+                                        </li>
+                                        <li>
+                                            <a class="dropdown-item" asp-action="Delete" asp-route-id="@inmueble.Id">
+                                                <i class="bi bi-trash text-danger"></i> Eliminar
+                                            </a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div> *@
             <div class="col-lg-4 col-md-6 mb-4">
                 <div class="card h-100 shadow-sm">
                     <!-- Imagen del inmueble -->
                     <div class="position-relative">
-                        <img src="@inmueble.PrimeraImagen" 
-                             class="card-img-top" 
-                             alt="@inmueble.Direccion"
-                             style="height: 200px; object-fit: cover;">
-                        
+                        <img src="@inmueble.PrimeraImagenDisplay" class="card-img-top" alt="@inmueble.Direccion"
+                            style="height:200px; object-fit:cover;">
+
                         <!-- Badge de estado -->
                         <span class="position-absolute top-0 end-0 m-2">
                             @if (inmueble.EstaDisponible)
@@ -127,7 +201,7 @@
                         </span>
 
                         <!-- Indicador de múltiples imágenes -->
-                        @if (inmueble.ListaImagenes.Count > 1)
+                        @if (inmueble.ListaImagenes != null && inmueble.ListaImagenes.Count > 1)
                         {
                             <span class="position-absolute bottom-0 end-0 m-2">
                                 <span class="badge bg-dark bg-opacity-75">
@@ -137,6 +211,7 @@
                         }
                     </div>
 
+                    <!-- Cuerpo de la tarjeta -->
                     <div class="card-body d-flex flex-column">
                         <!-- Dirección -->
                         <h5 class="card-title">
@@ -159,42 +234,39 @@
                         <!-- Propietario -->
                         <p class="card-text">
                             <small class="text-muted">
-                                <i class="bi bi-person"></i> 
+                                <i class="bi bi-person"></i>
                                 @inmueble.Propietario?.Nombre @inmueble.Propietario?.Apellido
                             </small>
                         </p>
 
-                        <!-- Precio -->
+                        <!-- Precio y botones -->
                         <div class="mt-auto">
                             <h4 class="text-success mb-3">
                                 <i class="bi bi-currency-dollar"></i>
                                 @inmueble.Precio.ToString("N0")
                             </h4>
 
-                            <!-- Botones de acción -->
                             <div class="d-flex gap-2">
-                                <a asp-action="Details" asp-route-id="@inmueble.Id" 
-                                   class="btn btn-primary btn-sm flex-fill">
+                                <a asp-action="Details" asp-route-id="@inmueble.Id" class="btn btn-primary btn-sm flex-fill">
                                     <i class="bi bi-eye"></i> Ver Detalles
                                 </a>
-                                
+
                                 <div class="dropdown">
-                                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" 
-                                            type="button" id="accionesMenu_@inmueble.Id" 
-                                            data-bs-toggle="dropdown" aria-expanded="false">
+                                    <button class="btn btn-outline-secondary btn-sm dropdown-toggle" type="button"
+                                        id="accionesMenu_@inmueble.Id" data-bs-toggle="dropdown" aria-expanded="false">
                                         <i class="bi bi-three-dots"></i>
                                     </button>
                                     <ul class="dropdown-menu" aria-labelledby="accionesMenu_@inmueble.Id">
                                         <li>
-                                            <a class="dropdown-item d-flex align-items-center gap-2" 
-                                               asp-action="Edit" asp-route-id="@inmueble.Id">
+                                            <a class="dropdown-item d-flex align-items-center gap-2" asp-action="Edit"
+                                                asp-route-id="@inmueble.Id">
                                                 <i class="bi bi-pencil text-success"></i>
                                                 <span>Editar</span>
                                             </a>
                                         </li>
                                         <li>
-                                            <a class="dropdown-item d-flex align-items-center gap-2" 
-                                               asp-action="Delete" asp-route-id="@inmueble.Id">
+                                            <a class="dropdown-item d-flex align-items-center gap-2" asp-action="Delete"
+                                                asp-route-id="@inmueble.Id">
                                                 <i class="bi bi-trash text-danger"></i>
                                                 <span>Eliminar</span>
                                             </a>
@@ -206,62 +278,39 @@
                     </div>
                 </div>
             </div>
+
         }
     }
     else
     {
-        <div class="col-12">
-            <div class="text-center py-5">
-                <i class="bi bi-house-x display-1 text-muted"></i>
-                <h4 class="mt-3 text-muted">No se encontraron inmuebles</h4>
-                @if (!string.IsNullOrEmpty(ViewBag.Direccion?.ToString()) || 
-                     !string.IsNullOrEmpty(ViewBag.Tipo?.ToString()) || 
-                     !string.IsNullOrEmpty(ViewBag.Uso?.ToString()) || 
-                     !string.IsNullOrEmpty(ViewBag.Estado?.ToString()) ||
-                     ViewBag.PrecioMin != null || ViewBag.PrecioMax != null)
-                {
-                    <p class="text-muted">No se encontraron inmuebles con los criterios especificados.</p>
-                    <button type="button" class="btn btn-outline-primary" id="btnLimpiarResultados">
-                        <i class="bi bi-arrow-clockwise me-1"></i>Ver todos los inmuebles
-                    </button>
-                }
-                else
-                {
-                    <p class="text-muted">No hay inmuebles registrados en el sistema.</p>
-                    <a asp-action="Create" class="btn btn-primary">
-                        <i class="bi bi-plus-circle me-1"></i>Registrar primer inmueble
-                    </a>
-                }
-            </div>
+        <div class="col-12 text-center py-5">
+            <i class="bi bi-house-x display-1 text-muted"></i>
+            <h4 class="mt-3 text-muted">No se encontraron inmuebles</h4>
+            <a asp-action="Create" class="btn btn-primary mt-3">
+                <i class="bi bi-plus-circle me-1"></i>Registrar primer inmueble
+            </a>
         </div>
     }
 </div>
 
 <script>
-$(document).ready(function() {
-    // Botón limpiar filtros
-    $('#btnLimpiar, #btnLimpiarResultados').click(function() {
-        $('#direccion, #tipo, #uso, #estado, #precioMin, #precioMax').val('');
-        window.location.href = '@Url.Action("Index", "Inmuebles")';
-    });
+    $(document).ready(function () {
+        // Botón limpiar filtros
+        $('#btnLimpiar').click(function () {
+            $('#direccion, #tipo, #uso, #estado, #precioMin, #precioMax').val('');
+            window.location.href = '@Url.Action("Index", "Inmuebles")';
+        });
 
-    // Mostrar filtros si hay criterios de búsqueda activos
-    @if (!string.IsNullOrEmpty(ViewBag.Direccion?.ToString()) || 
-         !string.IsNullOrEmpty(ViewBag.Tipo?.ToString()) || 
-         !string.IsNullOrEmpty(ViewBag.Uso?.ToString()) || 
-         !string.IsNullOrEmpty(ViewBag.Estado?.ToString()) ||
-         ViewBag.PrecioMin != null || ViewBag.PrecioMax != null)
-    {
-        <text>
-        $('#filtrosCollapse').addClass('show');
-        </text>
-    }
-
-    // Resaltar campos con filtros activos
-    $('#direccion, #tipo, #uso, #estado, #precioMin, #precioMax').each(function() {
-        if ($(this).val()) {
-            $(this).addClass('border-primary');
+        // Mostrar collapse si hay filtros activos
+        @if (!string.IsNullOrEmpty(ViewBag.Direccion?.ToString()) ||
+                                                                        !string.IsNullOrEmpty(ViewBag.TipoSeleccionado?.ToString()) ||
+                                                                        !string.IsNullOrEmpty(ViewBag.UsoSeleccionado?.ToString()) ||
+                                                                        !string.IsNullOrEmpty(ViewBag.EstadoSeleccionado?.ToString()) ||
+                                                                        ViewBag.PrecioMin != null || ViewBag.PrecioMax != null)
+            {
+                <text>
+                    $('#filtrosCollapse').addClass('show');
+                </text>
         }
-    });
 });
 </script>

@@ -1,0 +1,302 @@
+@model Inmobiliaria.Models.Entidades.Inmueble
+
+@{
+    ViewData["Title"] = "Eliminar Inmueble";
+}
+
+<!-- Alertas personalizadas -->
+<div class="">
+    @if (ViewBag.Id != null)
+    {
+        // alta exitosa - no aplicable aquí
+    }
+    else if (ViewBag.Mensaje != null)
+    {
+        // cartel general
+    }
+    else if (ViewBag.Error != null)
+    {
+        var error = ViewBag.Error;
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            <strong>¡Error!</strong> No se puede eliminar el inmueble. @ViewBag.Error
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true"><span class="lnr lnr-cross-circle"></span></span>
+            </button>
+        </div>
+    }
+    else if (!String.IsNullOrWhiteSpace(ViewBag.Error))
+    {
+        <environment names="Development">
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <strong>¡Error!</strong> Ocurrió: @ViewBag.Error
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true"><span class="lnr lnr-cross-circle"></span></span>
+                </button>
+                <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false">
+                    <span class="lnr lnr-plus-circle"></span>
+                </a>
+                <div class="collapse multi-collapse" id="multiCollapseExample1">
+                    @ViewBag.StackTrace
+                </div>
+            </div>
+        </environment>
+    }
+</div>
+
+<h4 class="mt-4 text-danger">
+    <i class="bi bi-exclamation-triangle"></i> Eliminar Inmueble
+</h4>
+<hr />
+
+<div class="alert alert-warning" role="alert">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    <strong>¡Atención!</strong> Esta acción no se puede deshacer. 
+    Se eliminará permanentemente toda la información del inmueble y sus imágenes asociadas.
+</div>
+
+<div class="row">
+    <!-- Información del inmueble -->
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-house-x"></i> Información del Inmueble a Eliminar
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <dl class="row">
+                            <dt class="col-sm-4">ID:</dt>
+                            <dd class="col-sm-8">@Html.DisplayFor(model => model.Id)</dd>
+
+                            <dt class="col-sm-4">Dirección:</dt>
+                            <dd class="col-sm-8">@Html.DisplayFor(model => model.Direccion)</dd>
+
+                            <dt class="col-sm-4">Tipo:</dt>
+                            <dd class="col-sm-8">
+                                <span class="badge bg-primary">@Html.DisplayFor(model => model.Tipo)</span>
+                            </dd>
+
+                            <dt class="col-sm-4">Uso:</dt>
+                            <dd class="col-sm-8">@Html.DisplayFor(model => model.Uso)</dd>
+
+                            <dt class="col-sm-4">Ambientes:</dt>
+                            <dd class="col-sm-8">@Html.DisplayFor(model => model.Ambientes)</dd>
+
+                            <dt class="col-sm-4">Superficie:</dt>
+                            <dd class="col-sm-8">@(Model.Superficie?.ToString() ?? "No especificada") m²</dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-6">
+                        <dl class="row">
+                            <dt class="col-sm-4">Precio:</dt>
+                            <dd class="col-sm-8">
+                                <strong class="text-success">$@Model.Precio.ToString("N0")</strong>
+                            </dd>
+
+                            <dt class="col-sm-4">Estado:</dt>
+                            <dd class="col-sm-8">
+                                @if (Model.EstaDisponible)
+                                {
+                                    <span class="badge bg-success">@Model.Estado</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-danger">@Model.Estado</span>
+                                }
+                            </dd>
+
+                            <dt class="col-sm-4">Propietario:</dt>
+                            <dd class="col-sm-8">
+                                <strong>@Model.Propietario?.Nombre @Model.Propietario?.Apellido</strong><br>
+                                <small class="text-muted">DNI: @Model.Propietario?.Dni</small>
+                            </dd>
+
+                            @if (Model.Latitud.HasValue && Model.Longitud.HasValue)
+                            {
+                                <dt class="col-sm-4">Coordenadas:</dt>
+                                <dd class="col-sm-8">
+                                    <small>Lat: @Model.Latitud, Lng: @Model.Longitud</small>
+                                </dd>
+                            }
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Imágenes del inmueble -->
+        @if (Model.ListaImagenes.Any())
+        {
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5 class="mb-0">
+                        <i class="bi bi-images"></i> Imágenes que se eliminarán
+                        <span class="badge bg-secondary">@Model.ListaImagenes.Count</span>
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-2">
+                        @foreach (var imagen in Model.ListaImagenes)
+                        {
+                            <div class="col-md-3 col-sm-4 col-6">
+                                <div class="card">
+                                    <img src="@imagen" class="card-img-top" 
+                                         style="height: 120px; object-fit: cover;" 
+                                         alt="Imagen del inmueble">
+                                    <div class="overlay-delete">
+                                        <i class="bi bi-trash text-white fs-1"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    <!-- Panel de confirmación -->
+    <div class="col-lg-4">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-exclamation-triangle"></i> Confirmación
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-3">
+                    <strong>¿Está seguro que desea eliminar este inmueble?</strong>
+                </p>
+                
+                <div class="alert alert-danger">
+                    <h6>Se eliminará:</h6>
+                    <ul class="mb-0">
+                        <li>Toda la información del inmueble</li>
+                        @if (Model.ListaImagenes.Any())
+                        {
+                            <li>@Model.ListaImagenes.Count imagen(es) asociada(s)</li>
+                        }
+                        <li>Historial y referencias</li>
+                    </ul>
+                </div>
+
+                <div class="alert alert-info">
+                    <small>
+                        <i class="bi bi-info-circle"></i>
+                        <strong>Nota:</strong> Solo se puede eliminar un inmueble que no tenga contratos asociados.
+                    </small>
+                </div>
+
+                <!-- Formulario de confirmación -->
+                <form asp-action="Delete" method="post" onsubmit="return confirmarEliminacion()">
+                    <input type="hidden" asp-for="Id" />
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="confirmarEliminacion" required>
+                            <label class="form-check-label" for="confirmarEliminacion">
+                                <small>Confirmo que deseo eliminar este inmueble permanentemente</small>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger" id="btnEliminar" disabled>
+                            <i class="bi bi-trash"></i> Confirmar Eliminación
+                        </button>
+                        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-primary">
+                            <i class="bi bi-eye"></i> Ver Detalles
+                        </a>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Volver al Listado
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Información adicional -->
+        <div class="card mt-3">
+            <div class="card-header">
+                <h6 class="mb-0">
+                    <i class="bi bi-shield-exclamation"></i> Políticas de Eliminación
+                </h6>
+            </div>
+            <div class="card-body">
+                <ul class="small mb-0">
+                    <li>No se puede eliminar un inmueble con contratos activos</li>
+                    <li>Las imágenes se eliminarán del servidor</li>
+                    <li>Esta acción no se puede deshacer</li>
+                    <li>Se registrará en el historial del sistema</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Habilitar/deshabilitar botón según checkbox
+document.getElementById('confirmarEliminacion').addEventListener('change', function() {
+    const btnEliminar = document.getElementById('btnEliminar');
+    btnEliminar.disabled = !this.checked;
+    
+    if (this.checked) {
+        btnEliminar.classList.remove('btn-danger');
+        btnEliminar.classList.add('btn-outline-danger');
+    } else {
+        btnEliminar.classList.add('btn-danger');
+        btnEliminar.classList.remove('btn-outline-danger');
+    }
+});
+
+// Confirmación adicional antes de enviar
+function confirmarEliminacion() {
+    const direccion = '@Model.Direccion';
+    const confirmacion = confirm(`¿Está completamente seguro que desea eliminar el inmueble ubicado en "${direccion}"?\n\nEsta acción NO se puede deshacer.`);
+    
+    if (confirmacion) {
+        // Deshabilitar botón para evitar doble click
+        const btnEliminar = document.getElementById('btnEliminar');
+        btnEliminar.disabled = true;
+        btnEliminar.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Eliminando...';
+        return true;
+    }
+    
+    return false;
+}
+
+// Efecto visual en las imágenes
+document.addEventListener('DOMContentLoaded', function() {
+    const imagenesCards = document.querySelectorAll('.card img');
+    imagenesCards.forEach(img => {
+        img.parentElement.style.position = 'relative';
+        img.style.filter = 'grayscale(50%)';
+    });
+});
+</script>
+
+<style>
+.overlay-delete {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(220, 53, 69, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card:hover .overlay-delete {
+    opacity: 1;
+}
+
+.btn-danger:disabled {
+    opacity: 0.6;
+}
+</style>

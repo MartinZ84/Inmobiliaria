@@ -1,0 +1,354 @@
+@model Inmobiliaria.Models.Entidades.Inmueble
+
+@{
+    ViewData["Title"] = "Editar Inmueble";
+}
+
+<h4 class="mt-4">Editar Inmueble</h4>
+<hr />
+
+@await Html.PartialAsync("_AutoDismissAlert")
+
+<div class="row">
+    <div class="col-md-8">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <input type="hidden" asp-for="Id" />
+            
+            <!-- Información básica -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-house"></i> Información Básica</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label asp-for="Direccion" class="control-label"></label>
+                            <input asp-for="Direccion" class="form-control" maxlength="100" />
+                            <span asp-validation-for="Direccion" class="text-danger"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="Tipo" class="control-label"></label>
+                            <select asp-for="Tipo" class="form-control">
+                                <option value="">Seleccionar...</option>
+                                <option value="Casa">Casa</option>
+                                <option value="Departamento">Departamento</option>
+                                <option value="Local">Local</option>
+                                <option value="Oficina">Oficina</option>
+                            </select>
+                            <span asp-validation-for="Tipo" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="Uso" class="control-label"></label>
+                            <select asp-for="Uso" class="form-control">
+                                <option value="">Seleccionar...</option>
+                                <option value="Residencial">Residencial</option>
+                                <option value="Comercial">Comercial</option>
+                            </select>
+                            <span asp-validation-for="Uso" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="Ambientes" class="control-label"></label>
+                            <input asp-for="Ambientes" class="form-control" type="number" min="1" max="20" />
+                            <span asp-validation-for="Ambientes" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="Superficie" class="control-label"></label>
+                            <input asp-for="Superficie" class="form-control" type="number" min="1" step="0.01" />
+                            <span asp-validation-for="Superficie" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Precio y Estado -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-currency-dollar"></i> Precio y Disponibilidad</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Precio" class="control-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="Precio" class="form-control" type="number" min="1" />
+                            </div>
+                            <span asp-validation-for="Precio" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Estado" class="control-label"></label>
+                            <select asp-for="Estado" class="form-control">
+                                <option value="">Seleccionar...</option>
+                                <option value="Disponible">Disponible</option>
+                                <option value="No disponible">No disponible</option>
+                            </select>
+                            <span asp-validation-for="Estado" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Propietario -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-person"></i> Propietario</h5>
+                </div>          
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="PropietarioId" class="control-label">Propietario</label>
+                        <select asp-for="PropietarioId" asp-items="ViewBag.Propietarios" class="form-control">
+                            <option value="">Seleccionar propietario...</option>
+                        </select>
+                        <span asp-validation-for="PropietarioId" class="text-danger"></span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Ubicación -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-geo-alt"></i> Ubicación (Opcional)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Latitud" class="control-label"></label>
+                            <input asp-for="Latitud" class="form-control" type="number" step="any" />
+                            <span asp-validation-for="Latitud" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Longitud" class="control-label"></label>
+                            <input asp-for="Longitud" class="form-control" type="number" step="any" />
+                            <span asp-validation-for="Longitud" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gestión de Imágenes -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-images"></i> Gestión de Imágenes</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Imágenes existentes -->
+                    @if (Model.ListaImagenes.Any())
+                    {
+                        <h6>Imágenes actuales:</h6>
+                        <div class="row g-2 mb-3" id="imagenesExistentes">
+                            @for (int i = 0; i < Model.ListaImagenes.Count; i++)
+                            {
+                                <div class="col-md-3 col-sm-4 col-6">
+                                    <div class="card imagen-existente" data-imagen="@Model.ListaImagenes[i]">
+                                        <img src="@Model.ListaImagenes[i]" class="card-img-top" 
+                                             style="height: 120px; object-fit: cover;" alt="Imagen @(i + 1)">
+                                        <div class="card-body p-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input imagen-checkbox" type="checkbox" 
+                                                       value="@Model.ListaImagenes[i]" checked 
+                                                       id="imagen_@i" onchange="actualizarImagenesSeleccionadas()">
+                                                <label class="form-check-label small" for="imagen_@i">
+                                                    Mantener
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        
+                        <div class="alert alert-info">
+                            <i class="bi bi-info-circle"></i>
+                            <strong>Instrucciones:</strong> Desmarque las imágenes que desea eliminar. 
+                            Puede agregar nuevas imágenes abajo (respetando el límite de 5 imágenes totales).
+                        </div>
+                    }
+
+                    <!-- Campo oculto para imágenes existentes seleccionadas -->
+                    <input type="hidden" id="imagenesExistentesInput" name="imagenesExistentes" value="@Model.Imagenes" />
+
+                    <!-- Nuevas imágenes -->
+                    <div class="mb-3">
+                        <label for="imagenesArchivos" class="control-label">Agregar nuevas imágenes</label>
+                        <input type="file" id="imagenesArchivos" name="imagenesArchivos" 
+                               class="form-control" multiple accept="image/*" 
+                               onchange="previsualizarNuevasImagenes(this)" />
+                        <small class="form-text text-muted">
+                            Formatos soportados: JPG, JPEG, PNG, GIF. 
+                            <span id="contadorImagenes">Imágenes actuales: @Model.ListaImagenes.Count / 5</span>
+                        </small>
+                    </div>
+                    
+                    <!-- Previsualización de nuevas imágenes -->
+                    <div id="previsualizacionNuevas" class="row g-2" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="form-group mb-4">
+                <input type="submit" value="Guardar Cambios" class="btn btn-primary me-2" />
+                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-primary me-2">Ver Detalles</a>
+                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Panel de información -->
+    <div class="col-md-4">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Información</h5>
+            </div>
+            <div class="card-body">
+                <p><strong>Editando inmueble ID:</strong> @Model.Id</p>
+                <p><strong>Dirección actual:</strong> @Model.Direccion</p>
+                <p><strong>Propietario actual:</strong> @Model.Propietario?.Nombre @Model.Propietario?.Apellido</p>
+                
+                <hr>
+                
+                <h6>Gestión de imágenes:</h6>
+                <ul class="small">
+                    <li>Puede mantener las imágenes existentes marcando la casilla "Mantener".</li>
+                    <li>Puede eliminar imágenes desmarcando la casilla correspondiente.</li>
+                    <li>Puede agregar nuevas imágenes (máximo 5 en total).</li>
+                    <li>Las imágenes se procesarán al guardar los cambios.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+let imagenesExistentesCount = @Model.ListaImagenes.Count;
+
+function actualizarImagenesSeleccionadas() {
+    const checkboxes = document.querySelectorAll('.imagen-checkbox:checked');
+    const imagenesSeleccionadas = Array.from(checkboxes).map(cb => cb.value);
+    
+    document.getElementById('imagenesExistentesInput').value = imagenesSeleccionadas.join(',');
+    
+    // Actualizar contador
+    imagenesExistentesCount = imagenesSeleccionadas.length;
+    actualizarContador();
+    
+    // Actualizar estilos visuales
+    document.querySelectorAll('.imagen-existente').forEach(div => {
+        const checkbox = div.querySelector('.imagen-checkbox');
+        if (checkbox.checked) {
+            div.style.opacity = '1';
+            div.style.border = '2px solid #28a745';
+        } else {
+            div.style.opacity = '0.5';
+            div.style.border = '2px solid #dc3545';
+        }
+    });
+}
+
+function previsualizarNuevasImagenes(input) {
+    const previsualizacion = document.getElementById('previsualizacionNuevas');
+    const archivos = input.files;
+    
+    // Limpiar previsualización anterior
+    previsualizacion.innerHTML = '';
+    
+    if (archivos.length === 0) {
+        previsualizacion.style.display = 'none';
+        actualizarContador();
+        return;
+    }
+    
+    // Validar cantidad total
+    const totalImagenes = imagenesExistentesCount + archivos.length;
+    if (totalImagenes > 5) {
+        alert(`Solo se permiten máximo 5 imágenes en total. Actualmente tiene ${imagenesExistentesCount} imágenes existentes.`);
+        input.value = '';
+        return;
+    }
+    
+    previsualizacion.style.display = 'block';
+    
+    // Mostrar cada nueva imagen
+    Array.from(archivos).forEach((archivo, index) => {
+        if (archivo.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const col = document.createElement('div');
+                col.className = 'col-md-3 col-sm-4 col-6';
+                col.innerHTML = `
+                    <div class="card border-primary">
+                        <img src="${e.target.result}" class="card-img-top" 
+                             style="height: 120px; object-fit: cover;" 
+                             alt="Nueva imagen ${index + 1}">
+                        <div class="card-body p-2">
+                            <small class="text-primary"><strong>Nueva ${index + 1}</strong></small>
+                        </div>
+                    </div>
+                `;
+                previsualizacion.appendChild(col);
+            };
+            reader.readAsDataURL(archivo);
+        }
+    });
+    
+    actualizarContador();
+}
+
+function actualizarContador() {
+    const nuevasImagenes = document.getElementById('imagenesArchivos').files.length;
+    const total = imagenesExistentesCount + nuevasImagenes;
+    document.getElementById('contadorImagenes').textContent = `Imágenes totales: ${total} / 5`;
+}
+
+// Inicializar estilos y eventos
+document.addEventListener('DOMContentLoaded', function() {
+    // Aplicar estilos iniciales a imágenes existentes
+    actualizarImagenesSeleccionadas();
+    
+    // Validación del formulario
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        const imagenesInput = document.getElementById('imagenesArchivos');
+        const totalImagenes = imagenesExistentesCount + imagenesInput.files.length;
+        
+        if (totalImagenes > 5) {
+            e.preventDefault();
+            alert('Solo se permiten máximo 5 imágenes en total.');
+            return false;
+        }
+        
+        // Validar tipos de archivo
+        Array.from(imagenesInput.files).forEach(archivo => {
+            if (!archivo.type.startsWith('image/')) {
+                e.preventDefault();
+                alert('Solo se permiten archivos de imagen.');
+                return false;
+            }
+        });
+    });
+});
+</script>
+
+<style>
+.imagen-existente {
+    transition: all 0.3s ease;
+}
+
+.imagen-existente:hover {
+    transform: scale(1.02);
+}
+</style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
