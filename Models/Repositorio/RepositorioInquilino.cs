@@ -291,7 +291,7 @@ public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
 		return res;
 	}
 
-		public int ObtenerCantidad()
+	public int ObtenerCantidad()
 	{
 		int res = 0;
 		using (MySqlConnection connection = new MySqlConnection(connectionString))
@@ -314,4 +314,5 @@ public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
 		}
 		return res;
 	}
+	
 }

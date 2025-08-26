@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Inmobiliaria.Models.Repositorio;
 using Inmobiliaria.Models.Entidades;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using TuProyecto.Helpers;
+using Inmobiliaria.Helpers;
 
 namespace Inmobiliaria.Controllers
 {
@@ -80,22 +80,29 @@ namespace Inmobiliaria.Controllers
         //         return View(new List<Inmueble>());
         //     }
         // }
-        public ActionResult Index(string? direccion = null, string? tipo = null,
-            string? uso = null, string? estado = null, int? precioMin = null, int? precioMax = null)
+        public ActionResult Index(string? tipo = null,
+            string? uso = null, string? estado = null, int? precioMin = null, int? precioMax = null, int pagina=1)
         {
             try
             {
                 IList<Inmueble> inmuebles;
+                var tamaño = 5;
 
-                if (!string.IsNullOrWhiteSpace(direccion) || !string.IsNullOrWhiteSpace(tipo) ||
+                if (!string.IsNullOrWhiteSpace(tipo) ||
                     !string.IsNullOrWhiteSpace(uso) || !string.IsNullOrWhiteSpace(estado) ||
                     precioMin.HasValue || precioMax.HasValue)
                 {
-                    inmuebles = repositorio.BuscarInmueblesConValidacion(direccion, tipo, uso, estado, precioMin, precioMax);
+                    inmuebles = repositorio.BuscarInmueblesConValidacion(tipo, uso, estado, precioMin, precioMax);
+                    var total = inmuebles.Count;
+                    ViewBag.Pagina = pagina;
+                    ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
                 }
                 else
                 {
-                    inmuebles = repositorio.ObtenerTodos();
+                    inmuebles = repositorio.ObtenerLista(pagina, 5);
+                    ViewBag.Pagina = pagina;
+				    var total = repositorio.ObtenerCantidad();
+				    ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
                 }
 
                 // Limpiar espacios de las rutas de imagen
@@ -104,13 +111,17 @@ namespace Inmobiliaria.Controllers
                     inmueble.PrimeraImagen = inmueble.PrimeraImagen?.Trim();
                 }
 
-                // Mantener filtros en la vista
-                ViewBag.Direccion = direccion;
+                // Mantener filtros en la vista             
                 ViewBag.Tipo = tipo;
                 ViewBag.Uso = uso;
                 ViewBag.Estado = estado;
                 ViewBag.PrecioMin = precioMin;
                 ViewBag.PrecioMax = precioMax;
+
+                // Cargar selects con seleccionado
+                ViewBag.Tipos = InmuebleSelectLists.GetTipos(tipo);
+                ViewBag.Usos = InmuebleSelectLists.GetUsos(uso);
+                ViewBag.Estados = InmuebleSelectLists.GetEstados(estado);
 
                 return View(inmuebles);
             }
@@ -140,7 +151,11 @@ namespace Inmobiliaria.Controllers
         public ActionResult Create()
         {
             // Obtener lista de propietarios para el dropdown
+            ViewBag.Tipos = InmuebleSelectLists.GetTipos();
+            ViewBag.Usos = InmuebleSelectLists.GetUsos();
+            ViewBag.Estados = InmuebleSelectLists.GetEstados();
             ViewBag.Propietarios = repositorioPropietario.ObtenerTodos();
+
             return View();
         }
 
@@ -213,6 +228,11 @@ namespace Inmobiliaria.Controllers
                     "NombreCompleto",
                     inmueble.PropietarioId
                 );
+
+                ViewBag.Tipos = InmuebleSelectLists.GetTipos(inmueble.Tipo);
+                ViewBag.Usos = InmuebleSelectLists.GetUsos(inmueble.Uso);
+                ViewBag.Estados = InmuebleSelectLists.GetEstados(inmueble.Estado);
+                ViewBag.Propietarios = repositorioPropietario.ObtenerTodos();
 
                 return View(inmueble);
             }

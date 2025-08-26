@@ -25,7 +25,7 @@ public ActionResult Index(string? dni = null, string? nombre = null,
     try
     {
         IList<Inquilino> inquilinos;
-        var tamaño = 5;
+        var tamaño = 10;
         // Si hay filtros, usar el método de búsqueda
         if (!string.IsNullOrWhiteSpace(dni) || !string.IsNullOrWhiteSpace(nombre) || 
             !string.IsNullOrWhiteSpace(apellido) || !string.IsNullOrWhiteSpace(email))
@@ -49,7 +49,7 @@ public ActionResult Index(string? dni = null, string? nombre = null,
         else
         {
             // Sin filtros, obtener todos los inquilinos           
-            inquilinos = repositorio.ObtenerLista(pagina, 5);
+            inquilinos = repositorio.ObtenerLista(pagina, tamaño);
             ViewBag.Pagina = pagina;
 				    var total = repositorio.ObtenerCantidad();
 				    ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;

@@ -152,7 +152,7 @@ namespace Inmobiliaria.Models.Repositorio
                     commandCheck.Parameters.AddWithValue("@id", id);
                     connection.Open();
                     int contractCount = Convert.ToInt32(commandCheck.ExecuteScalar());
-                    
+
                     if (contractCount > 0)
                     {
                         throw new Exception("No se puede eliminar el inmueble porque tiene contratos asociados.");
@@ -169,13 +169,13 @@ namespace Inmobiliaria.Models.Repositorio
             return result;
         }
 
-        public IList<Inmueble> BuscarInmueblesConValidacion(string? direccion = null, string? tipo = null, 
+        public IList<Inmueble> BuscarInmueblesConValidacion(string? tipo = null,
             string? uso = null, string? estado = null, int? precioMin = null, int? precioMax = null)
         {
             var inmuebles = new List<Inmueble>();
-            
+
             // Validar que al menos un criterio esté presente
-            if (string.IsNullOrWhiteSpace(direccion) && string.IsNullOrWhiteSpace(tipo) && 
+            if (string.IsNullOrWhiteSpace(tipo) &&
                 string.IsNullOrWhiteSpace(uso) && string.IsNullOrWhiteSpace(estado) &&
                 !precioMin.HasValue && !precioMax.HasValue)
             {
@@ -192,11 +192,11 @@ namespace Inmobiliaria.Models.Repositorio
 
                 var parameters = new List<MySqlParameter>();
 
-                if (!string.IsNullOrWhiteSpace(direccion))
-                {
-                    sql += " AND i.direccion LIKE @direccion";
-                    parameters.Add(new MySqlParameter("@direccion", $"%{direccion.Trim()}%"));
-                }
+                // if (!string.IsNullOrWhiteSpace(direccion))
+                // {
+                //     sql += " AND i.direccion LIKE @direccion";
+                //     parameters.Add(new MySqlParameter("@direccion", $"%{direccion.Trim()}%"));
+                // }
 
                 if (!string.IsNullOrWhiteSpace(tipo))
                 {
@@ -325,5 +325,62 @@ namespace Inmobiliaria.Models.Repositorio
                 }
             };
         }
+
+        public int ObtenerCantidad()
+        {
+            int res = 0;
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                string sql = @$"
+					SELECT COUNT(Id)
+					FROM Inmuebles
+				";
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                {
+                    command.CommandType = CommandType.Text;
+                    connection.Open();
+                    var reader = command.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        res = reader.GetInt32(0);
+                    }
+                    connection.Close();
+                }
+            }
+            return res;
+        }
+
+
+
+        public IList<Inmueble> ObtenerLista(int paginaNro = 1, int tamPagina = 5)
+        {
+            IList<Inmueble> res = new List<Inmueble>();
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                string sql = @$"
+					SELECT i.*, p.nombre as PropietarioNombre, p.apellido as PropietarioApellido
+                    FROM inmuebles i 
+                    INNER JOIN propietarios p ON i.propietarioId = p.id
+                    ORDER BY i.id
+					LIMIT {tamPagina} OFFSET {(paginaNro - 1) * tamPagina}        
+				";
+
+                using (var command = new MySqlCommand(sql, connection))
+                {
+                    connection.Open();
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            res.Add(MapearInmueble(reader));
+                        }
+                    }
+                }
+            }
+            return res;
+        }
     }
 }
+
+
+    

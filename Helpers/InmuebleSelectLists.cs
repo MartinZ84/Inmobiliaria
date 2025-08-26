@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System.Collections.Generic;
 
-namespace TuProyecto.Helpers
+namespace Inmobiliaria.Helpers
 {
     public static class InmuebleSelectLists
     {

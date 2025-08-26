@@ -1,6 +1,8 @@
 @model IEnumerable<Inmobiliaria.Models.Entidades.Inmueble>
 @{
     ViewData["Title"] = "Inmuebles";
+    var Pagina = ViewBag.Pagina ?? 1;
+    var TotalPaginas = ViewBag.TotalPaginas ?? 1;
 }
 
 <h1 class="mt-4">Listado de Inmuebles</h1>
@@ -25,11 +27,11 @@
                 <div class="collapse" id="filtrosCollapse">
                     <div class="card-body">
                         <div class="row g-3">
-                            <div class="col-md-4">
+                            @* <div class="col-md-4"></div>
                                 <label for="direccion" class="form-label">Dirección</label>
                                 <input type="text" class="form-control" id="direccion" name="direccion"
                                     value="@ViewBag.Direccion" placeholder="Buscar por dirección">
-                            </div>
+                            </div> *@
 
                             <div class="col-md-2">
                                 <label for="tipo" class="form-label">Tipo</label>
@@ -292,6 +294,51 @@
         </div>
     }
 </div>
+    <!-- Paginación con persistencia de filtros -->
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        <!-- Botón "Anterior" -->
+        @if (Pagina > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" href="~/Inmuebles/Index?pagina=@(Pagina - 1)&tipo=@ViewBag.Tipo&uso=@ViewBag.Uso&estado=@ViewBag.Estado&precioMin=@ViewBag.PrecioMin&precioMax=@ViewBag.PrecioMax" aria-label="Anterior">
+                    <i class="fa-solid fa-angles-left">Anterior</i>
+                </a>            
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                <span class="page-link"><i class="fa-solid fa-angles-left">Anterior</i></span>
+            </li>
+        }
+
+        <!-- Números de página -->
+        @for (int i = 1; i <= TotalPaginas; i++)
+        {
+            <li class="page-item @(i == Pagina ? "active" : "")">
+                <a class="page-link" 
+                    href="~/Inmuebles/Index?pagina=@i&tipo=@ViewBag.Tipo&uso=@ViewBag.Uso&estado=@ViewBag.Estado&precioMin=@ViewBag.PrecioMin&precioMax=@ViewBag.PrecioMax">@i</a>
+            </li>
+        }
+        
+        <!-- Botón "Siguiente" -->
+        @if (Pagina < TotalPaginas)
+        {
+            <li class="page-item">
+                   <a class="page-link" href="~/Inmuebles/Index?pagina=@(Pagina + 1)&tipo=@ViewBag.Tipo&uso=@ViewBag.Uso&estado=@ViewBag.Estado&precioMin=@ViewBag.PrecioMin&precioMax=@ViewBag.PrecioMax" aria-label="Siguiente">
+                    <i class="fa-solid fa-angles-right">Siguiente</i>
+                </a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled">
+                <span class="page-link"><i class="fa-solid fa-angles-right">Siguiente</i></span>
+            </li>
+        }
+    </ul>
+</nav>
 
 <script>
     $(document).ready(function () {
@@ -302,11 +349,11 @@
         });
 
         // Mostrar collapse si hay filtros activos
-        @if (!string.IsNullOrEmpty(ViewBag.Direccion?.ToString()) ||
-                                                                        !string.IsNullOrEmpty(ViewBag.TipoSeleccionado?.ToString()) ||
-                                                                        !string.IsNullOrEmpty(ViewBag.UsoSeleccionado?.ToString()) ||
-                                                                        !string.IsNullOrEmpty(ViewBag.EstadoSeleccionado?.ToString()) ||
-                                                                        ViewBag.PrecioMin != null || ViewBag.PrecioMax != null)
+        @if (
+                !string.IsNullOrEmpty(ViewBag.TipoSeleccionado?.ToString()) ||
+                !string.IsNullOrEmpty(ViewBag.UsoSeleccionado?.ToString()) ||
+                !string.IsNullOrEmpty(ViewBag.EstadoSeleccionado?.ToString()) ||
+                ViewBag.PrecioMin != null || ViewBag.PrecioMax != null)
             {
                 <text>
                     $('#filtrosCollapse').addClass('show');
