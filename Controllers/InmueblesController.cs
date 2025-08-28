@@ -89,7 +89,7 @@ namespace Inmobiliaria.Controllers
             try
             {
                 IList<Inmueble> inmuebles;
-                var tamaño = 5;
+                var tamaño = 6;
 
                 if (!string.IsNullOrWhiteSpace(tipo) ||
                     !string.IsNullOrWhiteSpace(uso) || !string.IsNullOrWhiteSpace(estado) ||
@@ -102,7 +102,7 @@ namespace Inmobiliaria.Controllers
                 }
                 else
                 {
-                    inmuebles = repositorio.ObtenerLista(pagina, 5);
+                    inmuebles = repositorio.ObtenerLista(pagina, tamaño);
                     ViewBag.Pagina = pagina;
                     var total = repositorio.ObtenerCantidad();
                     ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
