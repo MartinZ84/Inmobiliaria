@@ -20,10 +20,17 @@ namespace Inmobiliaria.Models.Entidades
         [Display(Name = "Superficie (m²)")]
         public decimal? Superficie { get; set; }
 
-        [Required(ErrorMessage = "El tipo es obligatorio")]
-        [StringLength(50, ErrorMessage = "El tipo no puede superar los 50 caracteres")]
-        [Display(Name = "Tipo")]
-        public string Tipo { get; set; } = "";
+        // [Required(ErrorMessage = "El tipo es obligatorio")]
+        // [StringLength(50, ErrorMessage = "El tipo no puede superar los 50 caracteres")]
+        // [Display(Name = "Tipo")]
+        // public string Tipo { get; set; } = "";
+
+        [Required(ErrorMessage = "El tipo de inmueble es obligatorio")]
+        [Display(Name = "Tipo de Inmueble")]
+        public int? TipoInmId { get; set; }
+        
+        public TipoInmueble? TipoInmueble { get; set; }
+
 
         [Required(ErrorMessage = "El uso es obligatorio")]
         [StringLength(20, ErrorMessage = "El uso no puede superar los 20 caracteres")]

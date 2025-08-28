@@ -92,7 +92,7 @@
                             {
                                 <span class="badge bg-danger me-2">No Disponible</span>
                             }
-                            <span class="badge bg-primary">@Model.Tipo</span>
+                            <span class="badge bg-primary">@Model.TipoInmueble?.Descripcion</span>
                         </h4>
                     </div>
                 </div>
@@ -216,7 +216,7 @@
                                 <dd class="col-sm-8">@Model.Direccion</dd>
 
                                 <dt class="col-sm-4">Tipo:</dt>
-                                <dd class="col-sm-8">@Model.Tipo</dd>
+                                <dd class="col-sm-8">@Model.TipoInmueble?.Descripcion</dd>
 
                                 <dt class="col-sm-4">Uso:</dt>
                                 <dd class="col-sm-8">@Model.Uso</dd>

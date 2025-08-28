@@ -19,9 +19,10 @@ namespace Inmobiliaria.Models.Repositorio
             using (var connection = new MySqlConnection(connectionString))
             {
                 var sql = @"
-                    SELECT i.*, p.nombre as PropietarioNombre, p.apellido as PropietarioApellido
+                    SELECT i.*, p.nombre as PropietarioNombre, p.apellido as PropietarioApellido, ti.descripcion as TipoInmuebleDescripcion
                     FROM inmuebles i 
                     INNER JOIN propietarios p ON i.propietarioId = p.id
+                    INNER JOIN tipos_inmuebles ti ON i.tipInmId = ti.id
                     ORDER BY i.id";
 
                 using (var command = new MySqlCommand(sql, connection))
@@ -46,9 +47,11 @@ namespace Inmobiliaria.Models.Repositorio
             {
                 var sql = @"
                     SELECT i.*, p.nombre as PropietarioNombre, p.apellido as PropietarioApellido,
-                           p.dni as PropietarioDni, p.telefono as PropietarioTelefono, p.email as PropietarioEmail
+                           p.dni as PropietarioDni, p.telefono as PropietarioTelefono, p.email as PropietarioEmail,
+                           ti.descripcion as TipoInmuebleDescripcion
                     FROM inmuebles i 
                     INNER JOIN propietarios p ON i.propietarioId = p.id
+                    INNER JOIN tiposInmuebles ti ON i.tipInmId = ti.id
                     WHERE i.id = @id";
 
                 using (var command = new MySqlCommand(sql, connection))
@@ -73,8 +76,8 @@ namespace Inmobiliaria.Models.Repositorio
             using (var connection = new MySqlConnection(connectionString))
             {
                 var sql = @"
-                    INSERT INTO inmuebles (direccion, ambientes, superficie, tipo, uso, precio, latitud, longitud, estado, propietarioId, imagenes)
-                    VALUES (@direccion, @ambientes, @superficie, @tipo, @uso, @precio, @latitud, @longitud, @estado, @propietarioId, @imagenes);
+                    INSERT INTO inmuebles (direccion, ambientes, superficie, tipInmId, uso, precio, latitud, longitud, estado, propietarioId, imagenes)
+                    VALUES (@direccion, @ambientes, @superficie, @tipoInmId, @uso, @precio, @latitud, @longitud, @estado, @propietarioId, @imagenes);
                     SELECT LAST_INSERT_ID()";
 
                 using (var command = new MySqlCommand(sql, connection))
@@ -82,7 +85,7 @@ namespace Inmobiliaria.Models.Repositorio
                     command.Parameters.AddWithValue("@direccion", inmueble.Direccion);
                     command.Parameters.AddWithValue("@ambientes", inmueble.Ambientes);
                     command.Parameters.AddWithValue("@superficie", inmueble.Superficie ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@tipo", inmueble.Tipo);
+                    command.Parameters.AddWithValue("@tipoInmId", inmueble.TipoInmId);
                     command.Parameters.AddWithValue("@uso", inmueble.Uso);
                     command.Parameters.AddWithValue("@precio", inmueble.Precio);
                     command.Parameters.AddWithValue("@latitud", inmueble.Latitud ?? (object)DBNull.Value);
@@ -108,7 +111,7 @@ namespace Inmobiliaria.Models.Repositorio
                         direccion = @direccion, 
                         ambientes = @ambientes, 
                         superficie = @superficie, 
-                        tipo = @tipo, 
+                        tipInmId = @tipoInmId, 
                         uso = @uso, 
                         precio = @precio, 
                         latitud = @latitud, 
@@ -124,7 +127,7 @@ namespace Inmobiliaria.Models.Repositorio
                     command.Parameters.AddWithValue("@direccion", inmueble.Direccion);
                     command.Parameters.AddWithValue("@ambientes", inmueble.Ambientes);
                     command.Parameters.AddWithValue("@superficie", inmueble.Superficie ?? (object)DBNull.Value);
-                    command.Parameters.AddWithValue("@tipo", inmueble.Tipo);
+                    command.Parameters.AddWithValue("@tipoInmId", inmueble.TipoInmId);
                     command.Parameters.AddWithValue("@uso", inmueble.Uso);
                     command.Parameters.AddWithValue("@precio", inmueble.Precio);
                     command.Parameters.AddWithValue("@latitud", inmueble.Latitud ?? (object)DBNull.Value);
@@ -185,9 +188,10 @@ namespace Inmobiliaria.Models.Repositorio
             using (var connection = new MySqlConnection(connectionString))
             {
                 var sql = @"
-                    SELECT i.*, p.nombre as PropietarioNombre, p.apellido as PropietarioApellido
+                    SELECT i.*, p.nombre as PropietarioNombre, p.apellido as PropietarioApellido, ti.descripcion as TipoInmuebleDescripcion
                     FROM inmuebles i 
                     INNER JOIN propietarios p ON i.propietarioId = p.id
+                    INNER JOIN tiposInmuebles ti ON i.tipoInmId = ti.id
                     WHERE 1=1";
 
                 var parameters = new List<MySqlParameter>();
@@ -252,9 +256,10 @@ namespace Inmobiliaria.Models.Repositorio
             using (var connection = new MySqlConnection(connectionString))
             {
                 var sql = @"
-                    SELECT i.*, p.nombre as PropietarioNombre, p.apellido as PropietarioApellido
+                    SELECT i.*, p.nombre as PropietarioNombre, p.apellido as PropietarioApellido, ti.descripcion as TipoInmuebleDescripcion
                     FROM inmuebles i 
                     INNER JOIN propietarios p ON i.propietarioId = p.id
+                    INNER JOIN tiposInmuebles ti ON i.tipInmId = ti.id
                     WHERE i.estado = 'Disponible'
                     ORDER BY i.id";
 
@@ -281,7 +286,7 @@ namespace Inmobiliaria.Models.Repositorio
                 Direccion = reader.GetString("direccion"),
                 Ambientes = reader.GetInt32("ambientes"),
                 Superficie = reader.IsDBNull("superficie") ? null : reader.GetDecimal("superficie"),
-                Tipo = reader.GetString("tipo"),
+                TipoInmId = reader.GetInt32("tipInmId"),
                 Uso = reader.GetString("uso"),
                 Precio = reader.GetInt32("precio"),
                 Latitud = reader.IsDBNull("latitud") ? null : reader.GetDecimal("latitud"),
@@ -294,7 +299,13 @@ namespace Inmobiliaria.Models.Repositorio
                     Id = reader.GetInt32("propietarioId"),
                     Nombre = reader.GetString("PropietarioNombre"),
                     Apellido = reader.GetString("PropietarioApellido")
+                },
+                TipoInmueble = new TipoInmueble
+                {
+                    Id = reader.GetInt32("tipInmId"),
+                    Descripcion = reader.GetString("TipoInmuebleDescripcion")
                 }
+
             };
         }
 
@@ -306,7 +317,7 @@ namespace Inmobiliaria.Models.Repositorio
                 Direccion = reader.GetString("direccion"),
                 Ambientes = reader.GetInt32("ambientes"),
                 Superficie = reader.IsDBNull("superficie") ? null : reader.GetDecimal("superficie"),
-                Tipo = reader.GetString("tipo"),
+                TipoInmId = reader.GetInt32("tipInmId"),
                 Uso = reader.GetString("uso"),
                 Precio = reader.GetInt32("precio"),
                 Latitud = reader.IsDBNull("latitud") ? null : reader.GetDecimal("latitud"),
@@ -322,7 +333,13 @@ namespace Inmobiliaria.Models.Repositorio
                     Dni = reader.GetString("PropietarioDni"),
                     Telefono = reader.GetString("PropietarioTelefono"),
                     Email = reader.GetString("PropietarioEmail")
+                },
+                  TipoInmueble = new TipoInmueble
+                {
+                    Id = reader.GetInt32("tipInmId"),
+                    Descripcion = reader.GetString("TipoInmuebleDescripcion")
                 }
+
             };
         }
 
@@ -358,9 +375,10 @@ namespace Inmobiliaria.Models.Repositorio
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
                 string sql = @$"
-					SELECT i.*, p.nombre as PropietarioNombre, p.apellido as PropietarioApellido
+					SELECT i.*, p.nombre as PropietarioNombre, p.apellido as PropietarioApellido, ti.descripcion as TipoInmuebleDescripcion
                     FROM inmuebles i 
                     INNER JOIN propietarios p ON i.propietarioId = p.id
+                    INNER JOIN tiposInmuebles ti ON i.tipInmId = ti.id
                     ORDER BY i.id
 					LIMIT {tamPagina} OFFSET {(paginaNro - 1) * tamPagina}        
 				";

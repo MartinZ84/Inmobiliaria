@@ -31,16 +31,10 @@
                     </div>
                     
                     <div class="row">
-                        <div class="col-md-3 mb-3">
-                            <label asp-for="Tipo" class="control-label"></label>
-                            <select asp-for="Tipo" class="form-control">
-                                <option value="">Seleccionar...</option>
-                                <option value="Casa">Casa</option>
-                                <option value="Departamento">Departamento</option>
-                                <option value="Local">Local</option>
-                                <option value="Oficina">Oficina</option>
-                            </select>
-                            <span asp-validation-for="Tipo" class="text-danger"></span>
+                         <div class="col-md-3 mb-3">                           
+                             <label asp-for="TipoInmId" class="control-label"></label>
+                            <select asp-for="TipoInmId" class="form-control" asp-items="ViewBag.Tipos"></select>
+                            <span asp-validation-for="TipoInmId" class="text-danger"></span>
                         </div>
                         
                         <div class="col-md-3 mb-3">

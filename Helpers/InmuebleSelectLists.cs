@@ -7,7 +7,7 @@ namespace Inmobiliaria.Helpers
     {
         public static SelectList GetTipos(string? seleccionado = null)
         {
-            var items = new List<string> { "Casa", "Departamento", "Local", "Oficina" };
+            var items = new List<string> { "Casa", "Departamento", "Local", "Oficina" , "Galpon"};
             return new SelectList(items, seleccionado);
         }
 

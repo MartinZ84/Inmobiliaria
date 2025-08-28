@@ -10,12 +10,15 @@ namespace Inmobiliaria.Controllers
     {
         private readonly RepositorioInmueble repositorio;
         private readonly RepositorioPropietario repositorioPropietario;
+        
+        private readonly RepositorioTipoInmueble repoTipoInm;
         private readonly IWebHostEnvironment webHostEnvironment;
 
-        public InmueblesController(RepositorioInmueble repositorio, RepositorioPropietario repositorioPropietario, IWebHostEnvironment webHostEnvironment)
+        public InmueblesController(RepositorioInmueble repositorio, RepositorioPropietario repositorioPropietario, RepositorioTipoInmueble repoTipoInm, IWebHostEnvironment webHostEnvironment)
         {
             this.repositorio = repositorio;
             this.repositorioPropietario = repositorioPropietario;
+            this.repoTipoInm = repoTipoInm;
             this.webHostEnvironment = webHostEnvironment;
         }
 
@@ -81,7 +84,7 @@ namespace Inmobiliaria.Controllers
         //     }
         // }
         public ActionResult Index(string? tipo = null,
-            string? uso = null, string? estado = null, int? precioMin = null, int? precioMax = null, int pagina=1)
+            string? uso = null, string? estado = null, int? precioMin = null, int? precioMax = null, int pagina = 1)
         {
             try
             {
@@ -101,8 +104,8 @@ namespace Inmobiliaria.Controllers
                 {
                     inmuebles = repositorio.ObtenerLista(pagina, 5);
                     ViewBag.Pagina = pagina;
-				    var total = repositorio.ObtenerCantidad();
-				    ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
+                    var total = repositorio.ObtenerCantidad();
+                    ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
                 }
 
                 // Limpiar espacios de las rutas de imagen
@@ -119,7 +122,10 @@ namespace Inmobiliaria.Controllers
                 ViewBag.PrecioMax = precioMax;
 
                 // Cargar selects con seleccionado
-                ViewBag.Tipos = InmuebleSelectLists.GetTipos(tipo);
+                //ViewBag.Tipos = InmuebleSelectLists.GetTipos(tipo);
+                var tipos = repoTipoInm.GetTipos();
+                //ViewBag.Tipos = new SelectList(tipos, "Id", "Descripcion");
+                ViewBag.Tipos = tipos;
                 ViewBag.Usos = InmuebleSelectLists.GetUsos(uso);
                 ViewBag.Estados = InmuebleSelectLists.GetEstados(estado);
 
@@ -151,7 +157,10 @@ namespace Inmobiliaria.Controllers
         public ActionResult Create()
         {
             // Obtener lista de propietarios para el dropdown
-            ViewBag.Tipos = InmuebleSelectLists.GetTipos();
+            // ViewBag.Tipos = InmuebleSelectLists.GetTipos();
+            var tipos = repoTipoInm.GetTipos();
+            //ViewBag.Tipos = new SelectList(tipos, "Id", "Descripcion");
+            ViewBag.Tipos = tipos;
             ViewBag.Usos = InmuebleSelectLists.GetUsos();
             ViewBag.Estados = InmuebleSelectLists.GetEstados();
             ViewBag.Propietarios = repositorioPropietario.ObtenerTodos();
@@ -173,7 +182,13 @@ namespace Inmobiliaria.Controllers
                     {
                         TempData["ErrorMessage"] = "Solo se permiten máximo 5 imágenes.";
                         TempData["AlertType"] = "danger";
-                        ViewBag.Propietarios = repositorioPropietario.ObtenerTodos();
+                        var propietarios = repositorioPropietario.ObtenerTodos();
+                        ViewBag.Propietarios = new SelectList(
+                            propietarios,
+                            "Id",
+                            "NombreCompleto",
+                            inmueble.PropietarioId
+                        );
                         return View(inmueble);
                     }
 
@@ -192,7 +207,13 @@ namespace Inmobiliaria.Controllers
                 {
                     TempData["ErrorMessage"] = "Error al crear el inmueble";
                     TempData["AlertType"] = "danger";
-                    ViewBag.Propietarios = repositorioPropietario.ObtenerTodos();
+                    var propietarios = repositorioPropietario.ObtenerTodos();
+                    ViewBag.Propietarios = new SelectList(
+                        propietarios,
+                        "Id",
+                        "NombreCompleto",
+                        inmueble.PropietarioId
+                    );
                     return View(inmueble);
                 }
             }
@@ -201,7 +222,13 @@ namespace Inmobiliaria.Controllers
                 TempData["ErrorMessage"] = "Error inesperado al procesar la solicitud";
                 TempData["AlertType"] = "danger";
                 Console.WriteLine(e);
-                ViewBag.Propietarios = repositorioPropietario.ObtenerTodos();
+                var propietarios = repositorioPropietario.ObtenerTodos();
+                    ViewBag.Propietarios = new SelectList(
+                        propietarios,
+                        "Id",
+                        "NombreCompleto",
+                        inmueble.PropietarioId
+                    );
                 return View(inmueble);
             }
         }
@@ -229,10 +256,12 @@ namespace Inmobiliaria.Controllers
                     inmueble.PropietarioId
                 );
 
-                ViewBag.Tipos = InmuebleSelectLists.GetTipos(inmueble.Tipo);
+                var tipos = repoTipoInm.GetTipos();
+                ViewBag.Tipos = new SelectList(tipos, "Id", "Descripcion");
+                ViewBag.Tipos = tipos;
                 ViewBag.Usos = InmuebleSelectLists.GetUsos(inmueble.Uso);
                 ViewBag.Estados = InmuebleSelectLists.GetEstados(inmueble.Estado);
-                ViewBag.Propietarios = repositorioPropietario.ObtenerTodos();
+              //  ViewBag.Propietarios = repositorioPropietario.ObtenerTodos();
 
                 return View(inmueble);
             }
@@ -339,7 +368,14 @@ namespace Inmobiliaria.Controllers
                     {
                         TempData["ErrorMessage"] = "Solo se permiten máximo 5 imágenes en total.";
                         TempData["AlertType"] = "danger";
-                        ViewBag.Propietarios = repositorioPropietario.ObtenerTodos();
+                        var propietarios = repositorioPropietario.ObtenerTodos();
+                        ViewBag.Propietarios = new SelectList(
+                            propietarios,
+                            "Id",
+                            "NombreCompleto",
+                            inmueble.PropietarioId
+                        );
+            
                         return View(inmueble);
                     }
 
@@ -357,8 +393,14 @@ namespace Inmobiliaria.Controllers
             {
                 Console.WriteLine(e);
                 TempData["ErrorMessage"] = "Error al actualizar el inmueble.";
-                TempData["AlertType"] = "danger";
-                ViewBag.Propietarios = repositorioPropietario.ObtenerTodos();
+                TempData["AlertType"] = "danger";                
+                var propietarios = repositorioPropietario.ObtenerTodos();
+                    ViewBag.Propietarios = new SelectList(
+                        propietarios,
+                        "Id",
+                        "NombreCompleto",
+                        inmueble.PropietarioId
+                    );
                 return View(inmueble);
             }
         }
