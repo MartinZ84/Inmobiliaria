@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 28-08-2025 a las 22:13:34
+-- Tiempo de generación: 29-08-2025 a las 14:47:54
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -83,7 +83,6 @@ INSERT INTO `inmuebles` (`id`, `direccion`, `ambientes`, `superficie`, `tipInmId
 (13, 'Colon 2542, Mendoza Capital', 4, 76, 2, 'Comercial', 67000, 0, 0, 'Disponible', 13, '/uploads/inmuebles/11e57bcf-c516-44a6-96f5-eb01c9d54029_Ubicacion terreno.png'),
 (14, 'Belgrano 45, San Luis', 5, 90, 1, 'Comercial', 80000, 0, 0, 'Disponible', 14, NULL),
 (20, 'Chacabuco 584', 3, 100, 1, 'Residencial', 1000000, NULL, NULL, 'Disponible', 14, '/uploads/inmuebles/ed8c04bc-c1fd-4fdf-b10b-dd882bc64e1b_Captura de pantalla 2025-07-13 123409.png'),
-(21, 'Mitre 878, Ciudad de San Luis', 3, 50, 1, 'Residencial', 25000, 10, 20, 'Disponible', 1, NULL),
 (22, 'San Martin 89', 4, 152, 2, 'Residencial', 4545, 53, 54, 'Disponible', 4, '/uploads/inmuebles/916529eb-81ee-4537-a56d-0cbfc58ad753_Terreno venta.png');
 
 -- --------------------------------------------------------
@@ -169,6 +168,26 @@ INSERT INTO `propietarios` (`id`, `nombre`, `apellido`, `dni`, `telefono`, `emai
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `tiposinmuebles`
+--
+
+CREATE TABLE `tiposinmuebles` (
+  `id` int(5) NOT NULL,
+  `descripcion` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `tiposinmuebles`
+--
+
+INSERT INTO `tiposinmuebles` (`id`, `descripcion`) VALUES
+(1, 'Casa'),
+(2, 'Departamento'),
+(3, 'Oficina');
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `usuarios`
 --
 
@@ -233,6 +252,12 @@ ALTER TABLE `pagos`
 -- Indices de la tabla `propietarios`
 --
 ALTER TABLE `propietarios`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Indices de la tabla `tiposinmuebles`
+--
+ALTER TABLE `tiposinmuebles`
   ADD PRIMARY KEY (`id`);
 
 --
