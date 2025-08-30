@@ -85,7 +85,7 @@ namespace Inmobiliaria.Controllers
         //     }
         // }
         public ActionResult Index(string? tipo = null,
-            string? uso = null, string? estado = null, int? precioMin = null, int? precioMax = null, int pagina = 1)
+            string? uso = null, int? estado = null, int? precioMin = null, int? precioMax = null, int pagina = 1)
         {
             try
             {
@@ -93,7 +93,7 @@ namespace Inmobiliaria.Controllers
                 var tamaño = 6;
 
                 if (!string.IsNullOrWhiteSpace(tipo) ||
-                    !string.IsNullOrWhiteSpace(uso) || !string.IsNullOrWhiteSpace(estado) ||
+                    !string.IsNullOrWhiteSpace(uso) || estado.HasValue ||
                     precioMin.HasValue || precioMax.HasValue)
                 {
                     inmuebles = repositorio.BuscarInmueblesConValidacion(tipo, uso, estado, precioMin, precioMax);
@@ -142,34 +142,94 @@ namespace Inmobiliaria.Controllers
                 return View(new List<Inmueble>());
             }
         }
+        
+        public ActionResult IndexBaja(string? tipo = null,
+            string? uso = null, int? estado = null, int? precioMin = null, int? precioMax = null, int pagina = 1)
+        {
+            try
+            {
+                IList<Inmueble> inmuebles;
+                var tamaño = 6;
+
+                if (!string.IsNullOrWhiteSpace(tipo) ||
+                    !string.IsNullOrWhiteSpace(uso) || estado.HasValue ||
+                    precioMin.HasValue || precioMax.HasValue)
+                {
+                    inmuebles = repositorio.BuscarInmueblesConValidacion(tipo, uso, estado, precioMin, precioMax);
+                    var total = inmuebles.Count;
+                    ViewBag.Pagina = pagina;
+                    ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
+                }
+                else
+                {
+                    inmuebles = repositorio.ObtenerLista(pagina, tamaño);
+                    ViewBag.Pagina = pagina;
+                    var total = repositorio.ObtenerCantidad();
+                    ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
+                }
+
+                // Limpiar espacios de las rutas de imagen
+                foreach (var inmueble in inmuebles)
+                {
+                    inmueble.PrimeraImagen = inmueble.PrimeraImagen?.Trim();
+                    inmueble.Estado = (EstadoInmueble)inmueble.EstadoBd;
+                }
+
+                // Mantener filtros en la vista             
+                ViewBag.Tipo = tipo;
+                ViewBag.Uso = uso;
+                ViewBag.Estado = estado;
+                ViewBag.PrecioMin = precioMin;
+                ViewBag.PrecioMax = precioMax;
+
+                // Cargar selects con seleccionado
+                //ViewBag.Tipos = InmuebleSelectLists.GetTipos(tipo);
+                var tipos = repoTipoInm.GetTipos();
+                //ViewBag.Tipos = new SelectList(tipos, "Id", "Descripcion");
+                ViewBag.Tipos = tipos;
+                ViewBag.Usos = InmuebleSelectLists.GetUsos(uso);
+                //ViewBag.Estados = InmuebleSelectLists.GetEstados(estado);
+
+              
+                return View(inmuebles);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                TempData["ErrorMessage"] = "Ocurrió un error al cargar los inmuebles.";
+                TempData["AlertType"] = "danger";
+                return View(new List<Inmueble>());
+            }
+        }
+
 
         // GET: Inmuebles/Details/5
         public ActionResult Details(int id)
         {
-            var inmueble = repositorio.ObtenerPorId(id);         
+            var inmueble = repositorio.ObtenerPorId(id);
             if (inmueble == null)
-                {
-                    TempData["ErrorMessage"] = "El inmueble no existe.";
-                    TempData["AlertType"] = "danger";
-                    return RedirectToAction(nameof(Index));
-                }
+            {
+                TempData["ErrorMessage"] = "El inmueble no existe.";
+                TempData["AlertType"] = "danger";
+                return RedirectToAction(nameof(Index));
+            }
 
-                var propietarios = repositorioPropietario.ObtenerTodos();
-                inmueble.Estado = (EstadoInmueble)inmueble.EstadoBd;
-                // Crear la SelectList con la opción seleccionada (inmueble.PropietarioId)
-                ViewBag.Propietarios = new SelectList(
-                    propietarios,
-                    "Id",
-                    "NombreCompleto",
-                    inmueble.PropietarioId
-                );
+            var propietarios = repositorioPropietario.ObtenerTodos();
+            inmueble.Estado = (EstadoInmueble)inmueble.EstadoBd;
+            // Crear la SelectList con la opción seleccionada (inmueble.PropietarioId)
+            ViewBag.Propietarios = new SelectList(
+                propietarios,
+                "Id",
+                "NombreCompleto",
+                inmueble.PropietarioId
+            );
 
-                var tipos = repoTipoInm.GetTipos();
-                ViewBag.Tipos = new SelectList(tipos, "Id", "Descripcion");
-                ViewBag.Tipos = tipos;
-                ViewBag.Usos = InmuebleSelectLists.GetUsos(inmueble.Uso);
-                //ViewBag.Estados = InmuebleSelectLists.GetEstados(inmueble.Estado);
-              //  ViewBag.Propietarios = repositorioPropietario.ObtenerTodos();
+            var tipos = repoTipoInm.GetTipos();
+            ViewBag.Tipos = new SelectList(tipos, "Id", "Descripcion");
+            ViewBag.Tipos = tipos;
+            ViewBag.Usos = InmuebleSelectLists.GetUsos(inmueble.Uso);
+            //ViewBag.Estados = InmuebleSelectLists.GetEstados(inmueble.Estado);
+            //  ViewBag.Propietarios = repositorioPropietario.ObtenerTodos();
             return View(inmueble);
         }
 

@@ -187,14 +187,19 @@
 
                         <!-- Badge de estado -->
                         <span class="position-absolute top-0 end-0 m-2">
-                            @if (inmueble.EstaDisponible)
+                            @if (inmueble.EstadoNumero == 1)
                             {
                                 <span class="badge bg-success">Disponible</span>
                             }
-                            else
+                            else if (inmueble.EstadoNumero == 2 )
                             {
                                 <span class="badge bg-danger">No Disponible</span>
                             }
+                            else if (inmueble.EstadoNumero == 3)
+                            {
+                                <span class="badge bg-secondary">Baja</span>
+                            }
+                          
                         </span>
 
                         <!-- Badge de tipo -->

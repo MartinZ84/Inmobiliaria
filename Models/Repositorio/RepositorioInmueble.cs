@@ -193,13 +193,13 @@ namespace Inmobiliaria.Models.Repositorio
         }
 
         public IList<Inmueble> BuscarInmueblesConValidacion(string? tipo = null,
-            string? uso = null, string? estado = null, int? precioMin = null, int? precioMax = null)
+            string? uso = null, int? estado = null, int? precioMin = null, int? precioMax = null)
         {
             var inmuebles = new List<Inmueble>();
 
             // Validar que al menos un criterio esté presente
             if (string.IsNullOrWhiteSpace(tipo) &&
-                string.IsNullOrWhiteSpace(uso) && string.IsNullOrWhiteSpace(estado) &&
+                string.IsNullOrWhiteSpace(uso) && !estado.HasValue &&
                 !precioMin.HasValue && !precioMax.HasValue)
             {
                 return inmuebles; // Retornar lista vacía si no hay criterios
@@ -211,9 +211,8 @@ namespace Inmobiliaria.Models.Repositorio
                     SELECT i.*, p.nombre as PropietarioNombre, p.apellido as PropietarioApellido, ti.descripcion as TipoInmuebleDescripcion
                     FROM inmuebles i 
                     INNER JOIN propietarios p ON i.propietarioId = p.id
-                    INNER JOIN tiposInmuebles ti ON i.tipoInmId = ti.id
-                    WHERE 1=1 
-                    AND i.estado <> 3";
+                    INNER JOIN tiposInmuebles ti ON i.tipInmId = ti.id
+                    WHERE 1=1 ";
 
                 var parameters = new List<MySqlParameter>();
 
@@ -235,10 +234,16 @@ namespace Inmobiliaria.Models.Repositorio
                     parameters.Add(new MySqlParameter("@uso", $"%{uso.Trim()}%"));
                 }
 
-                if (!string.IsNullOrWhiteSpace(estado))
+                if (estado.HasValue)
                 {
-                    sql += " AND i.estado LIKE @estado";
-                    parameters.Add(new MySqlParameter("@estado", $"%{estado.Trim()}%"));
+                    sql += " AND i.estado = @estado";
+                    parameters.Add(new MySqlParameter("@estado", estado.Value));
+                }
+                else
+                {
+                    // Si no se especifica estado, excluir los dados de baja
+                    sql += " AND i.estado <> @estadoBaja";
+                    parameters.Add(new MySqlParameter("@estadoBaja", (int)EstadoInmueble.Baja));
                 }
 
                 if (precioMin.HasValue)
