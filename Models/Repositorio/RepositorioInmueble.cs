@@ -1,6 +1,7 @@
 using System.Data;
 using MySql.Data.MySqlClient;
 using Inmobiliaria.Models.Entidades;
+using Inmobiliaria.Models.Enums;
 
 namespace Inmobiliaria.Models.Repositorio
 {
@@ -143,29 +144,48 @@ namespace Inmobiliaria.Models.Repositorio
             return result;
         }
 
-        public int Baja(int id)
+        // public int Baja(int id)
+        // {
+        //     int result = 0;
+        //     using (var connection = new MySqlConnection(connectionString))
+        //     {
+        //         // Verificar si el inmueble tiene contratos asociados
+        //         var sqlCheck = "SELECT COUNT(*) FROM contratos WHERE inmuebleId = @id";
+        //         using (var commandCheck = new MySqlCommand(sqlCheck, connection))
+        //         {
+        //             commandCheck.Parameters.AddWithValue("@id", id);
+        //             connection.Open();
+        //             int contractCount = Convert.ToInt32(commandCheck.ExecuteScalar());
+
+        //             if (contractCount > 0)
+        //             {
+        //                 throw new Exception("No se puede eliminar el inmueble porque tiene contratos asociados.");
+        //             }
+        //         }
+
+        //         var sql = "DELETE FROM inmuebles WHERE id = @id";
+        //         using (var command = new MySqlCommand(sql, connection))
+        //         {
+        //             command.Parameters.AddWithValue("@id", id);
+        //             result = command.ExecuteNonQuery();
+        //         }
+        //     }
+        //     return result;
+        // }
+         public int BajaLogica(int id)
         {
-            int result = 0;
+            int result = 0;         
+            var baja = (int)EstadoInmueble.Baja;
             using (var connection = new MySqlConnection(connectionString))
             {
-                // Verificar si el inmueble tiene contratos asociados
-                var sqlCheck = "SELECT COUNT(*) FROM contratos WHERE inmuebleId = @id";
-                using (var commandCheck = new MySqlCommand(sqlCheck, connection))
-                {
-                    commandCheck.Parameters.AddWithValue("@id", id);
-                    connection.Open();
-                    int contractCount = Convert.ToInt32(commandCheck.ExecuteScalar());
+                connection.Open();
 
-                    if (contractCount > 0)
-                    {
-                        throw new Exception("No se puede eliminar el inmueble porque tiene contratos asociados.");
-                    }
-                }
+                var sql = "UPDATE inmuebles SET estado = @baja WHERE id = @id";
 
-                var sql = "DELETE FROM inmuebles WHERE id = @id";
                 using (var command = new MySqlCommand(sql, connection))
                 {
                     command.Parameters.AddWithValue("@id", id);
+                    command.Parameters.AddWithValue("@baja", baja);
                     result = command.ExecuteNonQuery();
                 }
             }
@@ -192,7 +212,8 @@ namespace Inmobiliaria.Models.Repositorio
                     FROM inmuebles i 
                     INNER JOIN propietarios p ON i.propietarioId = p.id
                     INNER JOIN tiposInmuebles ti ON i.tipoInmId = ti.id
-                    WHERE 1=1";
+                    WHERE 1=1 
+                    AND i.estado <> 3";
 
                 var parameters = new List<MySqlParameter>();
 
@@ -260,7 +281,7 @@ namespace Inmobiliaria.Models.Repositorio
                     FROM inmuebles i 
                     INNER JOIN propietarios p ON i.propietarioId = p.id
                     INNER JOIN tiposInmuebles ti ON i.tipInmId = ti.id
-                    WHERE i.estado = 'Disponible'
+                    WHERE i.estado = 1
                     ORDER BY i.id";
 
                 using (var command = new MySqlCommand(sql, connection))
@@ -291,7 +312,7 @@ namespace Inmobiliaria.Models.Repositorio
                 Precio = reader.GetInt32("precio"),
                 Latitud = reader.IsDBNull("latitud") ? null : reader.GetDecimal("latitud"),
                 Longitud = reader.IsDBNull("longitud") ? null : reader.GetDecimal("longitud"),
-                Estado = reader.GetString("estado"),
+                EstadoBd = reader.GetInt32("estado"),
                 PropietarioId = reader.GetInt32("propietarioId"),
                 Imagenes = reader.IsDBNull("imagenes") ? null : reader.GetString("imagenes"),
                 Propietario = new Propietario
@@ -322,7 +343,7 @@ namespace Inmobiliaria.Models.Repositorio
                 Precio = reader.GetInt32("precio"),
                 Latitud = reader.IsDBNull("latitud") ? null : reader.GetDecimal("latitud"),
                 Longitud = reader.IsDBNull("longitud") ? null : reader.GetDecimal("longitud"),
-                Estado = reader.GetString("estado"),
+                EstadoBd = reader.GetInt32("estado"),
                 PropietarioId = reader.GetInt32("propietarioId"),
                 Imagenes = reader.IsDBNull("imagenes") ? null : reader.GetString("imagenes"),
                 Propietario = new Propietario
@@ -351,6 +372,7 @@ namespace Inmobiliaria.Models.Repositorio
                 string sql = @$"
 					SELECT COUNT(Id)
 					FROM Inmuebles
+                    WHERE Estado <> 3;
 				";
                 using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
@@ -379,6 +401,7 @@ namespace Inmobiliaria.Models.Repositorio
                     FROM inmuebles i 
                     INNER JOIN propietarios p ON i.propietarioId = p.id
                     INNER JOIN tiposInmuebles ti ON i.tipInmId = ti.id
+                    WHERE i.estado <> 3
                     ORDER BY i.id
 					LIMIT {tamPagina} OFFSET {(paginaNro - 1) * tamPagina}        
 				";

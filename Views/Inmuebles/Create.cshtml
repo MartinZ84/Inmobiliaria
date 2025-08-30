@@ -1,3 +1,4 @@
+@using Inmobiliaria.Helpers
 @model Inmobiliaria.Models.Entidades.Inmueble
 
 @{
@@ -77,13 +78,11 @@
                         </div>
                         
                         <div class="col-md-6 mb-3">
-                            <label asp-for="Estado" class="control-label"></label>
-                            <select asp-for="Estado" class="form-control">
-                                <option value="">Seleccionar...</option>
-                                <option value="Disponible">Disponible</option>
-                                <option value="No disponible">No disponible</option>
-                            </select>
+                          <div class="col-md-6 mb-3">
+                            <label asp-for="Estado" class="control-label"></label>                            
+                            @Html.EnumDropDownListFor(model => model.Estado, "Seleccionar...", new { @class = "form-control" }, Inmobiliaria.Models.Enums.EstadoInmueble.Baja)
                             <span asp-validation-for="Estado" class="text-danger"></span>
+                          </div>
                         </div>
                     </div>
                 </div>

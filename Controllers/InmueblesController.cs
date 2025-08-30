@@ -3,6 +3,7 @@ using Inmobiliaria.Models.Repositorio;
 using Inmobiliaria.Models.Entidades;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Inmobiliaria.Helpers;
+using Inmobiliaria.Models.Enums;
 
 namespace Inmobiliaria.Controllers
 {
@@ -112,6 +113,7 @@ namespace Inmobiliaria.Controllers
                 foreach (var inmueble in inmuebles)
                 {
                     inmueble.PrimeraImagen = inmueble.PrimeraImagen?.Trim();
+                    inmueble.Estado = (EstadoInmueble)inmueble.EstadoBd;
                 }
 
                 // Mantener filtros en la vista             
@@ -129,6 +131,7 @@ namespace Inmobiliaria.Controllers
                 ViewBag.Usos = InmuebleSelectLists.GetUsos(uso);
                 ViewBag.Estados = InmuebleSelectLists.GetEstados(estado);
 
+              
                 return View(inmuebles);
             }
             catch (Exception ex)
@@ -143,13 +146,30 @@ namespace Inmobiliaria.Controllers
         // GET: Inmuebles/Details/5
         public ActionResult Details(int id)
         {
-            var inmueble = repositorio.ObtenerPorId(id);
+            var inmueble = repositorio.ObtenerPorId(id);         
             if (inmueble == null)
-            {
-                TempData["ErrorMessage"] = "El inmueble no existe.";
-                TempData["AlertType"] = "danger";
-                return RedirectToAction(nameof(Index));
-            }
+                {
+                    TempData["ErrorMessage"] = "El inmueble no existe.";
+                    TempData["AlertType"] = "danger";
+                    return RedirectToAction(nameof(Index));
+                }
+
+                var propietarios = repositorioPropietario.ObtenerTodos();
+                inmueble.Estado = (EstadoInmueble)inmueble.EstadoBd;
+                // Crear la SelectList con la opción seleccionada (inmueble.PropietarioId)
+                ViewBag.Propietarios = new SelectList(
+                    propietarios,
+                    "Id",
+                    "NombreCompleto",
+                    inmueble.PropietarioId
+                );
+
+                var tipos = repoTipoInm.GetTipos();
+                ViewBag.Tipos = new SelectList(tipos, "Id", "Descripcion");
+                ViewBag.Tipos = tipos;
+                ViewBag.Usos = InmuebleSelectLists.GetUsos(inmueble.Uso);
+                //ViewBag.Estados = InmuebleSelectLists.GetEstados(inmueble.Estado);
+              //  ViewBag.Propietarios = repositorioPropietario.ObtenerTodos();
             return View(inmueble);
         }
 
@@ -162,7 +182,7 @@ namespace Inmobiliaria.Controllers
             //ViewBag.Tipos = new SelectList(tipos, "Id", "Descripcion");
             ViewBag.Tipos = tipos;
             ViewBag.Usos = InmuebleSelectLists.GetUsos();
-            ViewBag.Estados = InmuebleSelectLists.GetEstados();
+           // ViewBag.Estados = InmuebleSelectLists.GetEstados();
             ViewBag.Propietarios = repositorioPropietario.ObtenerTodos();
 
             return View();
@@ -247,7 +267,7 @@ namespace Inmobiliaria.Controllers
                 }
 
                 var propietarios = repositorioPropietario.ObtenerTodos();
-
+                inmueble.Estado = (EstadoInmueble)inmueble.EstadoBd;
                 // Crear la SelectList con la opción seleccionada (inmueble.PropietarioId)
                 ViewBag.Propietarios = new SelectList(
                     propietarios,
@@ -260,7 +280,7 @@ namespace Inmobiliaria.Controllers
                 ViewBag.Tipos = new SelectList(tipos, "Id", "Descripcion");
                 ViewBag.Tipos = tipos;
                 ViewBag.Usos = InmuebleSelectLists.GetUsos(inmueble.Uso);
-                ViewBag.Estados = InmuebleSelectLists.GetEstados(inmueble.Estado);
+                //ViewBag.Estados = InmuebleSelectLists.GetEstados(inmueble.Estado);
               //  ViewBag.Propietarios = repositorioPropietario.ObtenerTodos();
 
                 return View(inmueble);
@@ -386,7 +406,9 @@ namespace Inmobiliaria.Controllers
                 inmueble.Imagenes = imagenesFinales.Count > 0 ? string.Join(",", imagenesFinales) : null;
 
                 repositorio.Modificacion(inmueble);
-                TempData["Mensaje"] = "Datos guardados correctamente";
+                TempData["SuccessMessage"] = "Datos guardados correctamente";
+                  
+                
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception e)
@@ -408,7 +430,7 @@ namespace Inmobiliaria.Controllers
         // GET: Inmuebles/Delete/5
         public ActionResult Delete(int id)
         {
-            try
+         try
             {
                 var inmueble = repositorio.ObtenerPorId(id);
                 if (inmueble == null)
@@ -418,10 +440,22 @@ namespace Inmobiliaria.Controllers
                     return RedirectToAction(nameof(Index));
                 }
 
-                if (TempData.ContainsKey("Mensaje"))
-                    ViewBag.Mensaje = TempData["Mensaje"];
-                if (TempData.ContainsKey("Error"))
-                    ViewBag.Error = TempData["Error"];
+                var propietarios = repositorioPropietario.ObtenerTodos();
+                inmueble.Estado = (EstadoInmueble)inmueble.EstadoBd;
+                // Crear la SelectList con la opción seleccionada (inmueble.PropietarioId)
+                ViewBag.Propietarios = new SelectList(
+                    propietarios,
+                    "Id",
+                    "NombreCompleto",
+                    inmueble.PropietarioId
+                );
+
+                var tipos = repoTipoInm.GetTipos();
+                ViewBag.Tipos = new SelectList(tipos, "Id", "Descripcion");
+                ViewBag.Tipos = tipos;
+                ViewBag.Usos = InmuebleSelectLists.GetUsos(inmueble.Uso);
+                //ViewBag.Estados = InmuebleSelectLists.GetEstados(inmueble.Estado);
+              //  ViewBag.Propietarios = repositorioPropietario.ObtenerTodos();
 
                 return View(inmueble);
             }
@@ -434,6 +468,26 @@ namespace Inmobiliaria.Controllers
             }
         }
 
+        // POST: Inmuebles/Delete/5
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public ActionResult Delete(int id, Inmueble inmueble)
+        {
+            try
+            {
+                repositorio.BajaLogica(id);
+                TempData["SuccessMessage"] = "Baja realizada correctamente";
+                return RedirectToAction(nameof(Index));
+            }
+            catch (Exception ex)
+            {
+                var inm = repositorio.ObtenerPorId(id);
+                ViewBag.Error = ex.Message;
+                ViewBag.StackTrate = ex.StackTrace;
+                return View(inm);
+            }
+        }
+
         // // POST: Inmuebles/Delete/5
         // [HttpPost]
         // [ValidateAntiForgeryToken]
@@ -441,7 +495,18 @@ namespace Inmobiliaria.Controllers
         // {
         //     try
         //     {
+        //         // Obtener el inmueble para acceder a sus imágenes antes de eliminarlo
+        //         var inmuebleAEliminar = repositorio.ObtenerPorId(id);
+
+        //         if (inmuebleAEliminar != null)
+        //         {
+        //             // Eliminar las imágenes físicas del servidor
+        //             EliminarImagenesDelServidor(inmuebleAEliminar.ListaImagenes);
+        //         }
+
+        //         // Eliminar el registro de la base de datos
         //         repositorio.Baja(id);
+
         //         TempData["Mensaje"] = "Eliminación realizada correctamente";
         //         return RedirectToAction(nameof(Index));
         //     }
@@ -453,37 +518,7 @@ namespace Inmobiliaria.Controllers
         //         return View(inm);
         //     }
         // }
-        // POST: Inmuebles/Delete/5
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public ActionResult Delete(int id, Inmueble inmueble)
-        {
-            try
-            {
-                // Obtener el inmueble para acceder a sus imágenes antes de eliminarlo
-                var inmuebleAEliminar = repositorio.ObtenerPorId(id);
-
-                if (inmuebleAEliminar != null)
-                {
-                    // Eliminar las imágenes físicas del servidor
-                    EliminarImagenesDelServidor(inmuebleAEliminar.ListaImagenes);
-                }
-
-                // Eliminar el registro de la base de datos
-                repositorio.Baja(id);
-
-                TempData["Mensaje"] = "Eliminación realizada correctamente";
-                return RedirectToAction(nameof(Index));
-            }
-            catch (Exception ex)
-            {
-                var inm = repositorio.ObtenerPorId(id);
-                ViewBag.Error = ex.Message;
-                ViewBag.StackTrate = ex.StackTrace;
-                return View(inm);
-            }
-        }
-        // Método para buscar inmuebles disponibles
+        // // Método para buscar inmuebles disponibles
         public ActionResult Disponibles()
         {
             try

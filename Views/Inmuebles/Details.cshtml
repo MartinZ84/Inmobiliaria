@@ -1,3 +1,4 @@
+@using Inmobiliaria.Models.Enums
 @model Inmobiliaria.Models.Entidades.Inmueble;
 
 
@@ -84,13 +85,17 @@
                 <div class="card-header">
                     <div class="d-flex justify-content-between align-items-center">
                         <h4 class="mb-0">
-                            @if (Model.EstaDisponible)
+                           @if (Model.Estado == EstadoInmueble.Disponible)
                             {
                                 <span class="badge bg-success me-2">Disponible</span>
                             }
-                            else
+                            else if (Model.Estado == EstadoInmueble.NoDisponible)
                             {
                                 <span class="badge bg-danger me-2">No Disponible</span>
+                            }
+                            else if (Model.Estado == EstadoInmueble.Baja)
+                            {
+                                <span class="badge bg-secondary me-2">Baja</span>
                             }
                             <span class="badge bg-primary">@Model.TipoInmueble?.Descripcion</span>
                         </h4>
@@ -185,7 +190,7 @@
                             <i class="bi bi-pencil"></i> Editar Inmueble
                         </a>
                         <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger">
-                            <i class="bi bi-trash"></i> Eliminar Inmueble
+                            <i class="bi bi-trash"></i> Baja Inmueble
                         </a>
                         <a asp-action="Index" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left"></i> Volver al Listado

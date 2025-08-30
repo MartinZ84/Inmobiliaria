@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Inmobiliaria.Models.Enums;
 
 namespace Inmobiliaria.Models.Entidades
 {
@@ -49,9 +50,11 @@ namespace Inmobiliaria.Models.Entidades
         public decimal? Longitud { get; set; }
 
         [Required(ErrorMessage = "El estado es obligatorio")]
-        [StringLength(50, ErrorMessage = "El estado no puede superar los 50 caracteres")]
+        // [StringLength(50, ErrorMessage = "El estado no puede superar los 50 caracteres")]
         [Display(Name = "Estado")]
-        public string Estado { get; set; } = "";
+        // public string Estado { get; set; } = "";        
+        public EstadoInmueble Estado { get; set; }   
+        public int EstadoBd { get; set; }   
 
         [Required(ErrorMessage = "El propietario es obligatorio")]
         [Display(Name = "Propietario")]
@@ -102,6 +105,7 @@ namespace Inmobiliaria.Models.Entidades
                                            : PrimeraImagen.Trim();
 
         // Método helper para verificar disponibilidad
-        public bool EstaDisponible => Estado.Equals("Disponible", StringComparison.OrdinalIgnoreCase);
+        public bool EstaDisponible => Estado == EstadoInmueble.Disponible;
+
     }
 }

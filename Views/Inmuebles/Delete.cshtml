@@ -1,302 +1,294 @@
 @model Inmobiliaria.Models.Entidades.Inmueble
-
+@using Inmobiliaria.Helpers
 @{
-    ViewData["Title"] = "Eliminar Inmueble";
+    ViewData["Title"] = "Editar Inmueble";
 }
 
-<!-- Alertas personalizadas -->
-<div class="">
-    @if (ViewBag.Id != null)
-    {
-        // alta exitosa - no aplicable aquí
-    }
-    else if (ViewBag.Mensaje != null)
-    {
-        // cartel general
-    }
-    else if (ViewBag.Error != null)
-    {
-        var error = ViewBag.Error;
-        <div class="alert alert-danger alert-dismissible fade show" role="alert">
-            <strong>¡Error!</strong> No se puede eliminar el inmueble. @ViewBag.Error
-            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                <span aria-hidden="true"><span class="lnr lnr-cross-circle"></span></span>
-            </button>
-        </div>
-    }
-    else if (!String.IsNullOrWhiteSpace(ViewBag.Error))
-    {
-        <environment names="Development">
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                <strong>¡Error!</strong> Ocurrió: @ViewBag.Error
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close">
-                    <span aria-hidden="true"><span class="lnr lnr-cross-circle"></span></span>
-                </button>
-                <a class="btn btn-primary" data-toggle="collapse" href="#multiCollapseExample1" role="button" aria-expanded="false">
-                    <span class="lnr lnr-plus-circle"></span>
-                </a>
-                <div class="collapse multi-collapse" id="multiCollapseExample1">
-                    @ViewBag.StackTrace
-                </div>
-            </div>
-        </environment>
-    }
-</div>
-
-<h4 class="mt-4 text-danger">
-    <i class="bi bi-exclamation-triangle"></i> Eliminar Inmueble
-</h4>
+<h4 class="mt-4">Baja Inmueble</h4>
 <hr />
 
-<div class="alert alert-warning" role="alert">
-    <i class="bi bi-exclamation-triangle me-2"></i>
-    <strong>¡Atención!</strong> Esta acción no se puede deshacer. 
-    Se eliminará permanentemente toda la información del inmueble y sus imágenes asociadas.
-</div>
+@await Html.PartialAsync("_AutoDismissAlert")
 
 <div class="row">
-    <!-- Información del inmueble -->
-    <div class="col-lg-8">
-        <div class="card">
-            <div class="card-header bg-danger text-white">
-                <h5 class="mb-0">
-                    <i class="bi bi-house-x"></i> Información del Inmueble a Eliminar
-                </h5>
-            </div>
-            <div class="card-body">
-                <div class="row">
-                    <div class="col-md-6">
-                        <dl class="row">
-                            <dt class="col-sm-4">ID:</dt>
-                            <dd class="col-sm-8">@Html.DisplayFor(model => model.Id)</dd>
-
-                            <dt class="col-sm-4">Dirección:</dt>
-                            <dd class="col-sm-8">@Html.DisplayFor(model => model.Direccion)</dd>
-
-                            <dt class="col-sm-4">Tipo:</dt>
-                            <dd class="col-sm-8">
-                                <span class="badge bg-primary">@Html.DisplayFor(model => model.TipoInmueble.Descripcion)</span>
-                            </dd>
-
-                            <dt class="col-sm-4">Uso:</dt>
-                            <dd class="col-sm-8">@Html.DisplayFor(model => model.Uso)</dd>
-
-                            <dt class="col-sm-4">Ambientes:</dt>
-                            <dd class="col-sm-8">@Html.DisplayFor(model => model.Ambientes)</dd>
-
-                            <dt class="col-sm-4">Superficie:</dt>
-                            <dd class="col-sm-8">@(Model.Superficie?.ToString() ?? "No especificada") m²</dd>
-                        </dl>
-                    </div>
-                    <div class="col-md-6">
-                        <dl class="row">
-                            <dt class="col-sm-4">Precio:</dt>
-                            <dd class="col-sm-8">
-                                <strong class="text-success">$@Model.Precio.ToString("N0")</strong>
-                            </dd>
-
-                            <dt class="col-sm-4">Estado:</dt>
-                            <dd class="col-sm-8">
-                                @if (Model.EstaDisponible)
-                                {
-                                    <span class="badge bg-success">@Model.Estado</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-danger">@Model.Estado</span>
-                                }
-                            </dd>
-
-                            <dt class="col-sm-4">Propietario:</dt>
-                            <dd class="col-sm-8">
-                                <strong>@Model.Propietario?.Nombre @Model.Propietario?.Apellido</strong><br>
-                                <small class="text-muted">DNI: @Model.Propietario?.Dni</small>
-                            </dd>
-
-                            @if (Model.Latitud.HasValue && Model.Longitud.HasValue)
-                            {
-                                <dt class="col-sm-4">Coordenadas:</dt>
-                                <dd class="col-sm-8">
-                                    <small>Lat: @Model.Latitud, Lng: @Model.Longitud</small>
-                                </dd>
-                            }
-                        </dl>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Imágenes del inmueble -->
-        @if (Model.ListaImagenes.Any())
-        {
-            <div class="card mt-4">
+    <div class="col-md-8">
+        <form asp-action="Delete" method="post" enctype="multipart/form-data" id="FormEdit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            
+            <input type="hidden" asp-for="Id" />
+            
+            <!-- Información básica -->
+            <div class="card mb-4">
                 <div class="card-header">
-                    <h5 class="mb-0">
-                        <i class="bi bi-images"></i> Imágenes que se eliminarán
-                        <span class="badge bg-secondary">@Model.ListaImagenes.Count</span>
-                    </h5>
+                    <h5 class="mb-0"><i class="bi bi-house"></i> Información Básica</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row g-2">
-                        @foreach (var imagen in Model.ListaImagenes)
-                        {
-                            <div class="col-md-3 col-sm-4 col-6">
-                                <div class="card">
-                                    <img src="@imagen" class="card-img-top" 
-                                         style="height: 120px; object-fit: cover;" 
-                                         alt="Imagen del inmueble">
-                                    <div class="overlay-delete">
-                                        <i class="bi bi-trash text-white fs-1"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        }
-                    </div>
-                </div>
-            </div>
-        }
-    </div>
-
-    <!-- Panel de confirmación -->
-    <div class="col-lg-4">
-        <div class="card border-danger">
-            <div class="card-header bg-danger text-white">
-                <h5 class="mb-0">
-                    <i class="bi bi-exclamation-triangle"></i> Confirmación
-                </h5>
-            </div>
-            <div class="card-body">
-                <p class="mb-3">
-                    <strong>¿Está seguro que desea eliminar este inmueble?</strong>
-                </p>
-                
-                <div class="alert alert-danger">
-                    <h6>Se eliminará:</h6>
-                    <ul class="mb-0">
-                        <li>Toda la información del inmueble</li>
-                        @if (Model.ListaImagenes.Any())
-                        {
-                            <li>@Model.ListaImagenes.Count imagen(es) asociada(s)</li>
-                        }
-                        <li>Historial y referencias</li>
-                    </ul>
-                </div>
-
-                <div class="alert alert-info">
-                    <small>
-                        <i class="bi bi-info-circle"></i>
-                        <strong>Nota:</strong> Solo se puede eliminar un inmueble que no tenga contratos asociados.
-                    </small>
-                </div>
-
-                <!-- Formulario de confirmación -->
-                <form asp-action="Delete" method="post" onsubmit="return confirmarEliminacion()">
-                    <input type="hidden" asp-for="Id" />
-                    
-                    <div class="mb-3">
-                        <div class="form-check">
-                            <input class="form-check-input" type="checkbox" id="confirmarEliminacion" required>
-                            <label class="form-check-label" for="confirmarEliminacion">
-                                <small>Confirmo que deseo eliminar este inmueble permanentemente</small>
-                            </label>
+                    <div class="row">
+                        <div class="col-md-12 mb-3">
+                            <label asp-for="Direccion" class="control-label"></label>
+                            <input asp-for="Direccion" class="form-control" maxlength="100" disabled/>
+                            <span asp-validation-for="Direccion" class="text-danger"></span>
                         </div>
                     </div>
-
-                    <div class="d-grid gap-2">
-                        <button type="submit" class="btn btn-danger" id="btnEliminar" disabled>
-                            <i class="bi bi-trash"></i> Confirmar Eliminación
-                        </button>
-                        <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-primary">
-                            <i class="bi bi-eye"></i> Ver Detalles
-                        </a>
-                        <a asp-action="Index" class="btn btn-secondary">
-                            <i class="bi bi-arrow-left"></i> Volver al Listado
-                        </a>
+                    
+                    <div class="row">
+                         <div class="col-md-3 mb-3">                           
+                             <label asp-for="TipoInmId" class="control-label"></label>
+                            <select asp-for="TipoInmId" class="form-control" asp-items="ViewBag.Tipos"></select>
+                            <span asp-validation-for="TipoInmId" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="Uso" class="control-label"></label>
+                            <select asp-for="Uso" class="form-control">
+                                <option value="">Seleccionar...</option>
+                                <option value="Residencial">Residencial</option>
+                                <option value="Comercial">Comercial</option>
+                            </select>
+                            <span asp-validation-for="Uso" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="Ambientes" class="control-label"></label>
+                            <input asp-for="Ambientes" class="form-control" type="number" min="1" max="20" disabled />
+                            <span asp-validation-for="Ambientes" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-3 mb-3">
+                            <label asp-for="Superficie" class="control-label"></label>
+                            <input asp-for="Superficie" class="form-control" type="number" min="1" step="0.01" />
+                            <span asp-validation-for="Superficie" class="text-danger"></span>
+                        </div>
                     </div>
-                </form>
+                </div>
             </div>
-        </div>
 
-        <!-- Información adicional -->
-        <div class="card mt-3">
+            <!-- Precio y Estado -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-currency-dollar"></i> Precio y Disponibilidad</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Precio" class="control-label"></label>
+                            <div class="input-group">
+                                <span class="input-group-text">$</span>
+                                <input asp-for="Precio" class="form-control" type="number" min="1" />
+                            </div>
+                            <span asp-validation-for="Precio" class="text-danger"></span>
+                        </div>
+                        
+                         <div class="col-md-6 mb-3">
+                            <label asp-for="Estado" class="control-label"></label>
+                            @Html.EnumDropDownListFor(model => model.Estado, "Seleccionar...", new { @class = "form-control" }, Inmobiliaria.Models.Enums.EstadoInmueble.Baja)
+                            <span asp-validation-for="Estado" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Propietario -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-person"></i> Propietario</h5>
+                </div>          
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label asp-for="PropietarioId" class="control-label">Propietario</label>
+                        <select asp-for="PropietarioId" asp-items="ViewBag.Propietarios" class="form-control">
+                            <option value="">Seleccionar propietario...</option>
+                        </select>
+                        <span asp-validation-for="PropietarioId" class="text-danger"></span>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Ubicación -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-geo-alt"></i> Ubicación (Opcional)</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Latitud" class="control-label"></label>
+                            <input asp-for="Latitud" class="form-control" type="number" step="any" />
+                            <span asp-validation-for="Latitud" class="text-danger"></span>
+                        </div>
+                        
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Longitud" class="control-label"></label>
+                            <input asp-for="Longitud" class="form-control" type="number" step="any" />
+                            <span asp-validation-for="Longitud" class="text-danger"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Gestión de Imágenes -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0"><i class="bi bi-images"></i> Gestión de Imágenes</h5>
+                </div>
+                <div class="card-body">
+                    <!-- Imágenes existentes -->
+                    @if (Model.ListaImagenes.Any())
+                    {
+                        <h6>Imágenes actuales:</h6>
+                        <div class="row g-2 mb-3" id="imagenesExistentes">
+                            @for (int i = 0; i < Model.ListaImagenes.Count; i++)
+                            {
+                                <div class="col-md-3 col-sm-4 col-6">
+                                    <div class="card imagen-existente" data-imagen="@Model.ListaImagenes[i]">
+                                        <img src="@Model.ListaImagenes[i]" class="card-img-top" 
+                                             style="height: 120px; object-fit: cover;" alt="Imagen @(i + 1)">
+                                        <div class="card-body p-2">
+                                            <div class="form-check">
+                                                <input class="form-check-input imagen-checkbox" type="checkbox" 
+                                                       value="@Model.ListaImagenes[i]" checked 
+                                                       id="imagen_@i" onchange="actualizarImagenesSeleccionadas()">
+                                                <label class="form-check-label small" for="imagen_@i">
+                                                    Mantener
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        
+                       
+                    }
+
+                    <!-- Campo oculto para imágenes existentes seleccionadas -->
+                    <input type="hidden" id="imagenesExistentesInput" name="imagenesExistentes" value="@Model.Imagenes" />
+
+                    <!-- Nuevas imágenes -->
+                    <div class="mb-3">
+                        <label for="imagenesArchivos" class="control-label">Agregar nuevas imágenes</label>
+                        <input type="file" id="imagenesArchivos" name="imagenesArchivos" 
+                               class="form-control" multiple accept="image/*" />
+                        <small class="form-text text-muted">
+                            Formatos soportados: JPG, JPEG, PNG, GIF. 
+                            <span id="contadorImagenes">Imágenes actuales: @Model.ListaImagenes.Count / 5</span>
+                        </small>
+                    </div>
+                    
+                    <!-- Previsualización de nuevas imágenes -->
+                    <div id="previsualizacionNuevas" class="row g-2" style="display: none;"></div>
+                </div>
+            </div>
+
+            <!-- Botones -->
+            <div class="form-group mb-4">
+                <input type="submit" value="Baja"class="btn btn-danger me-2" id="btnBaja" />
+                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-primary me-2">Ver Detalles</a>
+                <a asp-action="Index" class="btn btn-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+    
+    <!-- Panel de información -->
+    <div class="col-md-4">
+        <div class="card">
             <div class="card-header">
-                <h6 class="mb-0">
-                    <i class="bi bi-shield-exclamation"></i> Políticas de Eliminación
-                </h6>
+                <h5 class="mb-0"><i class="bi bi-info-circle"></i> Información</h5>
             </div>
             <div class="card-body">
-                <ul class="small mb-0">
-                    <li>No se puede eliminar un inmueble con contratos activos</li>
-                    <li>Las imágenes se eliminarán del servidor</li>
-                    <li>Esta acción no se puede deshacer</li>
-                    <li>Se registrará en el historial del sistema</li>
+                 <div class="alert alert-danger">
+                     <i class="bi bi-info-circle"></i>
+                     @* <p><strong>Se dara de baja el inmueble. El inmueble mantendra la información solo cambiara su estado a baja.</strong></p> *@
+                     <strong>Nota:</strong> Se dara de baja el inmueble. El inmueble mantendra la información solo cambiara su estado a bajas.
+                 </div>
+               
+               
+                <p><strong>Baja inmueble ID:</strong> @Model.Id</p>
+                <p><strong>Dirección actual:</strong> @Model.Direccion</p>
+                <p><strong>Propietario actual:</strong> @Model.Propietario?.Nombre @Model.Propietario?.Apellido</p>
+                
+                <hr>
+                
+                <h6>Gestión de imágenes:</h6>
+                <ul class="small">
+                    <li>Se mantendran las imagenes.</li>               
                 </ul>
             </div>
         </div>
     </div>
+ </div>
 </div>
 
 <script>
-// Habilitar/deshabilitar botón según checkbox
-document.getElementById('confirmarEliminacion').addEventListener('change', function() {
-    const btnEliminar = document.getElementById('btnEliminar');
-    btnEliminar.disabled = !this.checked;
-    
-    if (this.checked) {
-        btnEliminar.classList.remove('btn-danger');
-        btnEliminar.classList.add('btn-outline-danger');
-    } else {
-        btnEliminar.classList.add('btn-danger');
-        btnEliminar.classList.remove('btn-outline-danger');
-    }
+
+$(document).ready(function () {
+    // Deshabilitar todos los campos menos los hidden y el botón de submit
+    $("#FormEdit :input")
+        .not(":hidden, :submit")
+        .prop("disabled", true);
 });
 
-// Confirmación adicional antes de enviar
-function confirmarEliminacion() {
-    const direccion = '@Model.Direccion';
-    const confirmacion = confirm(`¿Está completamente seguro que desea eliminar el inmueble ubicado en "${direccion}"?\n\nEsta acción NO se puede deshacer.`);
+function previsualizarNuevasImagenes(input) {
+    const previsualizacion = document.getElementById('previsualizacionNuevas');
+    const archivos = input.files;
     
-    if (confirmacion) {
-        // Deshabilitar botón para evitar doble click
-        const btnEliminar = document.getElementById('btnEliminar');
-        btnEliminar.disabled = true;
-        btnEliminar.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Eliminando...';
-        return true;
+    // Limpiar previsualización anterior
+    previsualizacion.innerHTML = '';
+    
+    if (archivos.length === 0) {
+        previsualizacion.style.display = 'none';
+        actualizarContador();
+        return;
     }
     
-    return false;
+    // Validar cantidad total
+    const totalImagenes = imagenesExistentesCount + archivos.length;
+    if (totalImagenes > 5) {
+        alert(`Solo se permiten máximo 5 imágenes en total. Actualmente tiene ${imagenesExistentesCount} imágenes existentes.`);
+        input.value = '';
+        return;
+    }
+    
+    previsualizacion.style.display = 'block';
+    
+    // Mostrar cada nueva imagen
+    Array.from(archivos).forEach((archivo, index) => {
+        if (archivo.type.startsWith('image/')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const col = document.createElement('div');
+                col.className = 'col-md-3 col-sm-4 col-6';
+                col.innerHTML = `
+                    <div class="card border-primary">
+                        <img src="${e.target.result}" class="card-img-top" 
+                             style="height: 120px; object-fit: cover;" 
+                             alt="Nueva imagen ${index + 1}">
+                        <div class="card-body p-2">
+                            <small class="text-primary"><strong>Nueva ${index + 1}</strong></small>
+                        </div>
+                    </div>
+                `;
+                previsualizacion.appendChild(col);
+            };
+            reader.readAsDataURL(archivo);
+        }
+    });
+    
+    actualizarContador();
 }
 
-// Efecto visual en las imágenes
-document.addEventListener('DOMContentLoaded', function() {
-    const imagenesCards = document.querySelectorAll('.card img');
-    imagenesCards.forEach(img => {
-        img.parentElement.style.position = 'relative';
-        img.style.filter = 'grayscale(50%)';
-    });
-});
 </script>
 
 <style>
-.overlay-delete {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(220, 53, 69, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    opacity: 0;
-    transition: opacity 0.3s ease;
+.imagen-existente {
+    transition: all 0.3s ease;
 }
 
-.card:hover .overlay-delete {
-    opacity: 1;
-}
-
-.btn-danger:disabled {
-    opacity: 0.6;
+.imagen-existente:hover {
+    transform: scale(1.02);
 }
 </style>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
