@@ -138,5 +138,30 @@ namespace Inmobiliaria.Models.Repositorio
             var tiposInmueble = ObtenerTodos();
             return new SelectList(tiposInmueble, "Id", "Descripcion");
         }
+        public int ObtenerCantidad()
+        {
+            int res = 0;
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                string sql = @$"
+					SELECT COUNT(Id)
+					FROM TipoInmuebles
+				";
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                {
+                    command.CommandType = CommandType.Text;
+                    connection.Open();
+                    var reader = command.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        res = reader.GetInt32(0);
+                    }
+                    connection.Close();
+                }
+            }
+            return res;
+        }
+
     }
 }
+

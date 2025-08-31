@@ -7,8 +7,8 @@ namespace Inmobiliaria.Models.Entidades
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        [StringLength(100)]
+        [Required(ErrorMessage = "Campo obligatorio")]
+        [StringLength(100, ErrorMessage = "Descripcion debe ser menor a 100 caracteres")]
         public string Descripcion { get; set; }
 
     }

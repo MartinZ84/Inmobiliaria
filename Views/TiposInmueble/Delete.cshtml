@@ -1,0 +1,116 @@
+@model Inmobiliaria.Models.Entidades.TipoInmueble
+
+@{
+    ViewData["Title"] = "Eliminar Tipo de inmueble";
+}
+
+<h4 class="mt-4 text-danger">
+    <i class="bi bi-exclamation-triangle"></i> Eliminar tipo de inmueble
+</h4>
+<hr />
+
+<div class="alert alert-warning" role="alert">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    <strong>¡Atención!</strong> Esta acción no se puede deshacer. 
+</div>
+
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-house-x"></i> Información del Tipo de Inmueble
+                </h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <dl class="row">
+                            <dt class="col-sm-4">Descripcion:</dt>
+                            <dd class="col-sm-8">@(Model.Descripcion?.ToString() ?? "No especificada") </dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Panel de confirmación -->
+    <div class="col-lg-4">
+        <div class="card border-danger">
+            <div class="card-header bg-danger text-white">
+                <h5 class="mb-0">
+                    <i class="bi bi-exclamation-triangle"></i> Confirmación
+                </h5>
+            </div>
+            <div class="card-body">
+                <p class="mb-3">
+                    <strong>¿Está seguro que desea eliminar este Tipo de inmueble de la lista?</strong>
+                </p>
+
+                <!-- Formulario de confirmación -->
+                <form asp-action="Delete" method="post" onsubmit="return confirmarEliminacion()">
+                    <input type="hidden" asp-for="Id" />
+                    
+                    <div class="mb-3">
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="confirmarEliminacion" required>
+                            <label class="form-check-label" for="confirmarEliminacion">
+                                <small>Confirmo que deseo eliminar este inmueble permanentemente</small>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="d-grid gap-2">
+                        <button type="submit" class="btn btn-danger" id="btnEliminar" disabled>
+                            <i class="bi bi-trash"></i> Confirmar Eliminación
+                        </button>
+                        <a asp-action="Index" class="btn btn-secondary">
+                            <i class="bi bi-arrow-left"></i> Volver al Listado
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+    </div>
+</div>
+
+<script>
+// Habilitar/deshabilitar botón según checkbox
+document.getElementById('confirmarEliminacion').addEventListener('change', function() {
+    const btnEliminar = document.getElementById('btnEliminar');
+    btnEliminar.disabled = !this.checked;
+    
+    if (this.checked) {
+        btnEliminar.classList.remove('btn-danger');
+        btnEliminar.classList.add('btn-outline-danger');
+    } else {
+        btnEliminar.classList.add('btn-danger');
+        btnEliminar.classList.remove('btn-outline-danger');
+    }
+});
+</script>
+<style>
+.overlay-delete {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(220, 53, 69, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.card:hover .overlay-delete {
+    opacity: 1;
+}
+
+.btn-danger:disabled {
+    opacity: 0.6;
+}
+</style>
