@@ -5,15 +5,22 @@ using System.Linq.Expressions;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 using Microsoft.AspNetCore.Html;
+using System.Reflection;
 
 namespace Inmobiliaria.Helpers
 {
     public static class HtmlEnumExtensions
     {
-        private static string GetDescription(Enum value)
+        // private static string GetDescription(Enum value)
+        // {
+        //     var field = value.GetType().GetField(value.ToString());
+        //     var attribute = (DescriptionAttribute?)Attribute.GetCustomAttribute(field!, typeof(DescriptionAttribute));
+        //     return attribute?.Description ?? value.ToString();
+        // }
+        public static string GetDescription(this Enum value)
         {
-            var field = value.GetType().GetField(value.ToString());
-            var attribute = (DescriptionAttribute?)Attribute.GetCustomAttribute(field!, typeof(DescriptionAttribute));
+            FieldInfo? field = value.GetType().GetField(value.ToString());
+            DescriptionAttribute? attribute = field?.GetCustomAttribute<DescriptionAttribute>();
             return attribute?.Description ?? value.ToString();
         }
 
@@ -38,4 +45,6 @@ namespace Inmobiliaria.Helpers
         }
 
     }
+
+    
 }

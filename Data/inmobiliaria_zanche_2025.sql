@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 29-08-2025 a las 14:47:54
+-- Tiempo de generación: 01-09-2025 a las 00:17:39
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -51,18 +51,6 @@ INSERT INTO `contratos` (`id`, `fechaInicio`, `fechaFin`, `estado`, `precio`, `i
 (53, '2022-07-02', '2022-08-01', 'Vigente', 50000, 3, 7, NULL, NULL, NULL),
 (55, '2023-04-23', '2024-04-22', 'Vigente', 80000, 13, 14, NULL, NULL, NULL);
 
-
-CREATE TABLE `tiposinmuebles` (
-  `id` int(11) NOT NULL,
-  `Descripcion` varchar(100) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
-INSERT INTO `tiposinmuebles` (`id`, `Descripcion`) VALUES
-(1, 'Casa'),
-(2, 'Monoambiente'),
-(3, 'Departamento'),
-(4, 'Local'),
-(5, 'Terreno');
 -- --------------------------------------------------------
 
 --
@@ -79,7 +67,7 @@ CREATE TABLE `inmuebles` (
   `precio` int(11) NOT NULL,
   `latitud` decimal(10,0) DEFAULT NULL,
   `longitud` decimal(10,0) DEFAULT NULL,
-  `estado` varchar(50) NOT NULL,
+  `estado` int(3) NOT NULL,
   `propietarioId` int(11) NOT NULL,
   `imagenes` varchar(255) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -89,13 +77,16 @@ CREATE TABLE `inmuebles` (
 --
 
 INSERT INTO `inmuebles` (`id`, `direccion`, `ambientes`, `superficie`, `tipInmId`, `uso`, `precio`, `latitud`, `longitud`, `estado`, `propietarioId`, `imagenes`) VALUES
-(1, 'Mitre 878, Ciudad de San Luis', 3, 50, 1, 'Residencial', 25000, 10, 20, 'Disponible', 1, NULL),
-(3, 'Rivadavia 523, Ciudad de San Luis', 5, 120, 1, 'Residencial', 50000, 8522552, 5855252, 'Disponible', 6, NULL),
-(7, 'San Justo 4555, Villa Larca, San Luis', 2, 70, 1, 'Comercial', 35000, 0, 0, 'Disponible', 4, NULL),
-(13, 'Colon 2542, Mendoza Capital', 4, 76, 2, 'Comercial', 67000, 0, 0, 'Disponible', 13, '/uploads/inmuebles/11e57bcf-c516-44a6-96f5-eb01c9d54029_Ubicacion terreno.png'),
-(14, 'Belgrano 45, San Luis', 5, 90, 1, 'Comercial', 80000, 0, 0, 'Disponible', 14, NULL),
-(20, 'Chacabuco 584', 3, 100, 1, 'Residencial', 1000000, NULL, NULL, 'Disponible', 14, '/uploads/inmuebles/ed8c04bc-c1fd-4fdf-b10b-dd882bc64e1b_Captura de pantalla 2025-07-13 123409.png'),
-(22, 'San Martin 89', 4, 152, 2, 'Residencial', 4545, 53, 54, 'Disponible', 4, '/uploads/inmuebles/916529eb-81ee-4537-a56d-0cbfc58ad753_Terreno venta.png');
+(1, 'Mitre 878, Ciudad de San Luis', 3, 50, 1, 'Residencial', 25000, 10, 20, 1, 1, NULL),
+(3, 'Rivadavia 523, Merlo', 1, 10, 2, 'Comercial', 45500, 45, 65, 2, 11, '/uploads/inmuebles/5ea86898-ddca-4a40-9000-4593d9dc4657_INMO.png'),
+(7, 'San Justo 4555, Villa Larca, San Luis', 2, 70, 1, 'Comercial', 35000, 0, 0, 3, 4, NULL),
+(13, 'Colon 2542, Mendoza Capital', 4, 76, 2, 'Comercial', 67000, 0, 0, 1, 13, '/uploads/inmuebles/11e57bcf-c516-44a6-96f5-eb01c9d54029_Ubicacion terreno.png'),
+(14, 'Belgrano 45, San Luis', 5, 90, 1, 'Comercial', 80000, 0, 0, 3, 14, NULL),
+(20, 'Chacabuco 584', 3, 100, 1, 'Residencial', 1000000, NULL, NULL, 1, 14, '/uploads/inmuebles/ed8c04bc-c1fd-4fdf-b10b-dd882bc64e1b_Captura de pantalla 2025-07-13 123409.png'),
+(22, 'San Martin 89', 4, 152, 2, 'Residencial', 4545, 53, 54, 1, 4, '/uploads/inmuebles/916529eb-81ee-4537-a56d-0cbfc58ad753_Terreno venta.png'),
+(23, 'Colon 2542, Mendoza Capital', 2, 30, 3, 'Residencial', 100000, 45445, 56445, 1, 4, '/uploads/inmuebles/7e50ceee-67af-480e-88d4-cd20f3779d85_Terreno Barrancas.png'),
+(24, 'Salta 458, Salta Capital', 5, 100, 1, 'Residencial', 5222, 546, 56, 2, 11, '/uploads/inmuebles/69d76abd-5c7c-4c8d-932c-b6e59e380ce5_sudamerica.jpg'),
+(25, 'Mexico 6347, San Luis Capital', 2, 100, 3, 'Residencial', 45455, 45, 45, 1, 6, NULL);
 
 -- --------------------------------------------------------
 
@@ -292,7 +283,7 @@ ALTER TABLE `contratos`
 -- AUTO_INCREMENT de la tabla `inmuebles`
 --
 ALTER TABLE `inmuebles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT de la tabla `inquilinos`
@@ -311,6 +302,12 @@ ALTER TABLE `pagos`
 --
 ALTER TABLE `propietarios`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+
+--
+-- AUTO_INCREMENT de la tabla `tiposinmuebles`
+--
+ALTER TABLE `tiposinmuebles`
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
@@ -336,7 +333,7 @@ ALTER TABLE `contratos`
 --
 ALTER TABLE `inmuebles`
   ADD CONSTRAINT `DELETE_INMUEBLE_CONTRATOS` FOREIGN KEY (`propietarioId`) REFERENCES `propietarios` (`id`),
-  ADD CONSTRAINT `FK_TIPINM_INMUEBLES` FOREIGN KEY (`tipInmId`) REFERENCES `TiposInmuebles` (`id`);
+  ADD CONSTRAINT `FK_TIPINM_INMUEBLES` FOREIGN KEY (`tipInmId`) REFERENCES `tiposinmuebles` (`id`);
 
 --
 -- Filtros para la tabla `pagos`

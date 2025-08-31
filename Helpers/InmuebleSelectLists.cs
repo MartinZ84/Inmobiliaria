@@ -17,10 +17,16 @@ namespace Inmobiliaria.Helpers
             return new SelectList(items, seleccionado);
         }
 
-        public static SelectList GetEstados(string? seleccionado = null)
+        public static SelectList GetEstados(int? seleccionado = null)
         {
-            var items = new List<string> { "Disponible", "No disponible" };
-            return new SelectList(items, seleccionado);
+            var items = new Dictionary<int, string>
+            {
+                { 1, "Disponible" },
+                { 2, "No disponible" },
+                { 3, "Baja" }
+            };
+
+            return new SelectList(items, "Key", "Value", seleccionado);
         }
     }
 }

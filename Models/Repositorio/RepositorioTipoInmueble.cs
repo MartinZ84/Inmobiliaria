@@ -133,10 +133,10 @@ namespace Inmobiliaria.Models.Repositorio
             return filasAfectadas;
         }
 
-        public SelectList GetTipos()
+        public SelectList GetTipos(int? seleccionado = null)
         {
             var tiposInmueble = ObtenerTodos();
-            return new SelectList(tiposInmueble, "Id", "Descripcion");
+            return new SelectList(tiposInmueble, "Id", "Descripcion", seleccionado);
         }
         public int ObtenerCantidad()
         {

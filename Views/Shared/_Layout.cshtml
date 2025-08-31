@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
@@ -9,6 +9,51 @@
     <link rel="stylesheet" href="~/Inmobiliaria.styles.css" asp-append-version="true" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <style>
+        /* Estilos para el submenú colapsible */
+        .submenu-arrow {
+            transition: transform 0.3s ease;
+            font-size: 0.8rem;
+        }
+        
+        .submenu-arrow.rotated {
+            transform: rotate(90deg);
+        }
+        
+        .nav-link:hover .submenu-arrow {
+            color: #fff !important;
+        }
+        
+        /* Estilos para los elementos del submenú */
+        .nav-item .nav-item .nav-link {
+            font-size: 0.9rem;
+            padding-left: 2rem !important;
+        }
+        
+        .nav-item .nav-item .nav-link:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-radius: 0.25rem;
+        }
+        
+        /* Estilos para elementos activos/con foco */
+        .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.2) !important;
+            border-radius: 0.25rem;
+            font-weight: bold;
+        }
+        
+        .nav-item .nav-item .nav-link.active {
+            background-color: rgba(255, 255, 255, 0.25) !important;
+            color: #fff !important;
+            font-weight: bold;
+        }
+        
+        /* Efecto de enfoque para el menú padre cuando tiene submenú activo */
+        .nav-link.parent-active {
+            background-color: rgba(255, 255, 255, 0.1) !important;
+            border-radius: 0.25rem;
+        }
+    </style>
 </head>
 <body>
     <header>
@@ -25,30 +70,47 @@
         <div class="row">
             <!-- Sidebar -->
             <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
-                @* <div class="sidebar-header p-3 bg-primary text-white">
-                    <h3><i class="bi bi-building"></i> Inmobiliaria</h3>
-                </div> *@
                 <ul class="nav flex-column components">
                     <li class="nav-item">
-                        <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index">
+                        <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index" onclick="setActiveMenu(this)">
                             <i class="bi bi-house-door"></i> Inicio
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" asp-area="" asp-controller="Propietarios" asp-action="Index">
+                        <a class="nav-link text-white" asp-area="" asp-controller="Propietarios" asp-action="Index" onclick="setActiveMenu(this)">
                             <i class="bi bi-person-badge"></i> Propietarios
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-white" asp-area="" asp-controller="Inquilinos" asp-action="Index">
+                        <a class="nav-link text-white" asp-area="" asp-controller="Inquilinos" asp-action="Index" onclick="setActiveMenu(this)">
                             <i class="bi bi-people"></i> Inquilinos
                         </a>
                     </li>
-                   <li class="nav-item">
-                        <a class="nav-link text-white" asp-area="" asp-controller="Inmuebles" asp-action="Index">
-                            <i class="bi bi-building"></i> Inmuebles
+                    
+                    <!-- Menú de Inmuebles con submenú colapsible -->
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="#" id="inmueblesToggle" onclick="toggleSubmenu('inmueblesSubmenu', this)">
+                            <i class="bi bi-building"></i> Inmuebles <i class="bi bi-chevron-right float-end submenu-arrow"></i>
                         </a>
+                        <ul class="nav flex-column ms-3" id="inmueblesSubmenu" style="display: none;">
+                            <li class="nav-item">
+                                <a class="nav-link text-white-50 py-1" asp-controller="Inmuebles" asp-action="Index" onclick="setActiveSubmenu(this, 'inmueblesToggle'); return true;">
+                                    <i class="bi bi-list-ul"></i> Todos
+                                </a>
+                            </li>
+                            @* <li class="nav-item">
+                                <a class="nav-link text-white-50 py-1" asp-controller="Inmuebles" asp-action="Index" asp-route-estado="Disponible" onclick="setActiveSubmenu(this, 'inmueblesToggle'); return true;">
+                                    <i class="bi bi-check-circle"></i> Inmuebles Disponibles
+                                </a>
+                            </li> *@
+                            <li class="nav-item">
+                                <a class="nav-link text-white-50 py-1" asp-controller="Inmuebles" asp-action="Index" asp-route-estado="3" onclick="setActiveSubmenu(this, 'inmueblesToggle'); return true;">
+                                    <i class="bi bi-x-circle"></i> Inmuebles dados de baja
+                                </a>
+                            </li>
+                        </ul>
                     </li>
+                    
                     <li class="nav-item"></li>
                         <a class="nav-link text-white" asp-area="" asp-controller="TiposInmueble" asp-action="Index">
                             <i class="bi bi-building"></i> Tipos de Inmueble
@@ -121,6 +183,120 @@
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+    
+    <script>
+        function toggleSubmenu(submenuId, toggleElement) {
+            const submenu = document.getElementById(submenuId);
+            const arrow = toggleElement.querySelector('.submenu-arrow');
+            
+            if (submenu.style.display === 'none' || submenu.style.display === '') {
+                submenu.style.display = 'block';
+                arrow.classList.add('rotated');
+            } else {
+                submenu.style.display = 'none';
+                arrow.classList.remove('rotated');
+            }
+        }
+        
+        function setActiveMenu(element) {
+            // Remover clase active de todos los enlaces principales
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active', 'parent-active');
+            });
+            
+            // Agregar clase active al elemento clickeado
+            element.classList.add('active');
+            
+            // Cerrar todos los submenús
+            document.querySelectorAll('[id$="Submenu"]').forEach(submenu => {
+                submenu.style.display = 'none';
+            });
+            document.querySelectorAll('.submenu-arrow').forEach(arrow => {
+                arrow.classList.remove('rotated');
+            });
+        }
+        
+        function setActiveSubmenu(element, parentId) {
+            // Remover clase active de todos los enlaces
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.classList.remove('active', 'parent-active');
+            });
+            
+            // Agregar clase active al submenú clickeado
+            element.classList.add('active');
+            
+            // Agregar clase parent-active al menú padre
+            const parentElement = document.getElementById(parentId);
+            if (parentElement) {
+                parentElement.classList.add('parent-active');
+            }
+            
+            // Asegurar que el submenú permanezca abierto
+            const submenu = document.getElementById('inmueblesSubmenu');
+            const arrow = parentElement ? parentElement.querySelector('.submenu-arrow') : null;
+            if (submenu && arrow) {
+                submenu.style.display = 'block';
+                arrow.classList.add('rotated');
+            }
+            
+            // Guardar el estado en sessionStorage para mantenerlo después de la navegación
+            sessionStorage.setItem('activeSubmenu', element.textContent.trim());
+            sessionStorage.setItem('submenuOpen', 'true');
+        }
+        
+        // Función para mantener el estado activo al cargar la página
+        document.addEventListener('DOMContentLoaded', function() {
+            const currentPath = window.location.pathname.toLowerCase();
+            const urlParams = new URLSearchParams(window.location.search);
+            
+            // Si estamos en la página de inmuebles
+            if (currentPath.includes('/inmuebles')) {
+                const estado = urlParams.get('estado');
+                
+                // Activar el menú padre de inmuebles
+                const parentToggle = document.getElementById('inmueblesToggle');
+                if (parentToggle) {
+                    parentToggle.classList.add('parent-active');
+                }
+                
+                // Mostrar el submenú
+                const submenu = document.getElementById('inmueblesSubmenu');
+                const arrow = parentToggle ? parentToggle.querySelector('.submenu-arrow') : null;
+                if (submenu && arrow) {
+                    submenu.style.display = 'block';
+                    arrow.classList.add('rotated');
+                }
+                
+                // Activar el submenú correspondiente
+                let activeSubmenuLink = null;
+                if (estado === 'Disponible') {
+                    activeSubmenuLink = submenu.querySelector('a[asp-route-estado="Disponible"]');
+                } else if (estado === 'Baja') {
+                    activeSubmenuLink = submenu.querySelector('a[asp-route-estado="Baja"]');
+                } else {
+                    // Para "Todos" (sin parámetro de estado)
+                    activeSubmenuLink = submenu.querySelector('a:not([asp-route-estado])');
+                }
+                
+                if (activeSubmenuLink) {
+                    activeSubmenuLink.classList.add('active');
+                }
+            } else {
+                // Para otros menús principales
+                if (currentPath.includes('/home') || currentPath === '/') {
+                    const homeLink = document.querySelector('a[asp-controller="Home"]');
+                    if (homeLink) homeLink.classList.add('active');
+                } else if (currentPath.includes('/propietarios')) {
+                    const propLink = document.querySelector('a[asp-controller="Propietarios"]');
+                    if (propLink) propLink.classList.add('active');
+                } else if (currentPath.includes('/inquilinos')) {
+                    const inquiLink = document.querySelector('a[asp-controller="Inquilinos"]');
+                    if (inquiLink) inquiLink.classList.add('active');
+                }
+            }
+        });
+    </script>
+    
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

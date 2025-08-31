@@ -97,14 +97,26 @@
 
                             <dt class="col-sm-4">Estado:</dt>
                             <dd class="col-sm-8">
-                                @if (Model.EstaDisponible)
+                                @* @if (Model.EstaDisponible)
                                 {
                                     <span class="badge bg-success">@Model.Estado</span>
                                 }
                                 else
                                 {
                                     <span class="badge bg-danger">@Model.Estado</span>
-                                }
+                                } *@
+                                @if (Model.EstadoNumero == 1)
+                                    {
+                                        <span class="badge bg-success">Disponible</span>
+                                    }
+                                    else if (Model.EstadoNumero == 2 )
+                                    {
+                                        <span class="badge bg-danger">No Disponible</span>
+                                    }
+                                    else if (Model.EstadoNumero == 3)
+                                    {
+                                        <span class="badge bg-secondary">Baja</span>
+                                    }
                             </dd>
 
                             <dt class="col-sm-4">Propietario:</dt>

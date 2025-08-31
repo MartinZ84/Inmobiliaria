@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Inmobiliaria.Helpers;
 using Inmobiliaria.Models.Enums;
 
 namespace Inmobiliaria.Models.Entidades
@@ -29,7 +30,7 @@ namespace Inmobiliaria.Models.Entidades
         [Required(ErrorMessage = "El tipo de inmueble es obligatorio")]
         [Display(Name = "Tipo de Inmueble")]
         public int? TipoInmId { get; set; }
-        
+
         public TipoInmueble? TipoInmueble { get; set; }
 
 
@@ -53,8 +54,8 @@ namespace Inmobiliaria.Models.Entidades
         // [StringLength(50, ErrorMessage = "El estado no puede superar los 50 caracteres")]
         [Display(Name = "Estado")]
         // public string Estado { get; set; } = "";        
-        public EstadoInmueble Estado { get; set; }   
-        public int EstadoBd { get; set; }   
+        public EstadoInmueble Estado { get; set; }
+        public int EstadoBd { get; set; }
 
         [Required(ErrorMessage = "El propietario es obligatorio")]
         [Display(Name = "Propietario")]
@@ -74,7 +75,7 @@ namespace Inmobiliaria.Models.Entidades
             {
                 if (string.IsNullOrEmpty(Imagenes))
                     return new List<string>();
-                
+
                 return Imagenes.Split(',', StringSplitOptions.RemoveEmptyEntries)
                               .Select(img => img.Trim())
                               .Where(img => !string.IsNullOrEmpty(img))
@@ -99,13 +100,14 @@ namespace Inmobiliaria.Models.Entidades
             }
         }
 
-            // Nueva propiedad calculada para la vista
-    public string PrimeraImagenDisplay => string.IsNullOrWhiteSpace(PrimeraImagen) 
-                                           ? "/images/no-image.png"  // placeholder
-                                           : PrimeraImagen.Trim();
+        // Nueva propiedad calculada para la vista
+        public string PrimeraImagenDisplay => string.IsNullOrWhiteSpace(PrimeraImagen)
+                                               ? "/images/no-image.png"  // placeholder
+                                               : PrimeraImagen.Trim();
 
         // Método helper para verificar disponibilidad
         public bool EstaDisponible => Estado == EstadoInmueble.Disponible;
+        public int EstadoNumero => (int)Estado;
 
     }
 }
