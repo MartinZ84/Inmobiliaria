@@ -5,8 +5,13 @@
     var TotalPaginas = ViewBag.TotalPaginas ?? 1;
 }
 
-<h1 class="mt-4">Listado</h1>
+<h1 class="mt-4">Listado Tipos Inmueble</h1>
 <hr />
+    <div class="col-md-2 d-flex align-items-start mb-2">
+        <a asp-action="Create" class="btn btn-primary w-100">
+            <i class="bi bi-plus-circle me-1"></i>Nuevo
+        </a>
+    </div>
 
 @await Html.PartialAsync("_AutoDismissAlert")
 

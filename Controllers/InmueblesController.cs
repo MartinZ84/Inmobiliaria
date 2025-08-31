@@ -84,7 +84,7 @@ namespace Inmobiliaria.Controllers
         //         return View(new List<Inmueble>());
         //     }
         // }
-        public ActionResult Index(string? tipo = null,
+        public ActionResult Index(int? tipo = null,
             string? uso = null, int? estado = null, int? precioMin = null, int? precioMax = null, int pagina = 1)
         {
             try
@@ -92,7 +92,7 @@ namespace Inmobiliaria.Controllers
                 IList<Inmueble> inmuebles;
                 var tamaño = 6;
 
-                if (!string.IsNullOrWhiteSpace(tipo) ||
+                if (tipo.HasValue ||
                     !string.IsNullOrWhiteSpace(uso) || estado.HasValue ||
                     precioMin.HasValue || precioMax.HasValue)
                 {
@@ -125,9 +125,10 @@ namespace Inmobiliaria.Controllers
 
                 // Cargar selects con seleccionado
                 //ViewBag.Tipos = InmuebleSelectLists.GetTipos(tipo);
-                var tipos = repoTipoInm.GetTipos();
+                var tipos = repoTipoInm.GetTipos(tipo);
                 //ViewBag.Tipos = new SelectList(tipos, "Id", "Descripcion");
-                ViewBag.Tipos = tipos;
+                ViewBag.Tipos = tipos;              
+              
                 ViewBag.Usos = InmuebleSelectLists.GetUsos(uso);
                 ViewBag.Estados = InmuebleSelectLists.GetEstados(estado);
 
@@ -143,7 +144,7 @@ namespace Inmobiliaria.Controllers
             }
         }
         
-        public ActionResult IndexBaja(string? tipo = null,
+        public ActionResult IndexBaja(int? tipo = null,
             string? uso = null, int? estado = null, int? precioMin = null, int? precioMax = null, int pagina = 1)
         {
             try
@@ -151,7 +152,7 @@ namespace Inmobiliaria.Controllers
                 IList<Inmueble> inmuebles;
                 var tamaño = 6;
 
-                if (!string.IsNullOrWhiteSpace(tipo) ||
+                if (!tipo.HasValue ||
                     !string.IsNullOrWhiteSpace(uso) || estado.HasValue ||
                     precioMin.HasValue || precioMax.HasValue)
                 {

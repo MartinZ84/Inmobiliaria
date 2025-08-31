@@ -192,14 +192,13 @@ namespace Inmobiliaria.Models.Repositorio
             return result;
         }
 
-        public IList<Inmueble> BuscarInmueblesConValidacion(string? tipo = null,
+        public IList<Inmueble> BuscarInmueblesConValidacion(int? tipo = null,
             string? uso = null, int? estado = null, int? precioMin = null, int? precioMax = null)
         {
             var inmuebles = new List<Inmueble>();
 
             // Validar que al menos un criterio esté presente
-            if (string.IsNullOrWhiteSpace(tipo) &&
-                string.IsNullOrWhiteSpace(uso) && !estado.HasValue &&
+            if (!tipo.HasValue && string.IsNullOrWhiteSpace(uso) && !estado.HasValue &&
                 !precioMin.HasValue && !precioMax.HasValue)
             {
                 return inmuebles; // Retornar lista vacía si no hay criterios
@@ -222,10 +221,10 @@ namespace Inmobiliaria.Models.Repositorio
                 //     parameters.Add(new MySqlParameter("@direccion", $"%{direccion.Trim()}%"));
                 // }
 
-                if (!string.IsNullOrWhiteSpace(tipo))
+                if (tipo.HasValue)
                 {
-                    sql += " AND i.tipo LIKE @tipo";
-                    parameters.Add(new MySqlParameter("@tipo", $"%{tipo.Trim()}%"));
+                    sql += " AND i.tipInmId = @tipo";
+                    parameters.Add(new MySqlParameter("@tipo", tipo.Value));
                 }
 
                 if (!string.IsNullOrWhiteSpace(uso))
