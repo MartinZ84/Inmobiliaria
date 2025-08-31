@@ -51,6 +51,18 @@ INSERT INTO `contratos` (`id`, `fechaInicio`, `fechaFin`, `estado`, `precio`, `i
 (53, '2022-07-02', '2022-08-01', 'Vigente', 50000, 3, 7, NULL, NULL, NULL),
 (55, '2023-04-23', '2024-04-22', 'Vigente', 80000, 13, 14, NULL, NULL, NULL);
 
+
+CREATE TABLE `tiposinmuebles` (
+  `id` int(11) NOT NULL,
+  `Descripcion` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+INSERT INTO `tiposinmuebles` (`id`, `Descripcion`) VALUES
+(1, 'Casa'),
+(2, 'Monoambiente'),
+(3, 'Departamento'),
+(4, 'Local'),
+(5, 'Terreno');
 -- --------------------------------------------------------
 
 --
@@ -299,7 +311,7 @@ ALTER TABLE `contratos`
 --
 ALTER TABLE `inmuebles`
   ADD CONSTRAINT `DELETE_INMUEBLE_CONTRATOS` FOREIGN KEY (`propietarioId`) REFERENCES `propietarios` (`id`),
-  ADD CONSTRAINT `FK_TIPINM_INMUEBLES` FOREIGN KEY (`tipInmId`) REFERENCES `tiposinmuebles` (`id`);
+  ADD CONSTRAINT `FK_TIPINM_INMUEBLES` FOREIGN KEY (`tipInmId`) REFERENCES `TiposInmuebles` (`id`);
 
 --
 -- Filtros para la tabla `pagos`
