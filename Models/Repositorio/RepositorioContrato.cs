@@ -1,6 +1,7 @@
 using MySql.Data.MySqlClient;
 using Inmobiliaria.Models;
 using Inmobiliaria.Models.Entidades;
+using System.Data;
 
 namespace Inmobiliaria.Models.Repositorio
 {
@@ -23,15 +24,16 @@ namespace Inmobiliaria.Models.Repositorio
 
 
 
-		public IList<Contrato> ObtenerTodos()
+		public IList<Contrato> ObtenerTodos(int paginaNro = 1, int tamPagina = 10)
 		{
 			IList<Contrato> res = new List<Contrato>();
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
-				string sql = "SELECT c.Id, FechaInicio, FechaFin, c.Estado, c.Precio, InquilinoId, InmuebleId, " +
+				string sql = @$"SELECT c.Id, FechaInicio, FechaFin, c.Estado, c.Precio, InquilinoId, InmuebleId, " +
 					" inq.Nombre, inq.Apellido, inm.Id, inm.Direccion " +
 					" FROM Contratos c INNER JOIN Inquilinos inq ON c.InquilinoId = inq.Id " +
-					"INNER JOIN Inmuebles inm ON inm.Id= c.InmuebleId " + "ORDER BY c.FechaInicio ASC";
+					"INNER JOIN Inmuebles inm ON inm.Id= c.InmuebleId " + "ORDER BY c.FechaInicio ASC " +
+					$"LIMIT {tamPagina} OFFSET {(paginaNro - 1) * tamPagina}";
 				using (MySqlCommand command = new MySqlCommand(sql, connection))
 				{
 					//command.CommandType = CommandType.Text;
@@ -59,7 +61,7 @@ namespace Inmobiliaria.Models.Repositorio
 								Id = reader.GetInt32(nameof(Inmueble.Id)),
 								Direccion = reader.GetString(nameof(Inmueble.Direccion)),
 							},
-					
+
 						};
 						res.Add(contrato);
 					}
@@ -134,7 +136,7 @@ namespace Inmobiliaria.Models.Repositorio
 					command.Parameters.AddWithValue("@precio", contrato.Precio);
 					command.Parameters.AddWithValue("@inquilinoId", contrato.InquilinoId);
 					command.Parameters.AddWithValue("@inmuebleId", contrato.InmuebleId);
-		
+
 					command.Parameters.AddWithValue
 					("@Id", contrato.Id);
 					// command.Parameters.AddWithValue($"@{nameof(contrato.Dni_Garante)}",contrato.Dni_Garante);
@@ -190,7 +192,7 @@ namespace Inmobiliaria.Models.Repositorio
 								Id = reader.GetInt32(nameof(Inmueble.Id)),
 								Direccion = reader.GetString(nameof(Inmueble.Direccion)),
 							},
-					
+
 						};
 					}
 					connection.Close();
@@ -238,7 +240,7 @@ namespace Inmobiliaria.Models.Repositorio
 								Id = reader.GetInt32(6),
 								Direccion = reader.GetString(9),
 							},
-						
+
 						};
 						res.Add(contrato);
 					}
@@ -285,7 +287,7 @@ namespace Inmobiliaria.Models.Repositorio
 								Id = reader.GetInt32(6),
 								Direccion = reader.GetString(9),
 							},
-					
+
 						};
 						res.Add(contrato);
 					}
@@ -307,7 +309,7 @@ namespace Inmobiliaria.Models.Repositorio
 					"WHERE  FechaInicio > NOW() OR FechaFin <= NOW() OR c.Estado='No vigente' " + " ORDER BY FechaFin ASC";
 				using (MySqlCommand command = new MySqlCommand(sql, connection))
 				{
-					//command.CommandType = CommandType.Text;
+					command.CommandType = CommandType.Text;
 					connection.Open();
 					var reader = command.ExecuteReader();
 					while (reader.Read())
@@ -332,7 +334,7 @@ namespace Inmobiliaria.Models.Repositorio
 								Id = reader.GetInt32(6),
 								Direccion = reader.GetString(9),
 							},
-				
+
 						};
 						res.Add(contrato);
 					}
@@ -341,5 +343,30 @@ namespace Inmobiliaria.Models.Repositorio
 			}
 			return res;
 		}
+
+		public int ObtenerCantidad()
+	{
+		int res = 0;
+		using (MySqlConnection connection = new MySqlConnection(connectionString))
+		{
+			string sql = @$"
+					SELECT COUNT(Id)
+					FROM Propietarios
+				";
+			using (MySqlCommand command = new MySqlCommand(sql, connection))
+			{
+				command.CommandType = CommandType.Text;
+				connection.Open();
+				var reader = command.ExecuteReader();
+				if (reader.Read())
+				{
+					res = reader.GetInt32(0);
+				}
+				connection.Close();
+			}
+		}
+		return res;
+	}
+		
 	}
 }

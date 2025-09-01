@@ -20,15 +20,15 @@ namespace Inmobiliaria.Controllers
     private readonly RepositorioTipoInmueble repoTipoInm;
     private readonly IWebHostEnvironment webHostEnvironment;
 
-    public ContratosController(RepositorioContrato repositorio, RepositorioPropietario repositorioPropietario, RepositorioTipoInmueble repoTipoInm, RepositorioInquilino repositorioInquilino ,RepositorioInmueble repositorioInmueble, IWebHostEnvironment webHostEnvironment)
+    public ContratosController(RepositorioContrato repositorio, RepositorioPropietario repositorioPropietario, RepositorioTipoInmueble repoTipoInm, RepositorioInquilino repositorioInquilino, RepositorioInmueble repositorioInmueble, IWebHostEnvironment webHostEnvironment)
     {
       this.repositorio = repositorio;
       this.repositorioPropietario = repositorioPropietario;
       this.repoTipoInm = repoTipoInm;
-      this.webHostEnvironment = webHostEnvironment;  
- 
-    this.repositorioInquilino = repositorioInquilino;
-    this.repositorioInmueble = repositorioInmueble;
+      this.webHostEnvironment = webHostEnvironment;
+
+      this.repositorioInquilino = repositorioInquilino;
+      this.repositorioInmueble = repositorioInmueble;
 
     }
     // GET: Contratos
@@ -51,27 +51,33 @@ namespace Inmobiliaria.Controllers
     // }
 
     public IActionResult Index(string? dni, string? nombre, string? apellido, int pagina = 1)
-{
-    var contratos = repositorio.ObtenerTodos();
+    {
+      var tamaño = 10;
+      var contratos = repositorio.ObtenerTodos(pagina, tamaño);
 
-    // Aquí podés aplicar filtros si querés, ejemplo por inquilino:
-    if (!string.IsNullOrEmpty(dni))
+      foreach (var contrato in contratos)
+      {
+        contrato.Inquilino = repositorioInquilino.ObtenerPorId(contrato.InquilinoId);
+        contrato.Inmueble = repositorioInmueble.ObtenerPorId(contrato.InmuebleId);
+      }
+
+      // Aquí podés aplicar filtros si querés, ejemplo por inquilino:
+      if (!string.IsNullOrEmpty(dni))
         contratos = contratos.Where(c => c.Inquilino.Dni.Contains(dni)).ToList();
 
-    if (!string.IsNullOrEmpty(nombre))
+      if (!string.IsNullOrEmpty(nombre))
         contratos = contratos.Where(c => c.Inquilino.Nombre.Contains(nombre)).ToList();
 
-    if (!string.IsNullOrEmpty(apellido))
+      if (!string.IsNullOrEmpty(apellido))
         contratos = contratos.Where(c => c.Inquilino.Apellido.Contains(apellido)).ToList();
 
-    // Paginación simple
-    int pageSize = 10;
-    int totalContratos = contratos.Count();
-    int totalPaginas = (int)Math.Ceiling(totalContratos / (double)pageSize);
-    contratos = contratos.Skip((pagina - 1) * pageSize).Take(pageSize).ToList();
 
-    var vm = new ContratosIndexViewModel
-    {
+      ViewBag.Pagina = pagina;
+      var total = repositorio.ObtenerCantidad();
+      ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
+      int totalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
+      var vm = new ContratosIndexViewModel
+      {
         Contratos = contratos,
         Inquilinos = repositorioInquilino.ObtenerTodos(),
         Inmuebles = repositorioInmueble.ObtenerTodos(),
@@ -80,14 +86,14 @@ namespace Inmobiliaria.Controllers
         Apellido = apellido,
         Pagina = pagina,
         TotalPaginas = totalPaginas
-    };
+      };
 
-    return View(vm);
-}
+      return View(vm);
+    }
 
 
     // GET: Contratos/Details/5
-    [Authorize(Policy = "Empleado")]
+    //[Authorize(Policy = "Empleado")]
     public ActionResult Details(int id)
     {
 
@@ -105,7 +111,7 @@ namespace Inmobiliaria.Controllers
     }
 
     // GET: Contratos/Create
-   // [Authorize(Policy = "Empleado")]
+    // [Authorize(Policy = "Empleado")]
     public ActionResult Create()
     {
       TempData.Remove("returnUrl");
@@ -116,7 +122,7 @@ namespace Inmobiliaria.Controllers
       return View();
     }
 
-   // [Authorize(Policy = "Empleado")]
+    // [Authorize(Policy = "Empleado")]
     public ActionResult CreateByInmId(int id)
     {
       TempData.Remove("returnUrl");
@@ -132,7 +138,7 @@ namespace Inmobiliaria.Controllers
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-   // [Authorize(Policy = "Empleado")]
+    // [Authorize(Policy = "Empleado")]
     public ActionResult Create(Contrato contrato)
     {
 
@@ -250,7 +256,7 @@ namespace Inmobiliaria.Controllers
     // POST: Contratos/Delete/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-   // [Authorize(Policy = "Empleado")]
+    // [Authorize(Policy = "Empleado")]
     public ActionResult Delete(int id, Contrato contrato)
     {
       try

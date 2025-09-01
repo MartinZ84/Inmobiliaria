@@ -28,6 +28,8 @@
                 <th>Inmueble</th>
                 <th>Fecha Inicio</th>
                 <th>Fecha Fin</th>
+                <th>Precio</th>
+                <th>Estado</th>
                 <th>Acciones</th>
             </tr>
         </thead>
@@ -38,10 +40,12 @@
                 {
                     <tr>
                         <td>@contrato.Id</td>
-                        <td>@contrato.Inquilino?.Nombre @contrato.Inquilino?.Apellido</td>
-                        <td>@contrato.Inmueble?.Direccion</td>
+                        <td>@contrato.Inquilino?.Dni - @contrato.Inquilino?.Nombre @contrato.Inquilino?.Apellido </td>
+                        <td>@contrato.Inmueble?.Id - @contrato.Inmueble?.Direccion</td>
                         <td>@contrato.FechaInicio.ToShortDateString()</td>
                         <td>@contrato.FechaFin.ToShortDateString()</td>
+                        <td>@contrato.Precio.ToString("C")</td>
+                        <td>@contrato.Estado</td>
                         <td>
                             <div class="dropdown">
                                 <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
@@ -50,19 +54,19 @@
                                 <ul class="dropdown-menu">
                                     <li>
                                         <a class="dropdown-item" asp-action="Edit" asp-route-id="@contrato.Id">
-                                            <i class="bi bi-pencil text-success"></i>Editar
+                                            <i class="bi bi-pencil text-success"></i> Editar
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" asp-action="Details" asp-route-id="@contrato.Id">
-                                            <i class="bi bi-info-circle text-warning"></i>Detalles
+                                            <i class="bi bi-info-circle text-warning"></i> Detalles
                                         </a>
                                     </li>
                                     <li>
                                         <a class="dropdown-item" asp-action="Delete" asp-route-id="@contrato.Id">
-                                            <i class="bi bi-trash text-danger"></i>Borrar
+                                            <i class="bi bi-trash text-danger"></i> Borrar
                                         </a>
-                                    </li>
+                                    </li>   
                                 </ul>
                             </div>
                         </td>

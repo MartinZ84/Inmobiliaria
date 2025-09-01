@@ -277,16 +277,42 @@ namespace Inmobiliaria.Models.Repositorio
 
         public IList<Inmueble> ObtenerDisponibles()
         {
-            var inmuebles = new List<Inmueble>();
-            using (var connection = new MySqlConnection(connectionString))
+            // var inmuebles = new List<Inmueble>();
+            // using (var connection = new MySqlConnection(connectionString))
+            // {
+            //     var sql = @"
+            //         SELECT i.*, p.nombre as PropietarioNombre, p.apellido as PropietarioApellido, ti.descripcion as TipoInmuebleDescripcion
+            //         FROM inmuebles i 
+            //         INNER JOIN propietarios p ON i.propietarioId = p.id
+            //         INNER JOIN tiposInmuebles ti ON i.tipInmId = ti.id
+            //         WHERE i.estado = 1
+            //         ORDER BY i.id";
+
+            //     using (var command = new MySqlCommand(sql, connection))
+            //     {
+            //         connection.Open();
+            //         using (var reader = command.ExecuteReader())
+            //         {
+            //             while (reader.Read())
+            //             {
+            //                 inmuebles.Add(MapearInmueble(reader));
+            //             }
+            //         }
+            //     }
+            // }
+            // return inmuebles;
+            IList<Inmueble> res = new List<Inmueble>();
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                var sql = @"
-                    SELECT i.*, p.nombre as PropietarioNombre, p.apellido as PropietarioApellido, ti.descripcion as TipoInmuebleDescripcion
+                string sql = @$"
+					SELECT i.*, p.nombre as PropietarioNombre, p.apellido as PropietarioApellido, ti.descripcion as TipoInmuebleDescripcion
                     FROM inmuebles i 
                     INNER JOIN propietarios p ON i.propietarioId = p.id
                     INNER JOIN tiposInmuebles ti ON i.tipInmId = ti.id
                     WHERE i.estado = 1
-                    ORDER BY i.id";
+                    ORDER BY i.id
+					       
+				";
 
                 using (var command = new MySqlCommand(sql, connection))
                 {
@@ -295,12 +321,12 @@ namespace Inmobiliaria.Models.Repositorio
                     {
                         while (reader.Read())
                         {
-                            inmuebles.Add(MapearInmueble(reader));
+                            res.Add(MapearInmueble(reader));
                         }
                     }
                 }
             }
-            return inmuebles;
+            return res;
         }
 
         private Inmueble MapearInmueble(MySqlDataReader reader)
@@ -430,10 +456,15 @@ namespace Inmobiliaria.Models.Repositorio
             IList<Inmueble> res = new List<Inmueble>();
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                string sql = "SELECT i.Id, Direccion, Ambientes, Superficie, Tipo, Uso, Precio,Latitud, Longitud, Estado, PropietarioId," +
-                    " p.Nombre, p.Apellido" +
-                    " FROM Inmuebles i INNER JOIN Propietarios p ON i.PropietarioId = p.Id " +
-                    " WHERE i.Estado = 'Disponible'";
+               string sql = @$"
+					SELECT i.*, p.nombre as PropietarioNombre, p.apellido as PropietarioApellido, ti.descripcion as TipoInmuebleDescripcion
+                    FROM inmuebles i 
+                    INNER JOIN propietarios p ON i.propietarioId = p.id
+                    INNER JOIN tiposInmuebles ti ON i.tipInmId = ti.id
+                    WHERE i.estado = 1
+                    ORDER BY i.id
+					       
+				";
                 using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
                     //command.CommandType = CommandType.Text;
