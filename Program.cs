@@ -12,7 +12,7 @@ builder.Services.AddScoped<RepositorioInquilino>();
 builder.Services.AddScoped<RepositorioInmueble>();
 builder.Services.AddScoped<RepositorioTipoInmueble>();
 builder.Services.AddTransient<RepositorioTipoInmueble>();
-
+builder.Services.AddScoped<RepositorioContrato>();
 
 
 // 2. Configurar localización ANTES de Build()

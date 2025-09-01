@@ -23,7 +23,7 @@ namespace Inmobiliaria.Models.Repositorio
                     SELECT i.*, p.nombre as PropietarioNombre, p.apellido as PropietarioApellido, ti.descripcion as TipoInmuebleDescripcion
                     FROM inmuebles i 
                     INNER JOIN propietarios p ON i.propietarioId = p.id
-                    INNER JOIN tipos_inmuebles ti ON i.tipInmId = ti.id
+                    INNER JOIN tiposInmuebles ti ON i.tipInmId = ti.id
                     ORDER BY i.id";
 
                 using (var command = new MySqlCommand(sql, connection))
@@ -172,9 +172,9 @@ namespace Inmobiliaria.Models.Repositorio
         //     }
         //     return result;
         // }
-         public int BajaLogica(int id)
+        public int BajaLogica(int id)
         {
-            int result = 0;         
+            int result = 0;
             var baja = (int)EstadoInmueble.Baja;
             using (var connection = new MySqlConnection(connectionString))
             {
@@ -359,7 +359,7 @@ namespace Inmobiliaria.Models.Repositorio
                     Telefono = reader.GetString("PropietarioTelefono"),
                     Email = reader.GetString("PropietarioEmail")
                 },
-                  TipoInmueble = new TipoInmueble
+                TipoInmueble = new TipoInmueble
                 {
                     Id = reader.GetInt32("tipInmId"),
                     Descripcion = reader.GetString("TipoInmuebleDescripcion")
@@ -424,8 +424,67 @@ namespace Inmobiliaria.Models.Repositorio
             }
             return res;
         }
+
+        public IList<Inmueble> ObtenerTodosDisponibles()
+        {
+            IList<Inmueble> res = new List<Inmueble>();
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                string sql = "SELECT i.Id, Direccion, Ambientes, Superficie, Tipo, Uso, Precio,Latitud, Longitud, Estado, PropietarioId," +
+                    " p.Nombre, p.Apellido" +
+                    " FROM Inmuebles i INNER JOIN Propietarios p ON i.PropietarioId = p.Id " +
+                    " WHERE i.Estado = 'Disponible'";
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                {
+                    //command.CommandType = CommandType.Text;
+
+                    connection.Open();
+                    var reader = command.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        res.Add(MapearInmueble(reader));
+                    }
+                    connection.Close();
+                }
+            }
+            return res;
+        }
+
+        public int BuscarDisponibilidad(int InmuebleId, DateTime FechaInicio, DateTime FechaFin)
+        {
+            int res = 0;
+            using (MySqlConnection connection = new MySqlConnection(connectionString))
+            {
+                string sql = "SELECT COUNT(CONTRATOS.inmuebleId) " +
+                         "FROM contratos WHERE " +
+                          "CONTRATOS.inmuebleId=@inmuebleId " + " AND " +
+                         "(( contratos.fechaInicio  between @FechaInicio and @FechaFin) " +
+                              " OR (contratos.fechaFin  between @FechaInicio and @FechaFin)) ";
+                using (MySqlCommand command = new MySqlCommand(sql, connection))
+                {
+                    //command.CommandType = CommandType.Text;
+                    command.Parameters.AddWithValue($"@{nameof(InmuebleId)}", InmuebleId);
+                    command.Parameters.AddWithValue($"@{nameof(FechaInicio)}", FechaInicio);
+                    command.Parameters.AddWithValue($"@{nameof(FechaFin)}", FechaFin);
+                    connection.Open();
+                    var reader = command.ExecuteReader();
+                    if (reader.Read())
+                    {
+                        res = reader.GetInt32(0);
+                    }
+                    ;
+
+                }
+                connection.Close();
+
+            }
+            return res;
+
+
+        }
+
     }
 }
 
 
-    
+

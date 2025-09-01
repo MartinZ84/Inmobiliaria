@@ -1,0 +1,114 @@
+@model Inmobiliaria.Models.ViewModels.ContratosIndexViewModel
+
+@{
+    ViewData["Title"] = "Contratos";
+    var Pagina = Model.Pagina;
+    var TotalPaginas = Model.TotalPaginas;
+}
+
+<h1 class="mt-4">Listado de Contratos</h1>
+<hr />
+
+@await Html.PartialAsync("_AutoDismissAlert")
+
+<!-- Botón Nuevo -->
+<div class="mb-3">
+    <a asp-action="Create" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i>Nuevo
+    </a>
+</div>
+
+<!-- Tabla de contratos -->
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="table-dark">
+            <tr>
+                <th>@Html.DisplayNameFor(model => model.Contratos.First().Id)</th>
+                <th>Inquilino</th>
+                <th>Inmueble</th>
+                <th>Fecha Inicio</th>
+                <th>Fecha Fin</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model.Contratos.Any())
+            {
+                foreach (var contrato in Model.Contratos)
+                {
+                    <tr>
+                        <td>@contrato.Id</td>
+                        <td>@contrato.Inquilino?.Nombre @contrato.Inquilino?.Apellido</td>
+                        <td>@contrato.Inmueble?.Direccion</td>
+                        <td>@contrato.FechaInicio.ToShortDateString()</td>
+                        <td>@contrato.FechaFin.ToShortDateString()</td>
+                        <td>
+                            <div class="dropdown">
+                                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                    <i class="bi bi-three-dots"></i>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <a class="dropdown-item" asp-action="Edit" asp-route-id="@contrato.Id">
+                                            <i class="bi bi-pencil text-success"></i>Editar
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-action="Details" asp-route-id="@contrato.Id">
+                                            <i class="bi bi-info-circle text-warning"></i>Detalles
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-action="Delete" asp-route-id="@contrato.Id">
+                                            <i class="bi bi-trash text-danger"></i>Borrar
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="6" class="text-center text-muted">No se encontraron contratos.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<!-- Paginación -->
+<nav aria-label="Page navigation">
+    <ul class="pagination">
+        @if (Pagina > 1)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-pagina="@(Pagina-1)">Anterior</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled"><span class="page-link">Anterior</span></li>
+        }
+
+        @for (int i = 1; i <= TotalPaginas; i++)
+        {
+            <li class="page-item @(i == Pagina ? "active" : "")">
+                <a class="page-link" asp-action="Index" asp-route-pagina="@i">@i</a>
+            </li>
+        }
+
+        @if (Pagina < TotalPaginas)
+        {
+            <li class="page-item">
+                <a class="page-link" asp-action="Index" asp-route-pagina="@(Pagina+1)">Siguiente</a>
+            </li>
+        }
+        else
+        {
+            <li class="page-item disabled"><span class="page-link">Siguiente</span></li>
+        }
+    </ul>
+</nav>
