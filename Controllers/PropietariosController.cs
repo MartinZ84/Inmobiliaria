@@ -27,7 +27,7 @@ public ActionResult Index(string? dni = null, string? nombre = null,
     try
     {
         IList<Propietario> propietarios;
-        var tamaño = 5;
+        var tamaño = 10;
         // Si hay filtros, usar el método de búsqueda
         if (!string.IsNullOrWhiteSpace(dni) || !string.IsNullOrWhiteSpace(nombre) ||
             !string.IsNullOrWhiteSpace(apellido) || !string.IsNullOrWhiteSpace(email))
@@ -52,7 +52,7 @@ public ActionResult Index(string? dni = null, string? nombre = null,
         {
           // Sin filtros, obtener todos los propietarios
           // propietarios = repositorio.ObtenerTodos();
-          propietarios = repositorio.ObtenerLista(pagina, 5);
+          propietarios = repositorio.ObtenerLista(pagina, tamaño);
           ViewBag.Pagina = pagina;
 				  var total = repositorio.ObtenerCantidad();
 				  ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
