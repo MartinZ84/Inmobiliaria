@@ -163,6 +163,8 @@ namespace Inmobiliaria.Controllers
       {
         if (ModelState.IsValid)
         {
+          contrato.FechaFinAnt = contrato.FechaFin;
+          // Verificar disponibilidad del inmueble en el periodo seleccionado
           var res = repositorioInmueble.BuscarDisponibilidad(contrato.InmuebleId, contrato.FechaInicio, contrato.FechaFin);
           if (res > 0)
           {

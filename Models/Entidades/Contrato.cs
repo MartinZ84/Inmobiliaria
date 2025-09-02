@@ -31,5 +31,8 @@ namespace Inmobiliaria.Models.Entidades
     public int? UsuarioBaja { get; set; }
 
     public Usuario? Usuario { get; set; }
+
+    public DateTime? FechaFinAnt { get; set; }
+   
   }
 }

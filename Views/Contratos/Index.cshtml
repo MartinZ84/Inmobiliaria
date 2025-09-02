@@ -48,7 +48,8 @@
                         <td>@contrato.Estado</td>
                         <td>
                             <div class="dropdown">
-                                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                <button class="btn btn-secondary btn-sm dropdown-toggle" type="button"
+                                    data-bs-toggle="dropdown">
                                     <i class="bi bi-three-dots"></i>
                                 </button>
                                 <ul class="dropdown-menu">
@@ -66,7 +67,19 @@
                                         <a class="dropdown-item" asp-action="Delete" asp-route-id="@contrato.Id">
                                             <i class="bi bi-trash text-danger"></i> Borrar
                                         </a>
-                                    </li>   
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-action="Renovar" asp-route-id="@contrato.Id">
+                                            <i class="bi bi-arrow-clockwise text-primary"></i> Renovar contrato
+                                        </a>
+                                    </li>
+                                      <li>
+                                         <a class="dropdown-item" asp-action="Revocar" asp-route-id="@contrato.Id">
+                                            <i class="bi bi-arrow-clockwise text-primary"></i> Revocar contrato
+                                        </a>
+                                      </li>
+                                      
+                                   
                                 </ul>
                             </div>
                         </td>
@@ -89,7 +102,7 @@
         @if (Pagina > 1)
         {
             <li class="page-item">
-                <a class="page-link" asp-action="Index" asp-route-pagina="@(Pagina-1)">Anterior</a>
+                <a class="page-link" asp-action="Index" asp-route-pagina="@(Pagina - 1)">Anterior</a>
             </li>
         }
         else
@@ -107,7 +120,7 @@
         @if (Pagina < TotalPaginas)
         {
             <li class="page-item">
-                <a class="page-link" asp-action="Index" asp-route-pagina="@(Pagina+1)">Siguiente</a>
+                <a class="page-link" asp-action="Index" asp-route-pagina="@(Pagina + 1)">Siguiente</a>
             </li>
         }
         else

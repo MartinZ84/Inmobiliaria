@@ -78,8 +78,8 @@ namespace Inmobiliaria.Models.Repositorio
 
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
-				string sql = $"INSERT INTO Contratos (FechaInicio, FechaFin, Estado, Precio, InquilinoId, InmuebleId , UsuarioIdAlta ) " +
-					"VALUES (@fechaInicio, @fechaFin, @estado, @precio, @InquilinoId, @InmuebleId, @UsuarioAlta);" +
+				string sql = $"INSERT INTO Contratos (FechaInicio, FechaFin, Estado, Precio, InquilinoId, InmuebleId , fechaFinAnt, UsuarioIdAlta ) " +
+					"VALUES (@fechaInicio, @fechaFin, @estado, @precio, @InquilinoId, @InmuebleId, @fechaFinAnt, @UsuarioAlta);" +
 					"SELECT LAST_INSERT_ID();";//devuelve el id insertado (LAST_INSERT_ID para mysql)
 				using (var command = new MySqlCommand(sql, connection))
 				{
@@ -90,6 +90,7 @@ namespace Inmobiliaria.Models.Repositorio
 					command.Parameters.AddWithValue($"@{nameof(contrato.Precio)}", contrato.Precio);
 					command.Parameters.AddWithValue($"@{nameof(contrato.InquilinoId)}", contrato.InquilinoId);
 					command.Parameters.AddWithValue($"@{nameof(contrato.InmuebleId)}", contrato.InmuebleId);
+					command.Parameters.AddWithValue($"@{nameof(contrato.FechaFinAnt)}", contrato.FechaFinAnt);
 					command.Parameters.AddWithValue($"@{nameof(contrato.UsuarioAlta)}", contrato.UsuarioAlta);
 					
 
@@ -125,7 +126,7 @@ namespace Inmobiliaria.Models.Repositorio
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
 				string sql = "UPDATE Contratos SET " +
-					"FechaInicio=@fechaInicio, FechaFin=@fechaFin, Estado=@estado, Precio=@precio, InquilinoId=@inquilinoId, InmuebleId=@inmuebleId " +
+					"FechaInicio=@fechaInicio, FechaFin=@fechaFin, Estado=@estado, Precio=@precio, InquilinoId=@inquilinoId, InmuebleId=@inmuebleId , FechaFinAnt=@fechaFinAnt " +
 					"WHERE Id = @id";
 				using (MySqlCommand command = new MySqlCommand(sql, connection))
 				{
@@ -135,13 +136,9 @@ namespace Inmobiliaria.Models.Repositorio
 					command.Parameters.AddWithValue("@precio", contrato.Precio);
 					command.Parameters.AddWithValue("@inquilinoId", contrato.InquilinoId);
 					command.Parameters.AddWithValue("@inmuebleId", contrato.InmuebleId);
+					command.Parameters.AddWithValue($"@{nameof(contrato.FechaFinAnt)}", contrato.FechaFinAnt);
 
-					command.Parameters.AddWithValue
-					("@Id", contrato.Id);
-					// command.Parameters.AddWithValue($"@{nameof(contrato.Dni_Garante)}",contrato.Dni_Garante);
-					// command.Parameters.AddWithValue($"@{nameof(contrato.Nombre_Garante)}",contrato.Nombre_Garante);
-					// command.Parameters.AddWithValue($"@{nameof(contrato.Apellido_Garante)}",contrato.Apellido_Garante);    
-					// command.Parameters.AddWithValue($"@{nameof(contrato.Telefono_Garante)}",contrato.Telefono_Garante);
+					command.Parameters.AddWithValue("@Id", contrato.Id);				
 
 					connection.Open();
 					res = command.ExecuteNonQuery();
@@ -173,13 +170,13 @@ namespace Inmobiliaria.Models.Repositorio
 					{
 						contrato = new Contrato
 						{
-							Id = reader.GetInt32(0),
-							FechaInicio = reader.GetDateTime(1),
-							FechaFin = reader.GetDateTime(2),
-							Estado = reader.GetString(3),
-							Precio = reader.GetInt32(4),
-							InquilinoId = reader.GetInt32(5),
-							InmuebleId = reader.GetInt32(6),
+							Id = reader.GetInt32(nameof(Contrato.Id)),
+							FechaInicio = reader.GetDateTime(nameof(Contrato.FechaInicio)),
+							FechaFin = reader.GetDateTime(nameof(Contrato.FechaFin)),
+							Estado = reader.GetString(nameof(Contrato.Estado)),
+							Precio = reader.GetInt32(nameof(Contrato.Precio)),
+							InquilinoId = reader.GetInt32(nameof(Contrato.InquilinoId)),
+							InmuebleId = reader.GetInt32(nameof(Contrato.InmuebleId)),
 							Inquilino = new Inquilino
 							{
 								Id = reader.GetInt32(nameof(Inquilino.Id)),
@@ -206,7 +203,7 @@ namespace Inmobiliaria.Models.Repositorio
 			IList<Contrato> res = new List<Contrato>();
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
-				string sql = "SELECT c.Id, FechaInicio, FechaFin, c.Estado, c.Precio, InquilinoId, InmuebleId, " +
+				string sql = "SELECT c.Id, FechaInicio, FechaFin, c.Estado, c.Precio, InquilinoId, InmuebleId, c.fechaFinAnt " +
 					" inq.Nombre, inq.Apellido, inm.Direccion " +
 					" FROM Contratos c INNER JOIN Inquilinos inq ON c.InquilinoId = inq.Id " +
 					"INNER JOIN Inmuebles inm ON inm.Id= c.InmuebleId " +
@@ -221,23 +218,24 @@ namespace Inmobiliaria.Models.Repositorio
 					{
 						Contrato contrato = new Contrato
 						{
-							Id = reader.GetInt32(0),
-							FechaInicio = reader.GetDateTime(1),
-							FechaFin = reader.GetDateTime(2),
-							Estado = reader.GetString(3),
-							Precio = reader.GetInt32(4),
-							InquilinoId = reader.GetInt32(5),
-							InmuebleId = reader.GetInt32(6),
+							Id = reader.GetInt32(nameof(Contrato.Id)),
+							FechaInicio = reader.GetDateTime(nameof(Contrato.FechaInicio)),
+							FechaFin = reader.GetDateTime(nameof(Contrato.FechaFin)),
+							Estado = reader.GetString(nameof(Contrato.Estado)),
+							Precio = reader.GetInt32(nameof(Contrato.Precio)),
+							InquilinoId = reader.GetInt32(nameof(Contrato.InquilinoId)),
+							InmuebleId = reader.GetInt32(nameof(Contrato.InmuebleId)),
+							FechaFinAnt = reader.GetDateTime(nameof(Contrato.FechaFinAnt)),
 							Inquilino = new Inquilino
 							{
-								Id = reader.GetInt32(5),
-								Nombre = reader.GetString(7),
-								Apellido = reader.GetString(8),
+								Id = reader.GetInt32(nameof(Inquilino.Id)),
+								Nombre = reader.GetString(nameof(Inquilino.Nombre)),
+								Apellido = reader.GetString(nameof(Inquilino.Apellido)),
 							},
 							Inmueble = new Inmueble
 							{
-								Id = reader.GetInt32(6),
-								Direccion = reader.GetString(9),
+								Id = reader.GetInt32(nameof(Inmueble.Id)),
+								Direccion = reader.GetString(nameof(Inmueble.Direccion)),
 							},
 
 						};
@@ -254,8 +252,8 @@ namespace Inmobiliaria.Models.Repositorio
 			IList<Contrato> res = new List<Contrato>();
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
-				string sql = "SELECT c.Id, FechaInicio, FechaFin, c.Estado, c.Precio, InquilinoId, InmuebleId, " +
-					" inq.Nombre, inq.Apellido, inm.Id, inm.Direccion, Dni_garante,Nombre_garante,Apellido_garante,Telefono_garante" +
+				string sql = "SELECT c.Id, FechaInicio, FechaFin, c.Estado, c.Precio, InquilinoId, InmuebleId, c.fechaFinAnt " +
+					" inq.Nombre, inq.Apellido, inm.Id, inm.Direccion " +
 					" FROM Contratos c INNER JOIN Inquilinos inq ON c.InquilinoId = inq.Id " +
 					"INNER JOIN Inmuebles inm ON inm.Id= c.InmuebleId " +
 					"WHERE c.estado = 'Vigente' AND FechaFin > NOW() AND FechaInicio <= NOW()" + " ORDER BY FechaFin ASC";
@@ -268,23 +266,24 @@ namespace Inmobiliaria.Models.Repositorio
 					{
 						Contrato contrato = new Contrato
 						{
-							Id = reader.GetInt32(0),
-							FechaInicio = reader.GetDateTime(1),
-							FechaFin = reader.GetDateTime(2),
-							Estado = reader.GetString(3),
-							Precio = reader.GetInt32(4),
-							InquilinoId = reader.GetInt32(5),
-							InmuebleId = reader.GetInt32(6),
+							Id = reader.GetInt32(nameof(Contrato.Id)),
+							FechaInicio = reader.GetDateTime(nameof(Contrato.FechaInicio)),
+							FechaFin = reader.GetDateTime(nameof(Contrato.FechaFin)),
+							Estado = reader.GetString(nameof(Contrato.Estado)),
+							Precio = reader.GetInt32(nameof(Contrato.Precio)),
+							InquilinoId = reader.GetInt32(nameof(Contrato.InquilinoId)),
+							InmuebleId = reader.GetInt32(nameof(Contrato.InmuebleId)),
+							FechaFinAnt = reader.GetDateTime(nameof(Contrato.FechaFinAnt)),
 							Inquilino = new Inquilino
 							{
-								Id = reader.GetInt32(5),
-								Nombre = reader.GetString(7),
-								Apellido = reader.GetString(8),
+								Id = reader.GetInt32(nameof(Inquilino.Id)),
+								Nombre = reader.GetString(nameof(Inquilino.Nombre)),
+								Apellido = reader.GetString(nameof(Inquilino.Apellido)),
 							},
 							Inmueble = new Inmueble
 							{
-								Id = reader.GetInt32(6),
-								Direccion = reader.GetString(9),
+								Id = reader.GetInt32(nameof(Inmueble.Id)),
+								Direccion = reader.GetString(nameof(Inmueble.Direccion)),
 							},
 
 						};
@@ -301,8 +300,8 @@ namespace Inmobiliaria.Models.Repositorio
 			IList<Contrato> res = new List<Contrato>();
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
-				string sql = "SELECT c.Id, FechaInicio, FechaFin, c.Estado, c.Precio, InquilinoId, InmuebleId, " +
-					" inq.Nombre, inq.Apellido, inm.Id, inm.Direccion, Dni_garante,Nombre_garante,Apellido_garante,Telefono_garante" +
+				string sql = "SELECT c.Id, FechaInicio, FechaFin, c.Estado, c.Precio, InquilinoId, InmuebleId,c.FechaFinAnt " +
+					" inq.Nombre, inq.Apellido, inm.Id, inm.Direccion  " +
 					" FROM Contratos c INNER JOIN Inquilinos inq ON c.InquilinoId = inq.Id " +
 					"INNER JOIN Inmuebles inm ON inm.Id= c.InmuebleId " +
 					"WHERE  FechaInicio > NOW() OR FechaFin <= NOW() OR c.Estado='No vigente' " + " ORDER BY FechaFin ASC";
@@ -322,6 +321,7 @@ namespace Inmobiliaria.Models.Repositorio
 							Precio = reader.GetInt32(4),
 							InquilinoId = reader.GetInt32(5),
 							InmuebleId = reader.GetInt32(6),
+							FechaFinAnt = reader.GetDateTime(nameof(Contrato.FechaFinAnt)),
 							Inquilino = new Inquilino
 							{
 								Id = reader.GetInt32(5),
@@ -350,7 +350,7 @@ namespace Inmobiliaria.Models.Repositorio
 		{
 			string sql = @$"
 					SELECT COUNT(Id)
-					FROM Propietarios
+					FROM Contratos
 				";
 			using (MySqlCommand command = new MySqlCommand(sql, connection))
 			{

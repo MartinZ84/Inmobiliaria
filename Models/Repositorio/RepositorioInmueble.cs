@@ -490,7 +490,7 @@ namespace Inmobiliaria.Models.Repositorio
                             SELECT COUNT(*)
                             FROM contratos
                             WHERE inmuebleId = @inmuebleId
-                            AND NOT (fechaFin < @FechaInicio OR fechaInicio > @FechaFin);";
+                            AND NOT (fechaFinAnt < @FechaInicio OR fechaInicio > @FechaFin);";
                 // string sql =    "SELECT COUNT(CONTRATOS.inmuebleId) " +
                 //                 "FROM contratos WHERE " +
                 //                 "CONTRATOS.inmuebleId=@inmuebleId " + " AND " +
