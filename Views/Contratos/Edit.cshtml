@@ -1,0 +1,57 @@
+@model Inmobiliaria.Models.Entidades.Contrato
+@{
+    ViewData["Title"] = "Editar Contrato";
+}
+
+
+
+<h4 class="mt-4">Editar Contrato</h4>
+<hr />
+@await Html.PartialAsync("_AutoDismissAlert")
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Id" class="control-label"></label>
+                <input asp-for="Id" class="form-control" type="Hidden"/>
+                <span asp-validation-for="Id" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FechaInicio" class="control-label"></label>
+                <input asp-for="FechaInicio" class="form-control" />
+                <span asp-validation-for="FechaInicio" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FechaFin" class="control-label"></label>
+                <input asp-for="FechaFin" class="form-control"  />
+                <span asp-validation-for="FechaFin" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Precio" class="control-label"></label>
+                <input asp-for="Precio" class="form-control"  maxlength="15" />
+                <span asp-validation-for="Precio" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Estado" class="control-label"></label>
+                <select asp-for="Estado" class="form-select">
+                    <option value="" disabled selected>Seleccionar estado</option>
+                    <option value="Vigente">Vigente</option>
+                    <option value="Finalizado">No Vigente</option>
+                </select>
+                <span asp-validation-for="Estado" class="text-danger"></span>
+            </div>
+            
+            <br>
+            <div class="form-group">
+                <input type="submit" value="Guardar" class="btn btn-primary" /> |
+                <a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

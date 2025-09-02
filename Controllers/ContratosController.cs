@@ -149,7 +149,7 @@ namespace Inmobiliaria.Controllers
       }
       else
       {
-        urlOrigen = "/Contratos/ContratosInmueble/" + contrato.InmuebleId;
+        urlOrigen = "/Contratos/Index/" + contrato.InmuebleId;
         TempData["returnUrl"] = urlOrigen;
       }
       try
@@ -177,7 +177,7 @@ namespace Inmobiliaria.Controllers
           // return RedirectToAction(nameof(Index));
           if (TempData.ContainsKey("returnUrl"))
           {
-            urlOrigen = "/Contratos/ContratosInmueble/" + contrato.InmuebleId;
+            urlOrigen = "/Contratos/Index/" + contrato.InmuebleId;
             return Redirect(urlOrigen);
           }
           else
@@ -210,6 +210,7 @@ namespace Inmobiliaria.Controllers
 
       ViewBag.Inquilinos = repositorioInquilino.ObtenerTodos();
       ViewBag.Inmuebles = repositorioInmueble.ObtenerTodos();
+
       if (TempData.ContainsKey("Mensaje"))
         ViewBag.Mensaje = TempData["Mensaje"];
       if (TempData.ContainsKey("Error"))
@@ -225,11 +226,21 @@ namespace Inmobiliaria.Controllers
     {
       try
       {
-        contrato.Id = id;
-        repositorio.Modificacion(contrato);
-        TempData["Mensaje"] = "Datos guardados correctamente";
-        return RedirectToAction(nameof(Index));
-
+        if (id != contrato.Id)
+        {
+          TempData["ErrorMessage"] = "El Contrato no existe.";
+          TempData["AlertType"] = "danger";
+          return RedirectToAction(nameof(Index));
+        }
+        if (ModelState.IsValid) {
+          contrato.Id = id;
+          repositorio.Modificacion(contrato);
+          TempData["Mensaje"] = "Datos guardados correctamente";
+          return RedirectToAction(nameof(Index));
+        }
+      TempData["ErrorMessage"] = "que panda el cunico";
+      TempData["AlertType"] = "danger";
+      return View(contrato);
       }
       catch (Exception ex)
       {
@@ -261,7 +272,6 @@ namespace Inmobiliaria.Controllers
     {
       try
       {
-
         repositorio.Baja(id);
         TempData["Mensaje"] = "Eliminación realizada correctamente";
         return RedirectToAction(nameof(Index));
