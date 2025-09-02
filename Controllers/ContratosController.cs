@@ -103,8 +103,8 @@ namespace Inmobiliaria.Controllers
       ViewBag.Propietario = repositorioPropietario.ObtenerPorId(ViewBag.Inmueble.PropietarioId);
       if (TempData.ContainsKey("Mensaje"))
         ViewBag.Mensaje = TempData["Mensaje"];
-      if (TempData.ContainsKey("Error"))
-        ViewBag.Error = TempData["Error"];
+      if (TempData.ContainsKey("ErrorMessage"))
+        ViewBag.Error = TempData["ErrorMessage"];
       return View(contrato);
 
 
@@ -116,8 +116,15 @@ namespace Inmobiliaria.Controllers
     {
       TempData.Remove("returnUrl");
       var returnUrl = "/Contratos";
-      ViewBag.Inquilino = repositorioInquilino.ObtenerTodos();
-      ViewBag.Inmuebles = repositorioInmueble.ObtenerTodosDisponibles();
+      // ViewBag.Inquilino = repositorioInquilino.ObtenerTodos();
+      // ViewBag.Inmuebles = repositorioInmueble.ObtenerTodosDisponibles();
+      ViewBag.Inquilinos = repositorioInquilino.ObtenerTodos()
+                .Select(i => new { i.Id, NombreCompleto = i.Nombre + " " + i.Apellido })
+                .ToList();
+
+      ViewBag.Inmuebles = repositorioInmueble.ObtenerTodosDisponibles()
+          .Select(i => new { i.Id, Direccion = $"{i.Id} {i.Direccion}" })
+          .ToList();
       TempData["returnUrl"] = returnUrl;
       return View();
     }
@@ -159,45 +166,69 @@ namespace Inmobiliaria.Controllers
           var res = repositorioInmueble.BuscarDisponibilidad(contrato.InmuebleId, contrato.FechaInicio, contrato.FechaFin);
           if (res > 0)
           {
-            TempData["Error"] = "No hay disponibilidad para el periodo seleccionado";
-            ViewBag.Inquilino = repositorioInquilino.ObtenerTodos();
-            ViewBag.Inmuebles = repositorioInmueble.ObtenerTodos();
+            TempData["ErrorMessage"] = "No hay disponibilidad en el inmueble para el periodo seleccionado";
+            //ViewBag.Inquilino = repositorioInquilino.ObtenerTodos();
+            //ViewBag.Inmuebles = repositorioInmueble.ObtenerTodos();
+            // Llenar ViewBag con listas para los dropdowns
+            ViewBag.Inquilinos = repositorioInquilino.ObtenerTodos()
+                .Select(i => new { i.Id, NombreCompleto = i.Nombre + " " + i.Apellido })
+                .ToList();
+
+            ViewBag.Inmuebles = repositorioInmueble.ObtenerTodos()
+                .Select(i => new { i.Id, Direccion = $"{i.Id} {i.Direccion}" })
+                .ToList();
             ViewBag.Inmueble = repositorioInmueble.ObtenerPorId(contrato.InmuebleId);
+
             ViewBag.Contrato = contrato;
             TempData["returnUrl"] = urlOrigen;
             return View(contrato);
           }
           else
           {
-            repositorio.Alta(contrato);
-            TempData["Id"] = contrato.Id;
+            contrato.UsuarioAlta = 1; // TODO: ver usuario logueado
+            res = repositorio.Alta(contrato);
+            if (res > 0)
+            {
+              TempData["SuccessMessage"] = "Contrato creado exitosamente";
+              TempData["AlertType"] = "success";
+              return RedirectToAction(nameof(Index));
+            }
+            else
+            {
+              TempData["ErrorMessage"] = "Error al crear el contrato";
+              TempData["AlertType"] = "danger";
+              return View(contrato);
+            }
 
           }
-
-          // return RedirectToAction(nameof(Index));
-          if (TempData.ContainsKey("returnUrl"))
-          {
-            urlOrigen = "/Contratos/ContratosInmueble/" + contrato.InmuebleId;
-            return Redirect(urlOrigen);
-          }
-          else
-          {
-            return RedirectToAction(nameof(Index));
-          }
-
-          //return View();
         }
         else
         {
-          ViewBag.Inmueble = repositorioInmueble.ObtenerTodos();
-          ViewBag.Inquilino = repositorioInquilino.ObtenerTodos();
+          ViewBag.Inquilinos = repositorioInquilino.ObtenerTodos()
+             .Select(i => new { i.Id, NombreCompleto = i.Nombre + " " + i.Apellido })
+             .ToList();
+
+          ViewBag.Inmuebles = repositorioInmueble.ObtenerTodos()
+              .Select(i => new { i.Id, Direccion = $"{i.Id} {i.Direccion}" })
+              .ToList();
+          ViewBag.Inmueble = repositorioInmueble.ObtenerPorId(contrato.InmuebleId);
           return View(contrato);
         }
       }
       catch (Exception ex)
       {
+        ViewBag.Inquilinos = repositorioInquilino.ObtenerTodos()
+            .Select(i => new { i.Id, NombreCompleto = i.Nombre + " " + i.Apellido })
+            .ToList();
+
+        ViewBag.Inmuebles = repositorioInmueble.ObtenerTodos()
+            .Select(i => new { i.Id, Direccion = $"{i.Id} {i.Direccion}" })
+            .ToList();
+        ViewBag.Inmueble = repositorioInmueble.ObtenerPorId(contrato.InmuebleId);
         ViewBag.Error = ex.Message;
         ViewBag.StackTrate = ex.StackTrace;
+        TempData["ErrorMessage"] = "Error inesperado al procesar la solicitud";
+        TempData["AlertType"] = "danger";
         return View(contrato);
       }
     }
@@ -232,11 +263,19 @@ namespace Inmobiliaria.Controllers
 
       }
       catch (Exception ex)
-      {
-        ViewBag.Inmueble = repositorioInmueble.ObtenerTodos();
-        ViewBag.Inquilino = repositorioInquilino.ObtenerTodos();
+      {      
+         ViewBag.Inquilinos = repositorioInquilino.ObtenerTodos()
+            .Select(i => new { i.Id, NombreCompleto = i.Nombre + " " + i.Apellido })
+            .ToList();
+
+        ViewBag.Inmuebles = repositorioInmueble.ObtenerTodos()
+            .Select(i => new { i.Id, Direccion = $"{i.Id} {i.Direccion}" })
+            .ToList();
+        ViewBag.Inmueble = repositorioInmueble.ObtenerPorId(contrato.InmuebleId);
         ViewBag.Error = ex.Message;
         ViewBag.StackTrate = ex.StackTrace;
+        TempData["ErrorMessage"] = "Error inesperado al procesar la solicitud";
+        TempData["AlertType"] = "danger";
         return View(contrato);
       }
     }

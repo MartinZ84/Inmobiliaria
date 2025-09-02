@@ -2,77 +2,78 @@
 @model Inmobiliaria.Models.Entidades.Contrato
 
 @{
-    ViewData["Title"] = "Nuevo contrato";
-
+    ViewData["Title"] = "Contrato - Editar";
+    var Inquilinos= (IList<Inquilino>)ViewBag.Inquilinos;
+    var Inmuebles= (IList<Inmueble>)ViewBag.Inmuebles; 
 }
 
+<h1>Editar</h1>
 
-
-<h4 class="mt-4">Nuevo contrato</h4>
+<h4>Contrato N° @Html.DisplayFor(model => model.Id)</h4>
 <hr />
-@await Html.PartialAsync("_AutoDismissAlert")
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Create" id="formContrato">
+        <form asp-action="Edit" id="formContrato">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            @* <div class="form-group">
+            <div class="form-group">
                 <label asp-for="Id" class="control-label"></label>
-                <input asp-for="Id" class="form-control" />
+                <input asp-for="Id" class="form-control"  disabled/>
                 <span asp-validation-for="Id" class="text-danger"></span>
-            </div> *@
+            </div>
             <div class="form-group">
                 <label asp-for="FechaInicio" class="control-label"></label>
-           
-                @* <input type="date" name="FechaInicio" id="fechaInicio" value="" 
-                  min="" max="" class="form-control" /> *@
-                   <input type="date" id="fechaInicio" name="fechaInicio" class="form-control" />
+                <input asp-for="FechaInicio" class="form-control" name="fechaInicio"  id="fechaInicio"/>
                 <span asp-validation-for="FechaInicio" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="FechaFin" class="control-label"></label>
-              
-                 <input type="date" name="fechaFin" id="fechaFin" value="" class="form-control" />
+                <input asp-for="FechaFin" class="form-control" name="fechaFin" id="fechaFin"   />
                 <span asp-validation-for="FechaFin" class="text-danger"></span>
+                      
+             
             </div>
+            
             <div class="form-group">
                 <label asp-for="Precio" class="control-label"></label>
                 <input asp-for="Precio" class="form-control" />
                 <span asp-validation-for="Precio" class="text-danger"></span>
             </div>
-          <div class="form-group">
+            <div class="form-group">
                 <label asp-for="Estado" class="control-label"></label>
-                <select class="form-select"  Disable name="Estado">
-                  <option value="" disabled selected>Seleccionar estado  </option>
+                @* <input asp-for="Estado" class="form-control" /> *@
+                  <select asp-for="Estado"  class="form-select"   name="Estado">
+                  <option value="" disabled >Seleccionar estado  </option>
                   <option value="Vigente">Vigente</option>
                   <option value="No vigente">No vigente</option>
                 </select>
-
                 <span asp-validation-for="Estado" class="text-danger"></span>
             </div>
-
-           <div class="form-group">
-               <label asp-for="InquilinoId" class="control-label"></label>
-               <select asp-for="InquilinoId" class="form-select"
-                       asp-items="@(new SelectList(ViewBag.Inquilinos ?? new List<object>(), "Id", "NombreCompleto", Model?.InquilinoId))">
-                   <option value="">Seleccionar inquilino</option>
-               </select>
-               <span asp-validation-for="InquilinoId" class="text-danger"></span>
-           </div>
-
-
             <div class="form-group">
-            <label asp-for="InmuebleId" class="control-label"></label>
-            <select asp-for="InmuebleId" class="form-select"
-                    asp-items="@(new SelectList(ViewBag.Inmuebles ?? new List<object>(), "Id", "Direccion", Model?.InmuebleId))">
-                <option value="">Seleccionar inmueble</option>
-            </select>
-            <span asp-validation-for="InmuebleId" class="text-danger"></span>
+                <label asp-for="InquilinoId" class="control-label"></label>
+                @* <input asp-for="InquilinoId" class="form-control" /> *@
+                <select class="form-select" name="InquilinoId" id="InquilinoId">
+                    @foreach (var item in Inquilinos)
+                    {
+                        @:<option @(item.Id==Model.InquilinoId ? "selected" : "") value="@item.Id">@(item.Nombre + " " + item.Apellido)</option>
+                    }
+                </select>
+                <span asp-validation-for="InquilinoId" class="text-danger"></span>
             </div>
-
-<br>
-          
             <div class="form-group">
-                <input type="submit" value="Crear" class="btn btn-primary" /> |
+                <label asp-for="InmuebleId" class="control-label"></label>
+                @* <input asp-for="InmuebleId" class="form-control" /> *@
+                <select class="form-select" name="InmuebleId" id="InmuebleId">
+                    @foreach (var item in Inmuebles)
+                    {
+                        @:<option @(item.Id==Model.InmuebleId ? "selected" : "") value="@item.Id">@(item.Id + " " + item.Direccion)</option>
+                    }
+                </select>
+                <span asp-validation-for="InmuebleId" class="text-danger"></span>
+            </div>
+           
+            <br>
+            <div class="form-group">
+                <input type="submit" value="Guardar" class="btn btn-primary" />                
                  <a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
             </div>
         </form>
@@ -81,31 +82,7 @@
 <br>
 
 <script>
-  
-
-window.onload = function () {
-  var fecha = new Date(); //Fecha actual
-  var mes = fecha.getMonth() + 1; //obteniendo mes
-  var dia = fecha.getDate(); //obteniendo dia
-  var ano = fecha.getFullYear(); //obteniendo año
-  if (dia < 10) dia = "0" + dia; //agrega cero si el menor de 10
-  if (mes < 10) mes = "0" + mes; //agrega cero si el menor de 10
-  document.getElementById("fechaInicio").value = ano + "-" + mes + "-" + dia;
-//  document.getElementById("fechaInicio").min = ano + "-" + mes + "-" + dia;
-
-  //sumar 2 años a la fecha actual
-  var fecha2 = new Date(); //Fecha actual
-  var mes2 = fecha2.getMonth() + 1; //obteniendo mes
-  var dia2 = fecha2.getDate(); //obteniendo dia
-  var ano2 = fecha2.getFullYear() + 2; //obteniendo año
-  if (dia2 < 10) dia2 = "0" + dia2; //agrega cero si el menor de 10
-  if (mes2 < 10) mes2 = "0" + mes2; //agrega cero si el menor de 10
-  document.getElementById("fechaFin").value = ano2 + "-" + mes2 + "-" + dia2;
-  // document.getElementById("fechaFin").max = ano2 + "-" + mes2 + "-" + dia2;
-   //  document.getElementById("fechaFin").min =  ano + "-" + mes + "-" + dia;
-};
-
-  $(document).ready(function () {
+      $(document).ready(function () {
             // -------------------------------
             // 1. Validar InquilinoId > 0
             // -------------------------------
@@ -216,10 +193,9 @@ window.onload = function () {
             }
         });
 
-
 </script>
+
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }
-

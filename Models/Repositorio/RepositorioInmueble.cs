@@ -41,7 +41,7 @@ namespace Inmobiliaria.Models.Repositorio
             return inmuebles;
         }
 
-        public Inmueble? ObtenerPorId(int id)
+        public Inmueble? ObtenerPorId(int? id)
         {
             Inmueble? inmueble = null;
             using (var connection = new MySqlConnection(connectionString))
@@ -481,16 +481,21 @@ namespace Inmobiliaria.Models.Repositorio
             return res;
         }
 
-        public int BuscarDisponibilidad(int InmuebleId, DateTime FechaInicio, DateTime FechaFin)
+        public int BuscarDisponibilidad(int? InmuebleId, DateTime FechaInicio, DateTime FechaFin)
         {
             int res = 0;
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-                string sql = "SELECT COUNT(CONTRATOS.inmuebleId) " +
-                         "FROM contratos WHERE " +
-                          "CONTRATOS.inmuebleId=@inmuebleId " + " AND " +
-                         "(( contratos.fechaInicio  between @FechaInicio and @FechaFin) " +
-                              " OR (contratos.fechaFin  between @FechaInicio and @FechaFin)) ";
+                string sql = @"
+                            SELECT COUNT(*)
+                            FROM contratos
+                            WHERE inmuebleId = @inmuebleId
+                            AND NOT (fechaFin < @FechaInicio OR fechaInicio > @FechaFin);";
+                // string sql =    "SELECT COUNT(CONTRATOS.inmuebleId) " +
+                //                 "FROM contratos WHERE " +
+                //                 "CONTRATOS.inmuebleId=@inmuebleId " + " AND " +
+                //                 "(( contratos.fechaInicio  between @FechaInicio and @FechaFin) " +
+                //                 " OR (contratos.fechaFin  between @FechaInicio and @FechaFin)) ";
                 using (MySqlCommand command = new MySqlCommand(sql, connection))
                 {
                     //command.CommandType = CommandType.Text;
