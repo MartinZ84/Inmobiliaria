@@ -226,21 +226,19 @@ namespace Inmobiliaria.Controllers
     {
       try
       {
-        if (id != contrato.Id)
+        if (ModelState.IsValid)
         {
-          TempData["ErrorMessage"] = "El Contrato no existe.";
-          TempData["AlertType"] = "danger";
-          return RedirectToAction(nameof(Index));
-        }
-        if (ModelState.IsValid) {
           contrato.Id = id;
           repositorio.Modificacion(contrato);
           TempData["Mensaje"] = "Datos guardados correctamente";
           return RedirectToAction(nameof(Index));
         }
-      TempData["ErrorMessage"] = "que panda el cunico";
-      TempData["AlertType"] = "danger";
-      return View(contrato);
+        else
+        {
+          TempData["ErrorMessage"] = "que panda el cunico";
+          TempData["AlertType"] = "danger";
+          return View(contrato);
+        }
       }
       catch (Exception ex)
       {
@@ -248,6 +246,8 @@ namespace Inmobiliaria.Controllers
         ViewBag.Inquilino = repositorioInquilino.ObtenerTodos();
         ViewBag.Error = ex.Message;
         ViewBag.StackTrate = ex.StackTrace;
+        TempData["ErrorMessage"] = ex.Message;
+        TempData["AlertType"] = "danger";
         return View(contrato);
       }
     }

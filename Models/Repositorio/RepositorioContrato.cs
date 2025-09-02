@@ -126,7 +126,7 @@ namespace Inmobiliaria.Models.Repositorio
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
 				string sql = "UPDATE Contratos SET " +
-					"FechaInicio=@fechaInicio, FechaFin=@fechaFin, Estado=@estado, Precio=@precio, InquilinoId=@inquilinoId, InmuebleId=@inmuebleId " +
+					"FechaInicio=@fechaInicio, FechaFin=@fechaFin, Estado=@estado, Precio=@precio " +
 					"WHERE Id = @id";
 				using (MySqlCommand command = new MySqlCommand(sql, connection))
 				{

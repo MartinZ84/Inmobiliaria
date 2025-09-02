@@ -1,9 +1,8 @@
 @model Inmobiliaria.Models.Entidades.Contrato
+
 @{
     ViewData["Title"] = "Editar Contrato";
 }
-
-
 
 <h4 class="mt-4">Editar Contrato</h4>
 <hr />
@@ -37,7 +36,7 @@
                 <select asp-for="Estado" class="form-select">
                     <option value="" disabled selected>Seleccionar estado</option>
                     <option value="Vigente">Vigente</option>
-                    <option value="Finalizado">No Vigente</option>
+                    <option value="No Vigente">No Vigente</option>
                 </select>
                 <span asp-validation-for="Estado" class="text-danger"></span>
             </div>
