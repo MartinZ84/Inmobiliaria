@@ -122,7 +122,7 @@
             // -------------------------------
             // 3. Validar fechaInicio >= hoy
             // -------------------------------
-            $("#fechaInicio").on("change", function () {
+            @* $("#fechaInicio").on("change", function () {
                 validarFechaInicio();
             });
 
@@ -139,7 +139,7 @@
                     limpiarError("#fechaInicio");
                     return true;
                 }
-            }
+            } *@
 
             // -------------------------------
             // 4. Validar fechaFin > fechaInicio
@@ -171,10 +171,11 @@
             $("#formContrato").on("submit", function (e) {
                 let okInquilino = validarInquilino();
                 let okInmueble = validarInmueble();
-                let okInicio = validarFechaInicio();
+                @* let okInicio = validarFechaInicio(); *@
                 let okFin = validarFechaFin();
 
-                if (!(okInquilino && okInmueble && okInicio && okFin)) {
+                if (!(okInquilino && okInmueble && okFin)) {
+                //&& okInicio 
                     e.preventDefault(); // detener submit
                 }
             });
