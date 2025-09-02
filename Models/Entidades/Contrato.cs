@@ -13,25 +13,23 @@ namespace Inmobiliaria.Models.Entidades
     [Required, Display(Name = "Fecha fin")]
     [DataType(DataType.Date)]
     public DateTime FechaFin { get; set; }
-    [Required]
+    [Required(ErrorMessage = "El precio es obligatorio")]
     public int Precio { get; set; }
     public string? Estado { get; set; }
-    [Required]
+    [Required(ErrorMessage = "El inquilino es obligatorio")]
     [Display(Name = "Inquilino")]
+    [Range(1, int.MaxValue, ErrorMessage = "Debe seleccionar un inquilino")]
     public int InquilinoId { get; set; }
     [Display(Name = "Inmueble")]
-    [Required]
+    [Range(1, int.MaxValue, ErrorMessage = "Debe seleccionar un inmueble")]
+    [Required(ErrorMessage = "El inmueble es obligatorio")]
     public int InmuebleId { get; set; }
     public Inquilino? Inquilino { get; set; }
     public Inmueble? Inmueble { get; set; }
 
-    // [Display(Name = "DNI Garante")]
-    // public string? Dni_Garante { get; set; }
-    // [Display(Name = "Nombre Garante")]
-    // public string? Nombre_Garante { get; set; }
-    // [Display(Name = "Apellido Garante")]
-    // public string? Apellido_Garante { get; set; }
-    // [Display(Name = "Teléfono Garante")]
-    // public string? Telefono_Garante { get; set; }
+    public int? UsuarioAlta { get; set; }
+    public int? UsuarioBaja { get; set; }
+
+    public Usuario? Usuario { get; set; }
   }
 }

@@ -78,8 +78,8 @@ namespace Inmobiliaria.Models.Repositorio
 
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
-				string sql = $"INSERT INTO Contratos (FechaInicio, FechaFin, Estado, Precio, InquilinoId, InmuebleId, Dni_Garante, Nombre_Garante, Apellido_Garante, Telefono_Garante ) " +
-					"VALUES (@fechaInicio, @fechaFin, @estado, @precio, @InquilinoId, @InmuebleId,@Dni_Garante, @Nombre_Garante, @Apellido_Garante, @Telefono_Garante);" +
+				string sql = $"INSERT INTO Contratos (FechaInicio, FechaFin, Estado, Precio, InquilinoId, InmuebleId , UsuarioIdAlta ) " +
+					"VALUES (@fechaInicio, @fechaFin, @estado, @precio, @InquilinoId, @InmuebleId, @UsuarioAlta);" +
 					"SELECT LAST_INSERT_ID();";//devuelve el id insertado (LAST_INSERT_ID para mysql)
 				using (var command = new MySqlCommand(sql, connection))
 				{
@@ -90,10 +90,9 @@ namespace Inmobiliaria.Models.Repositorio
 					command.Parameters.AddWithValue($"@{nameof(contrato.Precio)}", contrato.Precio);
 					command.Parameters.AddWithValue($"@{nameof(contrato.InquilinoId)}", contrato.InquilinoId);
 					command.Parameters.AddWithValue($"@{nameof(contrato.InmuebleId)}", contrato.InmuebleId);
-					// command.Parameters.AddWithValue($"@{nameof(contrato.Dni_Garante)}", contrato.Dni_Garante);
-					// command.Parameters.AddWithValue($"@{nameof(contrato.Nombre_Garante)}", contrato.Nombre_Garante);
-					// command.Parameters.AddWithValue($"@{nameof(contrato.Apellido_Garante)}", contrato.Apellido_Garante);
-					// command.Parameters.AddWithValue($"@{nameof(contrato.Telefono_Garante)}", contrato.Telefono_Garante);
+					command.Parameters.AddWithValue($"@{nameof(contrato.UsuarioAlta)}", contrato.UsuarioAlta);
+					
+
 					connection.Open();
 					res = Convert.ToInt32(command.ExecuteScalar());
 					contrato.Id = res;
@@ -126,7 +125,7 @@ namespace Inmobiliaria.Models.Repositorio
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
 				string sql = "UPDATE Contratos SET " +
-					"FechaInicio=@fechaInicio, FechaFin=@fechaFin, Estado=@estado, Precio=@precio, InquilinoId=@inquilinoId, InmuebleId=@inmuebleId, Dni_Garante=@dni_garante, Nombre_Garante=@nombre_garante, Apellido_Garante=@apellido_garante, Telefono_Garante=@telefono_garante " +
+					"FechaInicio=@fechaInicio, FechaFin=@fechaFin, Estado=@estado, Precio=@precio, InquilinoId=@inquilinoId, InmuebleId=@inmuebleId " +
 					"WHERE Id = @id";
 				using (MySqlCommand command = new MySqlCommand(sql, connection))
 				{
@@ -159,9 +158,9 @@ namespace Inmobiliaria.Models.Repositorio
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
 				string sql = $"SELECT c.Id, FechaInicio, FechaFin, c.Estado, c.Precio, InquilinoId, InmuebleId," +
-					" inq.Nombre, inq.Apellido, inm.Id, inm.Direccion,Dni_Garante, Nombre_Garante, Apellido_Garante, Telefono_Garante" +
-					$" FROM Contratos c INNER JOIN Inquilinos inq ON c.InquilinoId = inq.Id " +
-					"INNER JOIN Inmuebles inm ON inm.Id= c.InmuebleId " +
+							$" inq.Nombre, inq.Apellido, inm.Id, inm.Direccion " +
+							$" FROM Contratos c INNER JOIN Inquilinos inq ON c.InquilinoId = inq.Id " +
+							$"INNER JOIN Inmuebles inm ON inm.Id= c.InmuebleId " +
 							"WHERE c.Id = @id";
 				using (MySqlCommand command = new MySqlCommand(sql, connection))
 				{
@@ -208,7 +207,7 @@ namespace Inmobiliaria.Models.Repositorio
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
 				string sql = "SELECT c.Id, FechaInicio, FechaFin, c.Estado, c.Precio, InquilinoId, InmuebleId, " +
-					" inq.Nombre, inq.Apellido, inm.Direccion, Dni_garante,Nombre_garante,Apellido_garante,Telefono_garante" +
+					" inq.Nombre, inq.Apellido, inm.Direccion " +
 					" FROM Contratos c INNER JOIN Inquilinos inq ON c.InquilinoId = inq.Id " +
 					"INNER JOIN Inmuebles inm ON inm.Id= c.InmuebleId " +
 					" WHERE inm.Id = @id";
