@@ -1,0 +1,65 @@
+@model Inmobiliaria.Models.Entidades.Pago
+
+@{
+    ViewData["Title"] = "Crear pago";
+    //Obtengo el id del contrato para no perder la referencia al mismo
+    var ContratoId=ViewBag.ContratoId;
+    var nroPago= ViewBag.nroPago;
+    var importe=ViewBag.importe;
+}
+
+<h1>Realizar pago</h1>
+
+<h4>Pago</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div class="form-group">
+                @*<label asp-for="ContratoId" class="control-label"></label>*@
+               <input asp-for="ContratoId" class="form-control" hidden value=@ContratoId />
+               <span asp-validation-for="ContratoId" class="text-danger"></span>
+            </div>
+            
+            <div class="form-group">
+                <label asp-for="NroPago" class="control-label"></label>
+                <input asp-for="NroPago" readonly class="form-control" value=@nroPago />
+                <span asp-validation-for="NroPago" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FechaPago" class="control-label"></label>
+                <input asp-for="FechaPago" class="form-control" id='FechaPago'   />
+                <span asp-validation-for="FechaPago" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Importe" class="control-label"></label>
+                <input asp-for="Importe" class="form-control" value="@importe"/>
+                <span asp-validation-for="Importe" class="text-danger"></span>
+            </div>
+        
+            <br>
+            <div class="form-group">
+                <input type="submit" value="Crear" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+<br>
+<div>
+
+       @Html.ActionLink("Volver a la lista", "Index", new {  id=@ContratoId},new {@class="btn btn-secondary"}) 
+</div>
+
+<script>
+  window.onload = function(){
+  var fecha = new Date(); //Fecha actual
+  var mes = fecha.getMonth()+1; //obteniendo mes
+  var dia = fecha.getDate(); //obteniendo dia
+  var ano = fecha.getFullYear(); //obteniendo año
+  if(dia<10)
+    dia='0'+dia; //agrega cero si el menor de 10
+  if(mes<10)
+    mes='0'+mes //agrega cero si el menor de 10
+  document.getElementById('FechaPago').value=ano+"-"+mes+"-"+dia;
+}
+</script>

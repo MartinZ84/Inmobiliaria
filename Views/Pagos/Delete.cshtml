@@ -1,0 +1,52 @@
+@model Inmobiliaria.Models.Entidades.Pago
+
+@{
+    ViewData["Title"] = "Borrar";
+}
+
+<h1>Borrar</h1>
+
+<h3>Se procedera a eliminar el siguiente pago</h3>
+<div>
+    <h4>Pago</h4>
+    <hr />
+    <dl class="row">
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Id)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Id)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.NroPago)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.NroPago)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.FechaPago)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.FechaPago)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Importe)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Importe)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.ContratoId)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.ContratoId)
+        </dd>
+    </dl>
+    
+    <form asp-action="Delete">
+        <input type="submit" value="Borrar" class="btn btn-danger" /> |
+       
+        
+    @Html.ActionLink("Volver al listado", "Index", new { id = Model.ContratoId }, new{@class="btn btn-secondary"})
+    </form>
+</div>

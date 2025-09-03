@@ -18,8 +18,11 @@ public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
 		_logger = logger;
 	}
 
+	public RepositorioInquilino(IConfiguration configuration) : base(configuration)
+	{
+    }
 
-	private readonly ILogger<RepositorioInquilino> _logger;
+    private readonly ILogger<RepositorioInquilino> _logger;
 
 
 	public IList<Inquilino?> ObtenerTodos()
