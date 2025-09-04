@@ -25,7 +25,8 @@ namespace Inmobiliaria.Controllers
 
   
         public ActionResult Index(int? tipo = null,
-            string? uso = null, int? estado = null, int? precioMin = null, int? precioMax = null, int pagina = 1)
+            string? uso = null, int? estado = null, int? precioMin = null, int? precioMax = null, int? PropietarioId = null,
+            DateTime? fechaDesde = null, DateTime? fechaHasta = null, int pagina = 1)
         {
             try
             {
@@ -34,9 +35,10 @@ namespace Inmobiliaria.Controllers
 
                 if (tipo.HasValue ||
                     !string.IsNullOrWhiteSpace(uso) || estado.HasValue ||
-                    precioMin.HasValue || precioMax.HasValue)
+                    precioMin.HasValue || precioMax.HasValue || PropietarioId.HasValue ||
+                    fechaDesde.HasValue || fechaHasta.HasValue)
                 {
-                    inmuebles = repositorio.BuscarInmueblesConValidacion(tipo, uso, estado, precioMin, precioMax);
+                    inmuebles = repositorio.BuscarInmueblesConValidacion(tipo, uso, estado, precioMin, precioMax, PropietarioId, fechaDesde, fechaHasta, pagina, tamaño);
                     var total = inmuebles.Count;
                     ViewBag.Pagina = pagina;
                     ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;

@@ -21,11 +21,11 @@ namespace Inmobiliaria.Controllers
     // }
 
     // Método Index actualizado para manejar filtros
-public ActionResult Index(string? dni = null, string? nombre = null, 
-    string? apellido = null, string? email = null, int pagina=1)
-{
-    try
+    public ActionResult Index(string? dni = null, string? nombre = null,
+        string? apellido = null, string? email = null, int pagina = 1)
     {
+      try
+      {
         IList<Propietario> propietarios;
         var tamaño = 10;
         // Si hay filtros, usar el método de búsqueda
@@ -54,10 +54,10 @@ public ActionResult Index(string? dni = null, string? nombre = null,
           // propietarios = repositorio.ObtenerTodos();
           propietarios = repositorio.ObtenerLista(pagina, tamaño);
           ViewBag.Pagina = pagina;
-				  var total = repositorio.ObtenerCantidad();
-				  ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
+          var total = repositorio.ObtenerCantidad();
+          ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
         }
-     
+
         // Pasar los filtros a la vista para mantenerlos en el formulario
         ViewBag.Dni = dni;
         ViewBag.Nombre = nombre;
@@ -65,15 +65,15 @@ public ActionResult Index(string? dni = null, string? nombre = null,
         ViewBag.Email = email;
 
         return View(propietarios);
-    }
-    catch (Exception ex)
-    {
+      }
+      catch (Exception ex)
+      {
         Console.WriteLine($"Error en Index: {ex}");
         TempData["ErrorMessage"] = "Ocurrió un error al cargar los propietarios.";
         TempData["AlertType"] = "danger";
         return View(new List<Propietario>());
+      }
     }
-}
 
     // GET: Propietarios/Details/5
     // [Authorize(Policy = "Empleado")]
@@ -242,7 +242,7 @@ public ActionResult Index(string? dni = null, string? nombre = null,
 
 
     // GET: Propietario/Buscar/5
-    [Route("[controller]/Buscar/{q}", Name = "Buscar")]
+    [Route("[controller]/Buscar", Name = "Buscar")]
     public IActionResult Buscar(string q)
     {
       try
@@ -255,6 +255,8 @@ public ActionResult Index(string? dni = null, string? nombre = null,
         return Json(new { Error = ex.Message });
       }
     }
+
+
 
     public ActionResult Buscar(string? dni, string? nombre, string? apellido, string? email)
     {

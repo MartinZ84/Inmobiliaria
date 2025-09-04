@@ -141,36 +141,43 @@ public class RepositorioPropietario : RepositorioBase, IRepositorioPropietario
 		return p;
 	}
 
-	public Propietario? ObtenerPorNombre(string nombre)
-	{
-		Propietario? p = null;
-		using (MySqlConnection connection = new MySqlConnection(connectionString))
-		{
-			string sql = $"SELECT Id, Nombre, Apellido, Dni, Telefono, Email" +
-				$" FROM Propietarios" + $" WHERE Nombre=@nombre";
-			using (MySqlCommand command = new MySqlCommand(sql, connection))
-			{
-				// command.CommandType = CommandType.Text;
-				command.Parameters.AddWithValue($"@{nameof(nombre)}", nombre);
-				connection.Open();
-				var reader = command.ExecuteReader();
-				if (reader.Read())
-				{
-					p = new Propietario
-					{
-						Id = reader.GetInt32(nameof(Propietario.Id)),
-						Nombre = reader.GetString(nameof(Propietario.Nombre)),
-						Apellido = reader.GetString(nameof(Propietario.Apellido)),
-						Dni = reader.GetString(nameof(Propietario.Dni)),
-						Telefono = reader.GetString(nameof(Propietario.Telefono)),
-						Email = reader.GetString(nameof(Propietario.Email)),
-					};
-				}
-				connection.Close();
-			}
-		}
-		return p;
-	}
+public IList<Propietario> ObtenerPorNombre(string nombre)
+{
+    IList<Propietario> propietarios = new List<Propietario>();
+
+    using (MySqlConnection connection = new MySqlConnection(connectionString))
+    {
+        string sql = @"SELECT Id, Nombre, Apellido, Dni, Telefono, Email 
+                       FROM Propietarios 
+                       WHERE Nombre LIKE @nombre OR Apellido LIKE @nombre";
+
+        using (MySqlCommand command = new MySqlCommand(sql, connection))
+        {
+            command.Parameters.AddWithValue("@nombre", $"%{nombre}%");
+            connection.Open();
+            var reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                Propietario p = new Propietario
+                {
+                    Id = reader.GetInt32(nameof(Propietario.Id)),
+                    Nombre = reader.GetString(nameof(Propietario.Nombre)),
+                    Apellido = reader.GetString(nameof(Propietario.Apellido)),
+                    Dni = reader.GetString(nameof(Propietario.Dni)),
+                    Telefono = reader.GetString(nameof(Propietario.Telefono)),
+                    Email = reader.GetString(nameof(Propietario.Email))
+                };
+                propietarios.Add(p);
+            }
+
+            connection.Close();
+        }
+    }
+
+    return propietarios;
+}
+
 
 	public int Baja(int id)
 	{
