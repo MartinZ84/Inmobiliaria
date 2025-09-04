@@ -18,15 +18,16 @@ namespace Inmobiliaria.Controllers
     private readonly RepositorioInquilino repositorioInquilino;
     private readonly RepositorioInmueble repositorioInmueble;
     private readonly RepositorioTipoInmueble repoTipoInm;
+    private readonly RepositorioPago repositorioPago;
     private readonly IWebHostEnvironment webHostEnvironment;
 
-    public ContratosController(RepositorioContrato repositorio, RepositorioPropietario repositorioPropietario, RepositorioTipoInmueble repoTipoInm, RepositorioInquilino repositorioInquilino, RepositorioInmueble repositorioInmueble, IWebHostEnvironment webHostEnvironment)
+    public ContratosController(RepositorioContrato repositorio, RepositorioPago repositorioPago, RepositorioPropietario repositorioPropietario, RepositorioTipoInmueble repoTipoInm, RepositorioInquilino repositorioInquilino, RepositorioInmueble repositorioInmueble, IWebHostEnvironment webHostEnvironment)
     {
       this.repositorio = repositorio;
       this.repositorioPropietario = repositorioPropietario;
       this.repoTipoInm = repoTipoInm;
       this.webHostEnvironment = webHostEnvironment;
-
+      this.repositorioPago = repositorioPago;
       this.repositorioInquilino = repositorioInquilino;
       this.repositorioInmueble = repositorioInmueble;
 
@@ -50,6 +51,63 @@ namespace Inmobiliaria.Controllers
     //     return View(vm);
     // }
 
+    private void GenerarPagosPorRevocacion(Contrato contrato)
+{
+    var pagos = new List<Pago>();
+    var hoy = DateTime.Now;
+    var mitad = contrato.FechaInicio.AddDays((contrato.FechaFin - contrato.FechaInicio).TotalDays / 2);
+
+    int cantidadPagos = hoy < mitad ? 2 : 1;
+
+    for (int i = 0; i < cantidadPagos; i++)
+    {
+        pagos.Add(new Pago
+        {
+            ContratoId = contrato.Id,
+            FechaPago = hoy,
+            Importe = contrato.Precio
+        });
+    }
+
+    foreach (var pago in pagos)
+    {
+        repositorioPago.Alta(pago);
+    }
+}
+    public IActionResult Revocar(int id)
+    {
+    try
+    {
+        var contrato = repositorio.ObtenerPorId(id);
+        if (contrato.Estado == "No vigente")
+        {
+          TempData["ErrorMessage"] = "El contrato ya está revocado";
+          return RedirectToAction(nameof(Index));
+        }
+        var mitad = contrato.FechaInicio.AddDays((contrato.FechaFin - contrato.FechaInicio).TotalDays / 2);
+        if (DateTime.Now < mitad)
+        {
+            GenerarPagosPorRevocacion(contrato);
+            contrato.Estado = "No vigente";
+            repositorio.Modificacion(contrato);
+            TempData["SuccessMessage"] = "Contrato revocado exitosamente";
+            return RedirectToAction(nameof(Index));
+        }
+        else
+        {
+            GenerarPagosPorRevocacion(contrato);
+            contrato.Estado = "No vigente";
+            repositorio.Modificacion(contrato);
+            TempData["SuccessMessage"] = "Contrato revocado exitosamente";
+            return RedirectToAction(nameof(Index));
+        }
+    }
+    catch (Exception ex)
+    {
+        TempData["ErrorMessage"] = ex.Message;
+        return RedirectToAction(nameof(Index));
+    }
+}
     public IActionResult Index(string? dni, string? nombre, string? apellido, int pagina = 1)
     {
       var tamaño = 10;
