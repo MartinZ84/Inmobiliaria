@@ -63,9 +63,11 @@ namespace Inmobiliaria.Controllers
     {
         pagos.Add(new Pago
         {
-            ContratoId = contrato.Id,
-            FechaPago = hoy,
-            Importe = contrato.Precio
+          ContratoId = contrato.Id,
+          FechaPago = hoy,
+          Importe = contrato.Precio,
+          Concepto = hoy < mitad ? "Pago por revocación antes de la mitad del contrato" : "Pago por revocación después de la mitad del contrato",
+          
         });
     }
 

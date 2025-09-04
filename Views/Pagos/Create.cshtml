@@ -8,9 +8,7 @@
     var importe=ViewBag.importe;
 }
 
-<h1>Realizar pago</h1>
-
-<h4>Pago</h4>
+<h4 class="mt-4"> Crear Pago</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -36,7 +34,11 @@
                 <input asp-for="Importe" class="form-control" value="@importe"/>
                 <span asp-validation-for="Importe" class="text-danger"></span>
             </div>
-        
+           <div class="form-group">
+                <label asp-for="Concepto" class="control-label"></label>
+                <input asp-for="Concepto" class="form-control" maxlength="500" />
+                <span asp-validation-for="Concepto" class="text-danger"></span>
+            </div>
             <br>
             <div class="form-group">
                 <input type="submit" value="Crear" class="btn btn-primary" />

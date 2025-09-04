@@ -4,11 +4,9 @@
     ViewData["Title"] = "Borrar";
 }
 
-<h1>Borrar</h1>
-
-<h3>Se procedera a eliminar el siguiente pago</h3>
+ <h4 class= "mt-4"> Anular Pago</h4>
 <div>
-    <h4>Pago</h4>
+   
     <hr />
     <dl class="row">
         <dt class = "col-sm-2">
@@ -36,6 +34,18 @@
             @Html.DisplayFor(model => model.Importe)
         </dd>
         <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Concepto)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Concepto)
+        </dd>
+        <dt class = "col-sm-2">
+            @Html.DisplayNameFor(model => model.Estado)
+        </dt>
+        <dd class = "col-sm-10">
+            @Html.DisplayFor(model => model.Estado)
+        </dd>
+        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.ContratoId)
         </dt>
         <dd class = "col-sm-10">
@@ -44,9 +54,9 @@
     </dl>
     
     <form asp-action="Delete">
-        <input type="submit" value="Borrar" class="btn btn-danger" /> |
-       
-        
+        <input type="submit" value="Anular" class="btn btn-danger" /> |
+
+
     @Html.ActionLink("Volver al listado", "Index", new { id = Model.ContratoId }, new{@class="btn btn-secondary"})
     </form>
 </div>
