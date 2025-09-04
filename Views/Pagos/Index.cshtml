@@ -1,0 +1,103 @@
+@model IEnumerable<Inmobiliaria.Models.Entidades.Pago>
+
+@{
+    ViewData["Title"] = "Pagos";
+    var ContratoId = ViewBag.ContratoId;
+}
+
+<h3 class="mt-4">Pagos del contrato N° @ContratoId</h3>
+<hr>
+<p>
+
+    <div class="row justify-content-between">
+        @Html.ActionLink("Nuevo pago", "Create", new { id = @ContratoId }, new { @class = "btn btn-primary col-2" })
+        <a asp-controller="Contratos" asp-action="Index" class="btn btn-secondary col-2">Volver a contratos</a>
+
+    </div>
+
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Id)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.NroPago)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.FechaPago)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Importe)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Concepto)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Estado)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.ContratoId)
+            </th>
+            <th>Acciones    
+
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Id)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.NroPago)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.FechaPago)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Importe)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Concepto)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Estado)
+                <td>
+                    @Html.DisplayFor(modelItem => item.ContratoId)
+                </td>
+               
+                <td>
+                    <div class="dropdown">
+                        <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-three-dots"></i>
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" asp-action="Edit" asp-route-id="@item.Id">
+                                    <i class="bi bi-pencil text-success"></i> Editar
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id">
+                                    <i class="bi bi-info-circle text-warning"></i> Detalles
+                                </a>
+                            </li>                        
+                            <li>
+                                <a class="dropdown-item" asp-action="Delete" asp-route-id="@item.Id">
+                                    <i class="bi bi-trash text-danger"></i> Anular
+                                </a>
+                            </li>     
+
+
+                        </ul>
+                    </div>
+                </td>
+            </tr>
+
+        }
+    </tbody>
+</table>

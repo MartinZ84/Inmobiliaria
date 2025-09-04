@@ -40,12 +40,7 @@
             </div>
             <div class="form-group">
                 <label asp-for="Estado" class="control-label"></label>
-                @* <input asp-for="Estado" class="form-control" /> *@
-                  <select asp-for="Estado"  class="form-select"   name="Estado">
-                  <option value="" disabled >Seleccionar estado  </option>
-                  <option value="Vigente">Vigente</option>
-                  <option value="No vigente">No vigente</option>
-                </select>
+                <input asp-for="Estado"  class="form-control" disabled  name="Estado">
                 <span asp-validation-for="Estado" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -74,7 +69,8 @@
             <br>
             <div class="form-group">
                 <input type="submit" value="Guardar" class="btn btn-primary" />                
-                 <a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
+                <a asp-action="Index" class="btn btn-secondary">Volver al listado</a>
+                <a asp-action="Revocar" asp-route-id="@Model.Id" class="btn btn-secondary">Revocar contrato</a>
             </div>
         </form>
     </div>
