@@ -76,9 +76,9 @@
                             </div>
                             <div class="col-md-3">
                                 <label for="FechaDesde" class="form-label">Fecha Disponibilidad Inicio</label>
-                                @if (ViewBag.FechaInicio != null)
+                                @if (ViewBag.FechaDesde != null)
                                 {
-                                    var fechaInicio = ViewBag.FechaInicio.ToString("yyyy-MM-dd h:mm tt");
+                                    var fechaInicio = ViewBag.FechaDesde.ToString("yyyy-MM-dd");
                                     <input type="date" name="FechaDesde" id="FechaDesde" class="form-control"
                                         value=@fechaInicio />
                                 }
@@ -93,9 +93,9 @@
 
                             <div class=" col-md-3">
                                 <label for="fechaHasta" class="form-label">Fecha Disponibilidad Fin</label>
-                                @if (ViewBag.FechaFin != null)
+                                @if (ViewBag.FechaHasta != null)
                                 {
-                                    var fechaFin = ViewBag.FechaFin.ToString("yyyy-MM-dd h:mm tt");
+                                    var fechaFin = ViewBag.FechaHasta.ToString("yyyy-MM-dd");
                                     <input type="date" name="fechaHasta" id="fechaHasta" class="form-control" value=@fechaFin />
                                 }
                                 else
@@ -106,16 +106,13 @@
                                 <span for="fechaHasta" class="text-danger"></span>
                             </div>
                         </div>
-                    </div>
 
-
-
-                    <div class="row mt-3">
-                        <div class="col-12">
-                            <button type="submit" class="btn btn-outline-primary me-2">
-                                <i class="bi bi-search me-1"></i>Buscar
-                            </button>
-                            <button type="button" class="btn btn-outline-secondary me-2" id="btnLimpiar">
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-outline-primary me-2">
+                                    <i class="bi bi-search me-1"></i>Buscar
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary me-2" id="btnLimpiar">
                                 <i class="bi bi-eraser me-1"></i>Limpiar
                             </button>
                             @* <a href="@Url.Action("Disponibles")" class="btn btn-outline-success me-2">
@@ -123,6 +120,11 @@
                                 </a> *@
                         </div>
                     </div>
+                    </div>
+
+
+
+                    
                 </div>
             </div>
 
@@ -457,4 +459,19 @@
             }
         });
     });
+
+    // Restaurar selección si viene desde el servidor
+var propietarioId = '@ViewBag.PropietarioId';
+var nombrePropietario = '@ViewBag.NombrePropietario';
+var apellidoPropietario = '@ViewBag.ApellidoPropietario';
+if (propietarioId) {
+    $.ajax({
+        type: 'GET',
+        url: '/Propietarios/ObtenerPropPorId', // tu endpoint que devuelve {id,text}
+        data: { id: propietarioId }
+    }).then(function (data) {
+        var option = new Option(data.text, data.id, true, true);
+        $('#PropietarioId').append(option).trigger('change');
+    });
+}
 </script>

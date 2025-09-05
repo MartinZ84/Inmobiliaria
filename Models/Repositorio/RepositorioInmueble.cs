@@ -278,112 +278,131 @@ namespace Inmobiliaria.Models.Repositorio
         // }
 
         public IList<Inmueble> BuscarInmueblesConValidacion(
-    int? tipo = null,
-    string? uso = null,
-    int? estado = null,
-    int? precioMin = null,
-    int? precioMax = null,
-    int? PropietarioId = null,
-    DateTime? fechaDesde = null,
-    DateTime? fechaHasta = null
-    , int paginaNro = 1, int tamPagina = 6)
-{
-    var inmuebles = new List<Inmueble>();
+            int? tipo = null,
+            string? uso = null,
+            int? estado = null,
+            int? precioMin = null,
+            int? precioMax = null,
+            int? PropietarioId = null,
+            DateTime? fechaDesde = null,
+            DateTime? fechaHasta = null
+            , int paginaNro = 1, int tamPagina = 6)
+        {
+            var inmuebles = new List<Inmueble>();
 
-    // Validar que al menos un criterio esté presente
-    if (!tipo.HasValue && string.IsNullOrWhiteSpace(uso) && !estado.HasValue &&
-        !precioMin.HasValue && !precioMax.HasValue && !PropietarioId.HasValue &&
-        !fechaDesde.HasValue && !fechaHasta.HasValue)
-    {
-        return inmuebles; // Retornar lista vacía si no hay criterios
-    }
+            // Validar que al menos un criterio esté presente
+            if (!tipo.HasValue && string.IsNullOrWhiteSpace(uso) && !estado.HasValue &&
+                !precioMin.HasValue && !precioMax.HasValue && !PropietarioId.HasValue &&
+                !fechaDesde.HasValue && !fechaHasta.HasValue)
+            {
+                return inmuebles; // Retornar lista vacía si no hay criterios
+            }
 
-    using (var connection = new MySqlConnection(connectionString))
-    {
-        var sql = @"
+            using (var connection = new MySqlConnection(connectionString))
+            {
+                var sql = @"
             SELECT i.*, p.nombre as PropietarioNombre, p.apellido as PropietarioApellido, ti.descripcion as TipoInmuebleDescripcion
             FROM inmuebles i 
             INNER JOIN propietarios p ON i.propietarioId = p.id
             INNER JOIN tiposInmuebles ti ON i.tipInmId = ti.id
             WHERE 1=1 ";
 
-        var parameters = new List<MySqlParameter>();
+                var parameters = new List<MySqlParameter>();
 
-        if (tipo.HasValue)
-        {
-            sql += " AND i.tipInmId = @tipo";
-            parameters.Add(new MySqlParameter("@tipo", tipo.Value));
-        }
-
-        if (!string.IsNullOrWhiteSpace(uso))
-        {
-            sql += " AND i.uso LIKE @uso";
-            parameters.Add(new MySqlParameter("@uso", $"%{uso.Trim()}%"));
-        }
-
-        if (estado.HasValue)
-        {
-            sql += " AND i.estado = @estado";
-            parameters.Add(new MySqlParameter("@estado", estado.Value));
-        }
-        else
-        {
-            // Si no se especifica estado, excluir los dados de baja
-            sql += " AND i.estado <> @estadoBaja";
-            parameters.Add(new MySqlParameter("@estadoBaja", (int)EstadoInmueble.Baja));
-        }
-
-        if (precioMin.HasValue)
-        {
-            sql += " AND i.precio >= @precioMin";
-            parameters.Add(new MySqlParameter("@precioMin", precioMin.Value));
-        }
-
-        if (precioMax.HasValue)
-        {
-            sql += " AND i.precio <= @precioMax";
-            parameters.Add(new MySqlParameter("@precioMax", precioMax.Value));
-        }
-
-        if (PropietarioId.HasValue)
-        {
-            sql += " AND i.propietarioId = @PropietarioId";
-            parameters.Add(new MySqlParameter("@PropietarioId", PropietarioId.Value));
-        }
-
-        if (fechaDesde.HasValue && fechaHasta.HasValue)
-        {
-            // Excluir inmuebles que ya tengan contratos en ese rango de fechas
-            sql += @"
-                AND NOT EXISTS (
-                    SELECT 1 
-                    FROM contratos c
-                    WHERE c.inmuebleId = i.id
-                      AND (
-                            (c.fechaInicio <= @fechaHasta AND c.fechaFin >= @fechaDesde)
-                          )
-                )";
-            parameters.Add(new MySqlParameter("@fechaDesde", fechaDesde.Value));
-            parameters.Add(new MySqlParameter("@fechaHasta", fechaHasta.Value));
-        }
-
-        sql += $" ORDER BY i.id LIMIT {tamPagina} OFFSET {(paginaNro - 1) * tamPagina} "; // Limitar a 200 resultados
-
-        using (var command = new MySqlCommand(sql, connection))
-        {
-            command.Parameters.AddRange(parameters.ToArray());
-            connection.Open();
-            using (var reader = command.ExecuteReader())
-            {
-                while (reader.Read())
+                if (tipo.HasValue)
                 {
-                    inmuebles.Add(MapearInmueble(reader));
+                    sql += " AND i.tipInmId = @tipo";
+                    parameters.Add(new MySqlParameter("@tipo", tipo.Value));
+                }
+
+                if (!string.IsNullOrWhiteSpace(uso))
+                {
+                    sql += " AND i.uso LIKE @uso";
+                    parameters.Add(new MySqlParameter("@uso", $"%{uso.Trim()}%"));
+                }
+
+                if (estado.HasValue)
+                {
+                    sql += " AND i.estado = @estado";
+                    parameters.Add(new MySqlParameter("@estado", estado.Value));
+                }
+                else
+                {
+                    // Si no se especifica estado, excluir los dados de baja
+                    sql += " AND i.estado <> @estadoBaja";
+                    parameters.Add(new MySqlParameter("@estadoBaja", (int)EstadoInmueble.Baja));
+                }
+
+                if (precioMin.HasValue)
+                {
+                    sql += " AND i.precio >= @precioMin";
+                    parameters.Add(new MySqlParameter("@precioMin", precioMin.Value));
+                }
+
+                if (precioMax.HasValue)
+                {
+                    sql += " AND i.precio <= @precioMax";
+                    parameters.Add(new MySqlParameter("@precioMax", precioMax.Value));
+                }
+
+                if (PropietarioId.HasValue)
+                {
+                    sql += " AND i.propietarioId = @PropietarioId";
+                    parameters.Add(new MySqlParameter("@PropietarioId", PropietarioId.Value));
+                }
+                if (fechaDesde.HasValue || fechaHasta.HasValue)
+                {
+                    sql += @"
+                    AND NOT EXISTS (
+                        SELECT 1
+                        FROM contratos c
+                        WHERE c.inmuebleId = i.id
+                        AND c.estado = 'Vigente'
+                        AND (
+                                (@fechaDesde IS NULL OR c.fechaFinAnt >= @fechaDesde)
+                            AND (@fechaHasta IS NULL OR c.fechaInicio <= @fechaHasta)
+                        )
+                    )";
+
+                    // Usar DBNull.Value cuando el parámetro es null
+                    parameters.Add(new MySqlParameter("@fechaDesde", (object?)fechaDesde ?? DBNull.Value));
+                    parameters.Add(new MySqlParameter("@fechaHasta", (object?)fechaHasta ?? DBNull.Value));
+                }
+
+                // if (fechaDesde.HasValue && fechaHasta.HasValue)
+                // {
+                //     // Excluir inmuebles que ya tengan contratos en ese rango de fechas
+                //     sql += @"
+                // AND NOT EXISTS (
+                //     SELECT 1 
+                //     FROM contratos c
+                //     WHERE c.inmuebleId = i.id
+                //     AND c.estado = 'Vigente'
+                //       AND (
+                //             (c.fechaInicio <= @fechaHasta AND c.fechaFin >= @fechaDesde )
+                //           )
+                // )";
+                //     parameters.Add(new MySqlParameter("@fechaDesde", fechaDesde.Value));
+                //     parameters.Add(new MySqlParameter("@fechaHasta", fechaHasta.Value));
+                // }
+
+                sql += $" ORDER BY i.id LIMIT {tamPagina} OFFSET {(paginaNro - 1) * tamPagina} "; // Limitar a 200 resultados
+
+                using (var command = new MySqlCommand(sql, connection))
+                {
+                    command.Parameters.AddRange(parameters.ToArray());
+                    connection.Open();
+                    using (var reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            inmuebles.Add(MapearInmueble(reader));
+                        }
+                    }
                 }
             }
+            return inmuebles;
         }
-    }
-    return inmuebles;
-}
 
 
         public IList<Inmueble> ObtenerDisponibles()
@@ -567,7 +586,7 @@ namespace Inmobiliaria.Models.Repositorio
             IList<Inmueble> res = new List<Inmueble>();
             using (MySqlConnection connection = new MySqlConnection(connectionString))
             {
-               string sql = @$"
+                string sql = @$"
 					SELECT i.*, p.nombre as PropietarioNombre, p.apellido as PropietarioApellido, ti.descripcion as TipoInmuebleDescripcion
                     FROM inmuebles i 
                     INNER JOIN propietarios p ON i.propietarioId = p.id
@@ -601,7 +620,8 @@ namespace Inmobiliaria.Models.Repositorio
                             SELECT COUNT(*)
                             FROM contratos
                             WHERE inmuebleId = @inmuebleId
-                            AND NOT (fechaFinAnt < @FechaInicio OR fechaInicio > @FechaFin);";
+                            AND estado = 'Vigente'
+                            AND NOT (fechaFinAnt < @FechaInicio OR fechaInicio > @FechaFin );";
                 // string sql =    "SELECT COUNT(CONTRATOS.inmuebleId) " +
                 //                 "FROM contratos WHERE " +
                 //                 "CONTRATOS.inmuebleId=@inmuebleId " + " AND " +

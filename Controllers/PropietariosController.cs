@@ -82,6 +82,29 @@ namespace Inmobiliaria.Controllers
       var propietario = repositorio.ObtenerPorId(id);
       return View(propietario);
     }
+    public ActionResult ObtenerPropPorId(int id)
+    {
+      try
+      {
+        var propietario = repositorio.ObtenerPorId(id);
+        if (propietario == null)
+          return Json(new { Error = "No se encontró el propietario" });
+
+        // Para Select2, el texto visible se pone en 'text'
+        var res = new
+        {
+          id = propietario.Id,
+          text = $"{propietario.Nombre} {propietario.Apellido}"
+        };
+
+        return Json(res);
+      }
+      catch (Exception ex)
+      {
+        return Json(new { Error = ex.Message });
+      }
+    }
+
 
     // GET: Propietarios/Create
     // [Authorize(Policy = "Empleado")]
