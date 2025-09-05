@@ -203,7 +203,7 @@ namespace Inmobiliaria.Models.Repositorio
 			IList<Contrato> res = new List<Contrato>();
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
-				string sql = "SELECT c.Id, FechaInicio, FechaFin, c.Estado, c.Precio, InquilinoId, InmuebleId, c.fechaFinAnt " +
+				string sql = "SELECT c.Id, FechaInicio, FechaFin, c.Estado, c.Precio, InquilinoId, InmuebleId, c.fechaFinAnt, " +
 					" inq.Nombre, inq.Apellido, inm.Direccion " +
 					" FROM Contratos c INNER JOIN Inquilinos inq ON c.InquilinoId = inq.Id " +
 					"INNER JOIN Inmuebles inm ON inm.Id= c.InmuebleId " +

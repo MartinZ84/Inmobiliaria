@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 04-09-2025 a las 17:32:02
+-- Tiempo de generación: 06-09-2025 a las 01:55:11
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -49,9 +49,11 @@ INSERT INTO `contratos` (`id`, `fechaInicio`, `fechaFin`, `estado`, `precio`, `i
 (51, '2022-04-22', '2024-04-22', 'Vigente', 30000, 3, 3, '2024-04-22', 1, NULL),
 (52, '2022-05-01', '2022-07-01', 'Vigente', 30000, 3, 7, '2022-07-01', 1, NULL),
 (53, '2022-07-02', '2022-08-01', 'Vigente', 50000, 3, 7, '2022-08-01', 1, NULL),
-(65, '2025-09-02', '2027-09-02', 'No vigente', 5454, 7, 25, NULL, 1, NULL),
+(65, '2025-09-02', '2027-09-02', 'No vigente', 5454, 7, 25, '2027-09-02', 1, NULL),
 (66, '2025-09-02', '2026-09-02', 'Vigente', 55555, 3, 22, '2026-09-02', 1, NULL),
-(67, '2025-09-02', '2027-09-02', 'Vigente', 345235, 7, 23, '2027-09-02', 1, NULL);
+(67, '2025-09-02', '2027-09-02', 'No vigente', 345235, 7, 23, '2027-09-02', 1, NULL),
+(68, '2025-09-05', '2027-09-05', 'Vigente', 5000000, 9, 1, '2027-09-05', 1, NULL),
+(74, '2025-09-05', '2027-09-05', 'Vigente', 11223, 3, 20, '2027-09-05', 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -86,9 +88,10 @@ INSERT INTO `inmuebles` (`id`, `direccion`, `ambientes`, `superficie`, `tipInmId
 (14, 'Belgrano 45, San Luis', 5, 90, 1, 'Comercial', 80000, 0, 0, 3, 14, NULL),
 (20, 'Chacabuco 584', 3, 100, 1, 'Residencial', 1000000, NULL, NULL, 1, 14, '/uploads/inmuebles/ed8c04bc-c1fd-4fdf-b10b-dd882bc64e1b_Captura de pantalla 2025-07-13 123409.png'),
 (22, 'San Martin 89', 4, 152, 2, 'Residencial', 4545, 53, 54, 1, 4, '/uploads/inmuebles/916529eb-81ee-4537-a56d-0cbfc58ad753_Terreno venta.png'),
-(23, 'Colon 2542, Mendoza Capital', 2, 30, 3, 'Residencial', 100000, 45445, 56445, 1, 4, '/uploads/inmuebles/7e50ceee-67af-480e-88d4-cd20f3779d85_Terreno Barrancas.png'),
+(23, 'Peron 111, Mercedes', 2, 30, 3, 'Residencial', 100000, 45445, 56445, 1, 4, '/uploads/inmuebles/7e50ceee-67af-480e-88d4-cd20f3779d85_Terreno Barrancas.png'),
 (24, 'Salta 458, Salta Capital', 5, 100, 1, 'Residencial', 5222, 546, 56, 2, 11, '/uploads/inmuebles/69d76abd-5c7c-4c8d-932c-b6e59e380ce5_sudamerica.jpg'),
-(25, 'Mexico 6347, San Luis Capital', 2, 100, 3, 'Residencial', 45455, 45, 45, 1, 6, NULL);
+(25, 'Mexico 6347, San Luis Capital', 2, 100, 3, 'Residencial', 45455, 45, 45, 1, 6, NULL),
+(26, 'Junin 545 Capital', 5, 40, 2, 'Residencial', 46666000, 88, 8707, 1, 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -146,7 +149,11 @@ INSERT INTO `pagos` (`id`, `nroPago`, `fechaPago`, `importe`, `contratoId`, `usu
 (37, 0, '2025-09-04 10:28:18', 5454.00, 65, NULL, NULL, NULL, NULL),
 (38, 1, '2025-09-04 00:00:00', 50000.00, 53, NULL, NULL, 'PAgo 1', NULL),
 (39, 1, '2025-09-04 00:00:00', 30000.00, 52, NULL, NULL, 'Pago alquiler 1', NULL),
-(40, 2, '2025-09-04 00:00:00', 30000.00, 51, NULL, NULL, 'PAgo 2', 'Anulado');
+(40, 2, '2025-09-04 00:00:00', 30000.00, 51, NULL, NULL, 'PAgo 2', 'Anulado'),
+(41, 1, '2025-09-04 00:00:00', 55555.00, 66, NULL, NULL, 'Pago 1', 'Anulado'),
+(42, 0, '2025-09-05 09:51:58', 345235.00, 67, NULL, NULL, 'Pago por revocación antes de la mitad del contrato', 'Debe'),
+(43, 0, '2025-09-05 09:51:58', 345235.00, 67, NULL, NULL, 'Pago por revocación antes de la mitad del contrato', 'Debe'),
+(44, 1, '2025-09-05 00:00:00', 5000000.00, 68, NULL, NULL, 'PAgo 1', 'Anulado');
 
 -- --------------------------------------------------------
 
@@ -285,13 +292,13 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `contratos`
 --
 ALTER TABLE `contratos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
 
 --
 -- AUTO_INCREMENT de la tabla `inmuebles`
 --
 ALTER TABLE `inmuebles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
 
 --
 -- AUTO_INCREMENT de la tabla `inquilinos`
@@ -303,7 +310,7 @@ ALTER TABLE `inquilinos`
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
 
 --
 -- AUTO_INCREMENT de la tabla `propietarios`

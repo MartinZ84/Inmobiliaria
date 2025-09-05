@@ -192,6 +192,11 @@
                         <a asp-action="Delete" asp-route-id="@Model.Id" class="btn btn-outline-danger">
                             <i class="bi bi-trash"></i> Baja Inmueble
                         </a>
+                        
+                        <a href="@Url.Action("ContratosInmueble", "Contratos", new { id = Model.Id })" class="btn btn-outline-success">
+                            <i class="bi bi-file-earmark-text"></i> Contratos
+                        </a>
+
                         <a asp-action="Index" class="btn btn-outline-secondary">
                             <i class="bi bi-arrow-left"></i> Volver al Listado
                         </a>

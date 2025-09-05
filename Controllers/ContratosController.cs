@@ -383,8 +383,8 @@ namespace Inmobiliaria.Controllers
       TempData.Remove("returnUrl");
 
       var contrato = repositorio.ObtenerPorId(id);
-      contrato.FechaInicio = contrato.FechaInicio.Date.AddDays(2);
-      contrato.FechaFin = contrato.FechaInicio.AddYears(2);
+      contrato.FechaInicio = contrato.FechaFin.Date.AddDays(1);
+      contrato.FechaFin = contrato.FechaInicio.AddYears(1);
 
       ViewBag.Inquilino = repositorioInquilino.ObtenerPorId(contrato.InquilinoId);
       ViewBag.Inmueble = repositorioInmueble.ObtenerPorId(contrato.InmuebleId);
