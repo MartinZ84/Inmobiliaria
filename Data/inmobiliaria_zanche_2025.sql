@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 01-09-2025 a las 00:17:39
+-- Tiempo de generación: 04-09-2025 a las 17:32:02
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -45,11 +45,13 @@ CREATE TABLE `contratos` (
 --
 
 INSERT INTO `contratos` (`id`, `fechaInicio`, `fechaFin`, `estado`, `precio`, `inquilinoId`, `inmuebleId`, `fechaFinAnt`, `usuarioIdAlta`, `usuarioIdBaja`) VALUES
-(49, '2022-04-21', '2024-04-21', 'Vigente', 30000, 3, 1, NULL, NULL, NULL),
-(51, '2022-04-22', '2024-04-22', 'Vigente', 30000, 3, 3, NULL, NULL, NULL),
-(52, '2022-05-01', '2022-07-01', 'Vigente', 30000, 3, 7, NULL, NULL, NULL),
-(53, '2022-07-02', '2022-08-01', 'Vigente', 50000, 3, 7, NULL, NULL, NULL),
-(55, '2023-04-23', '2024-04-22', 'Vigente', 80000, 13, 14, NULL, NULL, NULL);
+(49, '2022-04-21', '2025-04-21', 'Vigente', 30000, 3, 1, '2025-04-21', 1, NULL),
+(51, '2022-04-22', '2024-04-22', 'Vigente', 30000, 3, 3, '2024-04-22', 1, NULL),
+(52, '2022-05-01', '2022-07-01', 'Vigente', 30000, 3, 7, '2022-07-01', 1, NULL),
+(53, '2022-07-02', '2022-08-01', 'Vigente', 50000, 3, 7, '2022-08-01', 1, NULL),
+(65, '2025-09-02', '2027-09-02', 'No vigente', 5454, 7, 25, NULL, 1, NULL),
+(66, '2025-09-02', '2026-09-02', 'Vigente', 55555, 3, 22, '2026-09-02', 1, NULL),
+(67, '2025-09-02', '2027-09-02', 'Vigente', 345235, 7, 23, '2027-09-02', 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -69,7 +71,7 @@ CREATE TABLE `inmuebles` (
   `longitud` decimal(10,0) DEFAULT NULL,
   `estado` int(3) NOT NULL,
   `propietarioId` int(11) NOT NULL,
-  `imagenes` varchar(255) DEFAULT NULL
+  `imagenes` varchar(5000) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
@@ -111,9 +113,9 @@ INSERT INTO `inquilinos` (`id`, `nombre`, `apellido`, `dni`, `telefono`, `email`
 (3, 'Laura', 'Inquilino', '45666878', '45468888', 'jose@inquilino.com'),
 (7, 'Jose', 'Sexto', '45666878', '2645548844', 'marilauzan@gmail.com'),
 (9, 'Roberto', 'Monez Ruiz', '5343233', '45455444', 'monezruiz@gobernator.com'),
-(13, 'Carla', 'Peterson', '45666878', '45468888', 'juna@palomino.com'),
+(13, 'Carla', 'Peterson', '1234567', '45468888', 'juna@palomino.com'),
 (20, 'Pablo', 'Podesta', '6776576', '5844558748', 'mirco@gmail.com'),
-(21, 'Sofia', 'Lorens', '47874554', '4787845455', 'sofia@lorenz.com.ar');
+(21, 'Sofia', 'Lorens', '47874554', '0000', 'sofia@lorenz.com.ar');
 
 -- --------------------------------------------------------
 
@@ -128,17 +130,23 @@ CREATE TABLE `pagos` (
   `importe` decimal(10,2) NOT NULL,
   `contratoId` int(11) NOT NULL,
   `usuarioIdAlta` int(11) DEFAULT NULL,
-  `usuarioIdBaja` int(11) DEFAULT NULL
+  `usuarioIdBaja` int(11) DEFAULT NULL,
+  `concepto` varchar(500) DEFAULT NULL,
+  `estado` varchar(50) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 --
 -- Volcado de datos para la tabla `pagos`
 --
 
-INSERT INTO `pagos` (`id`, `nroPago`, `fechaPago`, `importe`, `contratoId`, `usuarioIdAlta`, `usuarioIdBaja`) VALUES
-(33, 1, '2022-04-22 00:00:00', 30000.00, 49, NULL, NULL),
-(34, 2, '2022-04-22 00:00:00', 30000.00, 49, NULL, NULL),
-(35, 1, '2022-04-22 00:00:00', 30000.00, 51, NULL, NULL);
+INSERT INTO `pagos` (`id`, `nroPago`, `fechaPago`, `importe`, `contratoId`, `usuarioIdAlta`, `usuarioIdBaja`, `concepto`, `estado`) VALUES
+(33, 1, '2022-04-22 00:00:00', 30000.00, 49, NULL, NULL, NULL, NULL),
+(35, 1, '2022-04-22 00:00:00', 30000.00, 51, NULL, NULL, NULL, NULL),
+(36, 0, '2025-09-04 10:28:18', 5454.00, 65, NULL, NULL, NULL, NULL),
+(37, 0, '2025-09-04 10:28:18', 5454.00, 65, NULL, NULL, NULL, NULL),
+(38, 1, '2025-09-04 00:00:00', 50000.00, 53, NULL, NULL, 'PAgo 1', NULL),
+(39, 1, '2025-09-04 00:00:00', 30000.00, 52, NULL, NULL, 'Pago alquiler 1', NULL),
+(40, 2, '2025-09-04 00:00:00', 30000.00, 51, NULL, NULL, 'PAgo 2', 'Anulado');
 
 -- --------------------------------------------------------
 
@@ -165,8 +173,7 @@ INSERT INTO `propietarios` (`id`, `nombre`, `apellido`, `dni`, `telefono`, `emai
 (6, 'Juan', 'Palomino', '12550550', '264545444', 'juan@palomino.com'),
 (11, 'Jaime', 'Guido', '10545221', '1577858788', 'jaime@mail.com'),
 (13, 'Carlos', 'Fernandez', '28990654', '45455444', 'carlos@fernandez.com'),
-(14, 'Pablo', 'Granados', '45666878', '0', 'pablo@granados.com'),
-(29, 'Pablo', 'Perez', '4366734575', '43648764', 'pp@gmail.com');
+(14, 'Pablo', 'Granados', '45666878', '0', 'pablo@granados.com');
 
 -- --------------------------------------------------------
 
@@ -186,7 +193,8 @@ CREATE TABLE `tiposinmuebles` (
 INSERT INTO `tiposinmuebles` (`id`, `descripcion`) VALUES
 (1, 'Casa'),
 (2, 'Departamento'),
-(3, 'Oficina');
+(3, 'Oficina'),
+(4, 'Galpone');
 
 -- --------------------------------------------------------
 
@@ -277,7 +285,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `contratos`
 --
 ALTER TABLE `contratos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=56;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
 
 --
 -- AUTO_INCREMENT de la tabla `inmuebles`
@@ -295,19 +303,19 @@ ALTER TABLE `inquilinos`
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=41;
 
 --
 -- AUTO_INCREMENT de la tabla `propietarios`
 --
 ALTER TABLE `propietarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=33;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
 
 --
 -- AUTO_INCREMENT de la tabla `tiposinmuebles`
 --
 ALTER TABLE `tiposinmuebles`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`

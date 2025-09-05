@@ -1,0 +1,33 @@
+@using Inmobiliaria.Models.Entidades
+@model Inmobiliaria.Models.Entidades.Contrato
+
+@{
+    ViewData["Title"] = "Contrato - Revocar";
+    var Inquilinos= (IList<Inquilino>)ViewBag.Inquilinos;
+    var Inmuebles= (IList<Inmueble>)ViewBag.Inmuebles; 
+    int cantidadPagos = ViewBag.CantidadPagos ?? 1;
+}
+
+<h1>Revocar</h1>
+
+<h4>Contrato N° @Html.DisplayFor(model => model.Id)</h4>
+<h5> PRECAUCION | Revocar el contrato añadira una multa equivalente a 2 meses de pagos si es revocado antes de la mitad de su duracion   </h5>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Revocar" method="post">
+            <input type="hidden" asp-for="Id" />
+            @for (int i = 1; i <= cantidadPagos; i++)
+            {
+                <div class="form-group">
+                    <label for="Pago @i">Pago @i</label>
+                    <select class="form-select" name="Pago @i" id="Pago @i">
+                        <option value="Debe">Debe</option>
+                        <option value="Abonado">Abonado</option>
+                    </select>
+                </div>
+                }
+            <button type="submit" class="btn btn-secondary mt-3">Revocar contrato</button>
+            <a asp-action="Index" class="btn btn-primary mt-3">Volver al listado</a>
+        </form>
+    </div>

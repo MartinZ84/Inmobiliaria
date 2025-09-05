@@ -18,7 +18,7 @@ namespace Inmobiliaria.Models.Repositorio
 			IList<Pago> res = new List<Pago>();
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
-				string sql = "SELECT p.Id, NroPago, FechaPago, Estado, Importe, ContratoId, Concepto, p.Estado" +
+				string sql = "SELECT p.Id, NroPago, FechaPago, Estado, Importe, ContratoId, concepto, p.Estado" +
 					" " +
 					" FROM Pagos p INNER JOIN Contratos c ON p.ContratoId = c.Id";
 				using (MySqlCommand command = new MySqlCommand(sql, connection))
@@ -50,7 +50,7 @@ namespace Inmobiliaria.Models.Repositorio
 
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
-				string sql = $"INSERT INTO Pagos (NroPago, FechaPago, Importe, ContratoId, Concepto, Estado) " +
+				string sql = $"INSERT INTO Pagos (NroPago, FechaPago, Importe, ContratoId, concepto, Estado) " +
 					"VALUES (@nroPago, @fechaPago, @importe, @contratoId, @Concepto, @Estado); " +
 					"SELECT LAST_INSERT_ID();";//devuelve el id insertado (LAST_INSERT_ID para mysql)
 				using (var command = new MySqlCommand(sql, connection))
@@ -95,12 +95,12 @@ namespace Inmobiliaria.Models.Repositorio
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
 				string sql = "UPDATE Pagos SET " +
-					// "NroPago=@nroPago, FechaPago=@fechaPago, Importe=@importe, ContratoId=@contratoId " +
-					"Concepto=@concepto " +
+				    //"NroPago=@nroPago, FechaPago=@fechaPago, Importe=@importe, ContratoId=@contratoId " +
+					"concepto=@Concepto " +
 					"WHERE Id = @id";
 				using (MySqlCommand command = new MySqlCommand(sql, connection))
 				{
-					command.Parameters.AddWithValue("@concepto", pago.Concepto);
+					command.Parameters.AddWithValue("@Concepto", pago.Concepto);
 					command.Parameters.AddWithValue("@id", pago.Id);
 					connection.Open();
 					res = command.ExecuteNonQuery();
@@ -151,7 +151,7 @@ namespace Inmobiliaria.Models.Repositorio
 			IList<Pago> res = new List<Pago>();
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
-				string sql = @"SELECT p.Id, NroPago, FechaPago, Importe, ContratoId, Concepto, p.Estado
+				string sql = @"SELECT p.Id, NroPago, FechaPago, Importe, ContratoId, concepto, p.Estado
                        FROM Pagos p 
                        INNER JOIN Contratos c ON p.ContratoId = c.Id
                        WHERE c.Id = @id";

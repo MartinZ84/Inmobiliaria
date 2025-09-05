@@ -70,5 +70,5 @@
 
     @Html.ActionLink("Pagos", "Index","Pagos", new {  id = Model.Id }, new {@class="btn btn-info"}) | 
     <a asp-action="Index" class="btn btn-secondary">Volver al Listado</a>
-    <a asp-action="Revocar" asp-route-id="@Model.Id" class="btn btn-secondary">Revocar contrato</a>
+    <a asp-action="Revocar" asp-route-id="@Model.Id @Model.Estado" class="btn btn-secondary">Revocar contrato</a>
 </div>

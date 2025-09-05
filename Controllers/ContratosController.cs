@@ -51,35 +51,57 @@ namespace Inmobiliaria.Controllers
     //     return View(vm);
     // }
 
-    private void GenerarPagosPorRevocacion(Contrato contrato)
-{
-    var pagos = new List<Pago>();
-    var hoy = DateTime.Now;
-    var mitad = contrato.FechaInicio.AddDays((contrato.FechaFin - contrato.FechaInicio).TotalDays / 2);
-
-    int cantidadPagos = hoy < mitad ? 2 : 1;
-
-    for (int i = 0; i < cantidadPagos; i++)
+    private void GenerarPagosPorRevocacion(Contrato contrato, IFormCollection form)
     {
+      var pagos = new List<Pago>();
+      var hoy = DateTime.Now;
+      var mitad = contrato.FechaInicio.AddDays((contrato.FechaFin - contrato.FechaInicio).TotalDays / 2);
+
+      int cantidadPagos = hoy < mitad ? 2 : 1;
+
+      for (int i = 1; i < cantidadPagos + 1; i++)
+      {
+        var valores = form[$"Pago {i}"].ToString().Split(',');
+        string estado = valores.Contains("Abonado") ? "Abonado" : "Debe";
+        Console.WriteLine($"Pago {i}: {form[$"Pago {i}"]} => {estado}");
         pagos.Add(new Pago
         {
           ContratoId = contrato.Id,
           FechaPago = hoy,
           Importe = contrato.Precio,
+          Estado = estado,
           Concepto = hoy < mitad ? "Pago por revocación antes de la mitad del contrato" : "Pago por revocación después de la mitad del contrato",
-          
+
         });
+      }
+
+      foreach (var pago in pagos)
+      {
+        repositorioPago.Alta(pago);
+      }
     }
 
-    foreach (var pago in pagos)
-    {
-        repositorioPago.Alta(pago);
-    }
-}
     public IActionResult Revocar(int id)
     {
-    try
+      var contrato = repositorio.ObtenerPorId(id);
+      if (contrato == null) return NotFound();
+      if (contrato.Estado == "No vigente")
+      {
+        TempData["ErrorMessage"] = "El contrato ya está revocado";
+        return RedirectToAction(nameof(Index));
+      }
+      var mitad = contrato.FechaInicio.AddDays((contrato.FechaFin - contrato.FechaInicio).TotalDays / 2);
+      ViewBag.CantidadPagos = DateTime.Now < mitad ? 2 : 1;
+      ViewBag.Inquilinos = repositorioInquilino.ObtenerTodos();
+      ViewBag.Inmuebles = repositorioInmueble.ObtenerTodos();
+      return View(contrato);
+    }
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult Revocar(int id, IFormCollection form)
     {
+      try
+      {
         var contrato = repositorio.ObtenerPorId(id);
         if (contrato.Estado == "No vigente")
         {
@@ -89,27 +111,27 @@ namespace Inmobiliaria.Controllers
         var mitad = contrato.FechaInicio.AddDays((contrato.FechaFin - contrato.FechaInicio).TotalDays / 2);
         if (DateTime.Now < mitad)
         {
-            GenerarPagosPorRevocacion(contrato);
-            contrato.Estado = "No vigente";
-            repositorio.Modificacion(contrato);
-            TempData["SuccessMessage"] = "Contrato revocado exitosamente";
-            return RedirectToAction(nameof(Index));
+          GenerarPagosPorRevocacion(contrato, form);
+          contrato.Estado = "No vigente";
+          repositorio.Modificacion(contrato);
+          TempData["SuccessMessage"] = "Contrato revocado exitosamente";
+          return RedirectToAction(nameof(Index));
         }
         else
         {
-            GenerarPagosPorRevocacion(contrato);
-            contrato.Estado = "No vigente";
-            repositorio.Modificacion(contrato);
-            TempData["SuccessMessage"] = "Contrato revocado exitosamente";
-            return RedirectToAction(nameof(Index));
+          GenerarPagosPorRevocacion(contrato, form);
+          contrato.Estado = "No vigente";
+          repositorio.Modificacion(contrato);
+          TempData["SuccessMessage"] = "Contrato revocado exitosamente";
+          return RedirectToAction(nameof(Index));
         }
-    }
-    catch (Exception ex)
-    {
+      }
+      catch (Exception ex)
+      {
         TempData["ErrorMessage"] = ex.Message;
         return RedirectToAction(nameof(Index));
+      }
     }
-}
     public IActionResult Index(string? dni, string? nombre, string? apellido, int pagina = 1)
     {
       var tamaño = 10;
