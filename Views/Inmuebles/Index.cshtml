@@ -65,6 +65,46 @@
                                 <input type="number" class="form-control" id="precioMax" name="precioMax"
                                     value="@ViewBag.PrecioMax" placeholder="Hasta">
                             </div>
+
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-md-4 ">
+                                <label for="PropietarioId" class="form-label">Propietario</label>
+                                <select id="PropietarioId" name="PropietarioId" class="form-control"
+                                    style="width:100%" ></select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="FechaDesde" class="form-label">Fecha Disponibilidad Inicio</label>
+                                @if (ViewBag.FechaDesde != null)
+                                {
+                                    var fechaInicio = ViewBag.FechaDesde.ToString("yyyy-MM-dd");
+                                    <input type="date" name="FechaDesde" id="FechaDesde" class="form-control"
+                                        value=@fechaInicio />
+                                }
+                                else
+                                {
+                                    <input type="date" name="FechaDesde" id="FechaDesde" value="" min="" max=""
+                                        class="form-control" />
+                                }
+                                <span for="FechaDesde" class="text-danger"></span>
+                            </div>
+
+
+                            <div class=" col-md-3">
+                                <label for="fechaHasta" class="form-label">Fecha Disponibilidad Fin</label>
+                                @if (ViewBag.FechaHasta != null)
+                                {
+                                    var fechaFin = ViewBag.FechaHasta.ToString("yyyy-MM-dd");
+                                    <input type="date" name="fechaHasta" id="fechaHasta" class="form-control" value=@fechaFin />
+                                }
+                                else
+                                {
+
+                                    <input type="date" name="fechaHasta" id="fechaHasta" value="" class="form-control" />
+                                }
+                                <span for="fechaHasta" class="text-danger"></span>
+                            </div>
                         </div>
 
                         <div class="row mt-3">
@@ -73,16 +113,21 @@
                                     <i class="bi bi-search me-1"></i>Buscar
                                 </button>
                                 <button type="button" class="btn btn-outline-secondary me-2" id="btnLimpiar">
-                                    <i class="bi bi-eraser me-1"></i>Limpiar
-                                </button>
-                                <a href="@Url.Action("Disponibles")" class="btn btn-outline-success me-2">
+                                <i class="bi bi-eraser me-1"></i>Limpiar
+                            </button>
+                            @* <a href="@Url.Action("Disponibles")" class="btn btn-outline-success me-2">
                                     <i class="bi bi-check-circle me-1"></i>Solo Disponibles
-                                </a>
-                            </div>
+                                </a> *@
                         </div>
                     </div>
+                    </div>
+
+
+
+                    
                 </div>
             </div>
+
         </form>
     </div>
 
@@ -191,7 +236,7 @@
                             {
                                 <span class="badge bg-success">Disponible</span>
                             }
-                            else if (inmueble.EstadoNumero == 2 )
+                            else if (inmueble.EstadoNumero == 2)
                             {
                                 <span class="badge bg-danger">No Disponible</span>
                             }
@@ -199,7 +244,7 @@
                             {
                                 <span class="badge bg-secondary">Baja</span>
                             }
-                          
+
                         </span>
 
                         <!-- Badge de tipo -->
@@ -278,6 +323,12 @@
                                                 <span>Baja</span>
                                             </a>
                                         </li>
+                                       <li>
+                                            <a href="@Url.Action("ContratosInmueble", "Contratos", new { id = inmueble.Id })" class="dropdown-item text-dark">
+                                                <i class="bi bi-file-earmark-text"></i> Contratos
+                                            </a>
+                                        </li>
+                                        
                                     </ul>
                                 </div>
                             </div>
@@ -299,16 +350,18 @@
         </div>
     }
 </div>
-    <!-- Paginación con persistencia de filtros -->
+<!-- Paginación con persistencia de filtros -->
 <nav aria-label="Page navigation">
     <ul class="pagination">
         <!-- Botón "Anterior" -->
         @if (Pagina > 1)
         {
             <li class="page-item">
-                <a class="page-link" href="~/Inmuebles/Index?pagina=@(Pagina - 1)&tipo=@ViewBag.Tipo&uso=@ViewBag.Uso&estado=@ViewBag.Estado&precioMin=@ViewBag.PrecioMin&precioMax=@ViewBag.PrecioMax" aria-label="Anterior">
+                <a class="page-link"
+                    href="~/Inmuebles/Index?pagina=@(Pagina - 1)&tipo=@ViewBag.Tipo&uso=@ViewBag.Uso&estado=@ViewBag.Estado&precioMin=@ViewBag.PrecioMin&precioMax=@ViewBag.PrecioMax"
+                    aria-label="Anterior">
                     <i class="fa-solid fa-angles-left">Anterior</i>
-                </a>            
+                </a>
             </li>
         }
         else
@@ -322,16 +375,18 @@
         @for (int i = 1; i <= TotalPaginas; i++)
         {
             <li class="page-item @(i == Pagina ? "active" : "")">
-                <a class="page-link" 
+                <a class="page-link"
                     href="~/Inmuebles/Index?pagina=@i&tipo=@ViewBag.Tipo&uso=@ViewBag.Uso&estado=@ViewBag.Estado&precioMin=@ViewBag.PrecioMin&precioMax=@ViewBag.PrecioMax">@i</a>
             </li>
         }
-        
+
         <!-- Botón "Siguiente" -->
         @if (Pagina < TotalPaginas)
         {
             <li class="page-item">
-                   <a class="page-link" href="~/Inmuebles/Index?pagina=@(Pagina + 1)&tipo=@ViewBag.Tipo&uso=@ViewBag.Uso&estado=@ViewBag.Estado&precioMin=@ViewBag.PrecioMin&precioMax=@ViewBag.PrecioMax" aria-label="Siguiente">
+                <a class="page-link"
+                    href="~/Inmuebles/Index?pagina=@(Pagina + 1)&tipo=@ViewBag.Tipo&uso=@ViewBag.Uso&estado=@ViewBag.Estado&precioMin=@ViewBag.PrecioMin&precioMax=@ViewBag.PrecioMax"
+                    aria-label="Siguiente">
                     <i class="fa-solid fa-angles-right">Siguiente</i>
                 </a>
             </li>
@@ -355,14 +410,74 @@
 
         // Mostrar collapse si hay filtros activos
         @if (
-                !string.IsNullOrEmpty(ViewBag.TipoSeleccionado?.ToString()) ||
-                !string.IsNullOrEmpty(ViewBag.UsoSeleccionado?.ToString()) ||
-                !string.IsNullOrEmpty(ViewBag.EstadoSeleccionado?.ToString()) ||
-                ViewBag.PrecioMin != null || ViewBag.PrecioMax != null)
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                !string.IsNullOrEmpty(ViewBag.TipoSeleccionado?.ToString()) ||
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                !string.IsNullOrEmpty(ViewBag.UsoSeleccionado?.ToString()) ||
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                !string.IsNullOrEmpty(ViewBag.EstadoSeleccionado?.ToString()) ||
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                ViewBag.PrecioMin != null || ViewBag.PrecioMax != null)
             {
                 <text>
                     $('#filtrosCollapse').addClass('show');
                 </text>
         }
 });
+</script>
+
+<script>
+    $(document).ready(function () {
+        $('#PropietarioId').select2({
+            placeholder: "Buscar propietario...",
+            minimumInputLength: 3, // busca a partir de 2 caracteres
+            language: {
+                errorLoading: () => 'No se pudieron cargar los resultados.',
+                inputTooLong: args => {
+                    const over = args.input.length - args.maximum;
+                    return `Por favor, borre ${over} caracter${over > 1 ? 'es' : ''}`;
+                },
+                inputTooShort: args => {
+                    const remaining = args.minimum - args.input.length;
+                    return `Por favor, introduzca ${remaining} caracter${remaining > 1 ? 'es' : ''}`;
+                },
+                loadingMore: () => 'Cargando más resultados…',
+                maximumSelected: args => `Sólo puede seleccionar ${args.maximum} elemento${args.maximum > 1 ? 's' : ''}`,
+                noResults: () => 'No se encontraron resultados',
+                searching: () => 'Buscando…',
+                removeAllItems: () => 'Eliminar todos los elementos'
+            },
+            ajax: {
+                url: '/Propietarios/Buscar',   // coincide con tu controller
+                dataType: 'json',
+                delay: 250, // retrasa un poco la búsqueda
+                data: function (params) {
+                    return {
+                        q: params.term // lo que el usuario escribe
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data.datos.map(function (item) {
+                            return {
+                                id: item.id,  // lo que se guarda en el select
+                                text: item.nombre + " " + item.apellido // lo que se muestra
+                            };
+                        })
+                    };
+                }
+            }
+        });
+    });
+
+    // Restaurar selección si viene desde el servidor
+var propietarioId = '@ViewBag.PropietarioId';
+var nombrePropietario = '@ViewBag.NombrePropietario';
+var apellidoPropietario = '@ViewBag.ApellidoPropietario';
+if (propietarioId) {
+    $.ajax({
+        type: 'GET',
+        url: '/Propietarios/ObtenerPropPorId', // tu endpoint que devuelve {id,text}
+        data: { id: propietarioId }
+    }).then(function (data) {
+        var option = new Option(data.text, data.id, true, true);
+        $('#PropietarioId').append(option).trigger('change');
+    });
+}
 </script>

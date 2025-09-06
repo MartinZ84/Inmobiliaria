@@ -96,13 +96,15 @@
                 <div class="card-body">
                     <div class="mb-3">
                         <label asp-for="PropietarioId" class="control-label">Propietario</label>
-                        <select asp-for="PropietarioId" class="form-control">
+                        @* <select asp-for="PropietarioId" class="form-control">
                             <option value="">Seleccionar propietario...</option>
                             @foreach (var propietario in ViewBag.Propietarios)
                             {
                                 <option value="@propietario.Id">@propietario.Nombre @propietario.Apellido - DNI: @propietario.Dni</option>
                             }
-                        </select>
+                        </select> *@
+                         <select id="PropietarioId" name="PropietarioId" class="form-control"
+                                    style="width:100%" ></select>
                         <span asp-validation-for="PropietarioId" class="text-danger"></span>
                     </div>
                 </div>
@@ -255,6 +257,50 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 });
+
+$(document).ready(function () {
+        $('#PropietarioId').select2({
+            placeholder: "Buscar propietario...",
+            minimumInputLength: 3, // busca a partir de 2 caracteres
+            language: {
+                errorLoading: () => 'No se pudieron cargar los resultados.',
+                inputTooLong: args => {
+                    const over = args.input.length - args.maximum;
+                    return `Por favor, borre ${over} caracter${over > 1 ? 'es' : ''}`;
+                },
+                inputTooShort: args => {
+                    const remaining = args.minimum - args.input.length;
+                    return `Por favor, introduzca ${remaining} caracter${remaining > 1 ? 'es' : ''}`;
+                },
+                loadingMore: () => 'Cargando más resultados…',
+                maximumSelected: args => `Sólo puede seleccionar ${args.maximum} elemento${args.maximum > 1 ? 's' : ''}`,
+                noResults: () => 'No se encontraron resultados',
+                searching: () => 'Buscando…',
+                removeAllItems: () => 'Eliminar todos los elementos'
+            },
+            ajax: {
+                url: '/Propietarios/Buscar',   // coincide con tu controller
+                dataType: 'json',
+                delay: 250, // retrasa un poco la búsqueda
+                data: function (params) {
+                    return {
+                        q: params.term // lo que el usuario escribe
+                    };
+                },
+                processResults: function (data) {
+                    return {
+                        results: data.datos.map(function (item) {
+                            return {
+                                id: item.id,  // lo que se guarda en el select
+                                text: item.nombre + " " + item.apellido // lo que se muestra
+                            };
+                        })
+                    };
+                }
+            }
+        });
+    });
+
 </script>
 
 @section Scripts {

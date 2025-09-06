@@ -1,0 +1,105 @@
+@model Inmobiliaria.Models.Entidades.Contrato
+
+@{
+    ViewData["Title"] = "Contrato - Renovar";
+       var Inquilino= ViewBag.Inquilino;
+    var Inmueble= ViewBag.Inmueble;
+    var Propietario= ViewBag.Propietario;
+}
+
+<h1>Renovar contrato</h1>
+
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Create">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+          
+            <div class="form-group">
+                <label asp-for="FechaInicio" class="control-label"></label> 
+                  <input asp-for="FechaInicio" class="form-control" />
+                @* <input type="date" name="FechaInicio" value=@Model.FechaInicio.AddDays(2) class="form-control" /> *@
+                <span asp-validation-for="FechaInicio" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FechaFin" class="control-label"></label> (por defecto es la fecha de inicio + 2 años)
+                <input asp-for="FechaFin" class="form-control" />
+                @* <input name="FechaFin" value=@Model.FechaInicio.AddMonths(24) class="form-control" /> *@
+                <span asp-validation-for="FechaFin" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Precio" class="control-label"></label>
+                <input name="Precio" class="form-control" />
+                <span asp-validation-for="Precio" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Estado" class="control-label"></label>
+                @* <input asp-for="Estado" class="form-control" /> *@
+                  <select asp-for="Estado"  class="form-select"   name="Estado">
+                  <option value="" disabled >Seleccionar estado  </option>
+                  <option value="Vigente">Vigente</option>
+                  <option value="No vigente">No vigente</option>
+                </select>
+                <span asp-validation-for="Estado" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="InquilinoId" class="control-label"></label>
+                     <input asp-for="InquilinoId" class="form-control" hidden/> 
+                    @{var inq= @ViewBag.Inquilino.Nombre + " " + @ViewBag.Inquilino.Apellido ;}
+                     <input value="@inq" class="form-control" disabled  />
+                @* <input asp-for="InquilinoId" class="form-control" /> *@
+                @* <select class="form-select" name="InquilinoId">
+                    @foreach (var item in Inquilinos)
+                    {
+                        @:<option @(item.Id==Model.InquilinoId ? "selected" : "") value="@item.Id">@(item.Nombre + " " + item.Apellido)</option>
+                    }
+                </select> *@
+                <span asp-validation-for="InquilinoId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="InmuebleId" class="control-label"></label>
+                 <input asp-for="InmuebleId" class="form-control" hidden/> 
+                    @{var inm= @ViewBag.Inmueble.Id + " " + @ViewBag.Inmueble.Direccion ;}
+                 <input value="@inm" class="form-control"  disabled/>
+                <span asp-validation-for="InmuebleId" class="text-danger"></span>
+            </div>
+     
+            <br>
+            <div class="form-group">
+                <input type="submit" value="Guardar" class="btn btn-primary" /> |  
+                 <a asp-action="Index" class="btn btn-secondary">Volver al Listado</a>
+            </div>
+        </form>
+    </div>
+</div>
+<br>
+
+<script>
+  window.onload = function () {
+  var fecha = new Date(); //Fecha actual
+  var mes = fecha.getMonth() + 1; //obteniendo mes
+  var dia = fecha.getDate(); //obteniendo dia
+  var ano = fecha.getFullYear(); //obteniendo año
+  if (dia < 10) dia = "0" + dia; //agrega cero si el menor de 10
+  if (mes < 10) mes = "0" + mes; //agrega cero si el menor de 10
+  
+  document.getElementById("fechaInicio").min = ano + "-" + mes + "-" + dia;
+
+  //sumar 2 años a la fecha actual
+  var fecha2 = new Date(); //Fecha actual
+  var mes2 = fecha2.getMonth() + 1; //obteniendo mes
+  var dia2 = fecha2.getDate(); //obteniendo dia
+  var ano2 = fecha2.getFullYear() + 2; //obteniendo año
+  if (dia2 < 10) dia2 = "0" + dia2; //agrega cero si el menor de 10
+  if (mes2 < 10) mes2 = "0" + mes2; //agrega cero si el menor de 10
+
+   document.getElementById("fechaFin").max = ano2 + "-" + mes2 + "-" + dia2;
+     document.getElementById("fechaFin").min =  ano + "-" + mes + "-" + dia;
+};
+</script>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
