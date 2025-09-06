@@ -70,6 +70,133 @@ namespace Inmobiliaria.Models.Repositorio
 			}
 			return res;
 		}
+
+		public IList<Contrato> BuscarContratos(
+			string? estado = null,
+			DateTime? fechaDesde = null,
+			DateTime? fechaHasta = null,
+			int? dias = null,
+			int paginaNro = 1,
+			int tamPagina = 10)
+		{
+			var contratos = new List<Contrato>();
+
+			using (var connection = new MySqlConnection(connectionString))
+			{
+				var sql = @$"SELECT c.Id, FechaInicio, FechaFin, c.Estado, c.Precio, InquilinoId, InmuebleId, " +
+					" inq.Nombre, inq.Apellido, inm.Id, inm.Direccion " +
+					" FROM Contratos c INNER JOIN Inquilinos inq ON c.InquilinoId = inq.Id " +
+					"INNER JOIN Inmuebles inm ON inm.Id= c.InmuebleId " +					
+					"WHERE 1=1 ";
+				var parameters = new List<MySqlParameter>();
+
+				// Filtro por estado
+				if (!string.IsNullOrWhiteSpace(estado))
+				{
+					sql += " AND c.estado = @estado ";
+					parameters.Add(new MySqlParameter("@estado", estado.Trim()));
+				}
+
+				// // Filtro por fecha de inicio
+				// if (fechaDesde.HasValue)
+				// {
+				// 	sql += " AND c.fechaInicio >= @fechaDesde ";
+				// 	parameters.Add(new MySqlParameter("@fechaDesde", fechaDesde.Value));
+				// }
+
+				// // Filtro por fecha de fin
+				// if (fechaHasta.HasValue)
+				// {
+				// 	sql += " AND c.fechaFin <= @fechaHasta ";
+				// 	parameters.Add(new MySqlParameter("@fechaHasta", fechaHasta.Value));
+				// }
+
+				// Filtro por fecha de inicio y fin
+				if (fechaDesde.HasValue && fechaHasta.HasValue)
+				{
+					sql += " AND c.fechaInicio >= @fechaDesde AND c.fechaFin <= @fechaHasta ";
+					parameters.Add(new MySqlParameter("@fechaDesde", fechaDesde.Value));
+					parameters.Add(new MySqlParameter("@fechaHasta", fechaHasta.Value));
+				}
+				else if (fechaDesde.HasValue) // Solo fecha desde
+				{
+					sql += " AND c.fechaInicio >= @fechaDesde ";
+					parameters.Add(new MySqlParameter("@fechaDesde", fechaDesde.Value));
+				}
+				else if (fechaHasta.HasValue) // Solo fecha hasta
+				{
+					sql += " AND c.fechaFin <= @fechaHasta ";
+					parameters.Add(new MySqlParameter("@fechaHasta", fechaHasta.Value));
+				}
+
+				// Filtro por cantidad de días restantes hasta el fin
+				// if (dias.HasValue)
+				// {
+				// 	sql += " AND DATEDIFF(c.fechaFin, CURDATE()) = @dias ";
+				// 	parameters.Add(new MySqlParameter("@dias", dias.Value));
+				// }
+				if (dias.HasValue)
+				{
+					switch (dias.Value)
+					{
+						case 30:
+							sql += " AND c.fechaFin BETWEEN CURDATE() AND DATE_ADD(CURDATE(), INTERVAL 1 MONTH) ";
+							break;
+						case 60:
+							sql += " AND c.fechaFin BETWEEN DATE_ADD(CURDATE(), INTERVAL 1 MONTH) AND DATE_ADD(CURDATE(), INTERVAL 2 MONTH) ";
+							break;
+						case 90:
+							sql += " AND c.fechaFin BETWEEN DATE_ADD(CURDATE(), INTERVAL 2 MONTH) AND DATE_ADD(CURDATE(), INTERVAL 3 MONTH) ";
+							break;
+						default:
+							// Si se pasa otro valor, se puede ignorar o lanzar excepción
+							break;
+					}
+				}
+
+				// Paginado
+				sql += $" ORDER BY c.id LIMIT {tamPagina} OFFSET {(paginaNro - 1) * tamPagina}";
+
+				using (var command = new MySqlCommand(sql, connection))
+				{
+					command.Parameters.AddRange(parameters.ToArray());
+					connection.Open();
+					using (var reader = command.ExecuteReader())
+					{
+						while (reader.Read())
+						{
+							Contrato contrato = new Contrato
+							{
+								Id = reader.GetInt32(nameof(Contrato.Id)),
+								FechaInicio = reader.GetDateTime(nameof(Contrato.FechaInicio)),
+								FechaFin = reader.GetDateTime(nameof(Contrato.FechaFin)),
+								Estado = reader.GetString(nameof(Contrato.Estado)),
+								Precio = reader.GetInt32(nameof(Contrato.Precio)),
+								InquilinoId = reader.GetInt32(nameof(Contrato.InquilinoId)),
+								InmuebleId = reader.GetInt32(nameof(Contrato.InmuebleId)),
+								Inquilino = new Inquilino
+								{
+									Id = reader.GetInt32(nameof(Inquilino.Id)),
+									Nombre = reader.GetString(nameof(Inquilino.Nombre)),
+									Apellido = reader.GetString(nameof(Inquilino.Apellido)),
+								},
+								Inmueble = new Inmueble
+								{
+									Id = reader.GetInt32(nameof(Inmueble.Id)),
+									Direccion = reader.GetString(nameof(Inmueble.Direccion)),
+								},
+
+							};
+							contratos.Add(contrato);
+						}
+					}
+					connection.Close();
+				}
+
+				return contratos;
+			}
+		}
+
 		public int Alta(Contrato contrato)
 		{
 			int res = -1;
@@ -92,7 +219,7 @@ namespace Inmobiliaria.Models.Repositorio
 					command.Parameters.AddWithValue($"@{nameof(contrato.InmuebleId)}", contrato.InmuebleId);
 					command.Parameters.AddWithValue($"@{nameof(contrato.FechaFinAnt)}", contrato.FechaFinAnt);
 					command.Parameters.AddWithValue($"@{nameof(contrato.UsuarioAlta)}", contrato.UsuarioAlta);
-					
+
 
 					connection.Open();
 					res = Convert.ToInt32(command.ExecuteScalar());

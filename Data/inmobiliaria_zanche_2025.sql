@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-09-2025 a las 01:55:11
+-- Tiempo de generación: 06-09-2025 a las 17:06:12
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -52,8 +52,9 @@ INSERT INTO `contratos` (`id`, `fechaInicio`, `fechaFin`, `estado`, `precio`, `i
 (65, '2025-09-02', '2027-09-02', 'No vigente', 5454, 7, 25, '2027-09-02', 1, NULL),
 (66, '2025-09-02', '2026-09-02', 'Vigente', 55555, 3, 22, '2026-09-02', 1, NULL),
 (67, '2025-09-02', '2027-09-02', 'No vigente', 345235, 7, 23, '2027-09-02', 1, NULL),
-(68, '2025-09-05', '2027-09-05', 'Vigente', 5000000, 9, 1, '2027-09-05', 1, NULL),
-(74, '2025-09-05', '2027-09-05', 'Vigente', 11223, 3, 20, '2027-09-05', 1, NULL);
+(68, '2025-09-05', '2025-10-05', 'Vigente', 5000000, 9, 1, '2025-10-05', 1, NULL),
+(74, '2025-09-05', '2025-11-05', 'No vigente', 11223, 3, 20, '2025-11-05', 1, NULL),
+(76, '2025-09-06', '2025-12-05', 'Vigente', 4555000, 7, 13, '2025-12-05', 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -153,7 +154,10 @@ INSERT INTO `pagos` (`id`, `nroPago`, `fechaPago`, `importe`, `contratoId`, `usu
 (41, 1, '2025-09-04 00:00:00', 55555.00, 66, NULL, NULL, 'Pago 1', 'Anulado'),
 (42, 0, '2025-09-05 09:51:58', 345235.00, 67, NULL, NULL, 'Pago por revocación antes de la mitad del contrato', 'Debe'),
 (43, 0, '2025-09-05 09:51:58', 345235.00, 67, NULL, NULL, 'Pago por revocación antes de la mitad del contrato', 'Debe'),
-(44, 1, '2025-09-05 00:00:00', 5000000.00, 68, NULL, NULL, 'PAgo 1', 'Anulado');
+(44, 1, '2025-09-05 00:00:00', 5000000.00, 68, NULL, NULL, 'PAgo 1', 'Anulado'),
+(45, 0, '2025-09-05 21:04:19', 11223.00, 74, NULL, NULL, 'Pago por revocación antes de la mitad del contrato', NULL),
+(46, 0, '2025-09-05 21:04:19', 11223.00, 74, NULL, NULL, 'Pago por revocación antes de la mitad del contrato', NULL),
+(47, 3, '2025-09-06 00:00:00', 11223.00, 74, NULL, NULL, 'Pago alquiler 3', 'Abonado');
 
 -- --------------------------------------------------------
 
@@ -292,7 +296,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `contratos`
 --
 ALTER TABLE `contratos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=75;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
 
 --
 -- AUTO_INCREMENT de la tabla `inmuebles`
@@ -310,7 +314,7 @@ ALTER TABLE `inquilinos`
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=45;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
 
 --
 -- AUTO_INCREMENT de la tabla `propietarios`

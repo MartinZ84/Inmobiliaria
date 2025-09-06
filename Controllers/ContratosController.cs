@@ -110,46 +110,129 @@ namespace Inmobiliaria.Controllers
         return RedirectToAction(nameof(Index));
     }
 }
-    public IActionResult Index(string? dni, string? nombre, string? apellido, int pagina = 1)
+    // public IActionResult Index(string? estado, DateTime? FechaDesde, DateTime? FechaHasta, int? Dias, int pagina = 1)
+    // {
+    //   var tamaño = 10;
+    //   var contratos = repositorio.ObtenerTodos(pagina, tamaño);
+
+    //   foreach (var contrato in contratos)
+    //   {
+    //     contrato.Inquilino = repositorioInquilino.ObtenerPorId(contrato.InquilinoId);
+    //     contrato.Inmueble = repositorioInmueble.ObtenerPorId(contrato.InmuebleId);
+    //   }
+
+    //   // // Aquí podés aplicar filtros si querés, ejemplo por inquilino:
+    //   // if (!string.IsNullOrEmpty(dni))
+    //   //   contratos = contratos.Where(c => c.Inquilino.Dni.Contains(dni)).ToList();
+
+    //   // if (!string.IsNullOrEmpty(nombre))
+    //   //   contratos = contratos.Where(c => c.Inquilino.Nombre.Contains(nombre)).ToList();
+
+    //   // if (!string.IsNullOrEmpty(apellido))
+    //   //   contratos = contratos.Where(c => c.Inquilino.Apellido.Contains(apellido)).ToList();
+
+
+    //   ViewBag.Pagina = pagina;
+    //   var total = repositorio.ObtenerCantidad();
+    //   ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
+    //   int totalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
+    //   var vm = new ContratosIndexViewModel
+    //   {
+    //     Contratos = contratos,
+    //     Inquilinos = repositorioInquilino.ObtenerTodos(),
+    //     Inmuebles = repositorioInmueble.ObtenerTodos(),
+    //     // Dni = dni,
+    //     // Nombre = nombre,
+    //     // Apellido = apellido,
+    //     Estado = estado,
+    //     FechaDesde = FechaDesde,
+    //     FechaHasta = FechaHasta,
+    //     Dias = Dias,
+    //     Pagina = pagina,
+    //     TotalPaginas = totalPaginas
+    //   };
+
+    //   return View(vm);
+    // }
+
+public IActionResult Index(string? estado, DateTime? FechaDesde, DateTime? FechaHasta, int? Dias, int pagina = 1)
+{
+    try
     {
-      var tamaño = 10;
-      var contratos = repositorio.ObtenerTodos(pagina, tamaño);
+        IList<Contrato> contratos;
+        var tamaño = 10;
 
-      foreach (var contrato in contratos)
-      {
-        contrato.Inquilino = repositorioInquilino.ObtenerPorId(contrato.InquilinoId);
-        contrato.Inmueble = repositorioInmueble.ObtenerPorId(contrato.InmuebleId);
-      }
+        // Si hay filtros aplicados
+        if (!string.IsNullOrWhiteSpace(estado) || FechaDesde != null || FechaHasta != null || Dias != null)
+        {
+            contratos = repositorio.BuscarContratos(estado, FechaDesde, FechaHasta, Dias);
 
-      // Aquí podés aplicar filtros si querés, ejemplo por inquilino:
-      if (!string.IsNullOrEmpty(dni))
-        contratos = contratos.Where(c => c.Inquilino.Dni.Contains(dni)).ToList();
+            var total = contratos.Count;
+            ViewBag.Pagina = pagina;
+            ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
 
-      if (!string.IsNullOrEmpty(nombre))
-        contratos = contratos.Where(c => c.Inquilino.Nombre.Contains(nombre)).ToList();
+            // Mensajes de ayuda
+            if (contratos.Count == 0)
+            {
+                TempData["InfoMessage"] = "No se encontraron contratos con los criterios especificados.";
+                TempData["AlertType"] = "info";
+            }
+            else if (contratos.Count >= 200)
+            {
+                TempData["WarningMessage"] = "Se encontraron muchos resultados (200+). Considere refinar su búsqueda.";
+                TempData["AlertType"] = "warning";
+            }
+        }
+        else
+        {
+            // Sin filtros → obtener todos paginados
+            contratos = repositorio.ObtenerTodos(pagina, tamaño);
+            var total = repositorio.ObtenerCantidad();
+            ViewBag.Pagina = pagina;
+            ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
+        }
 
-      if (!string.IsNullOrEmpty(apellido))
-        contratos = contratos.Where(c => c.Inquilino.Apellido.Contains(apellido)).ToList();
+        // Completar navegación (rellenar Inquilino e Inmueble)
+        foreach (var contrato in contratos)
+        {
+            contrato.Inquilino = repositorioInquilino.ObtenerPorId(contrato.InquilinoId);
+            contrato.Inmueble = repositorioInmueble.ObtenerPorId(contrato.InmuebleId);
+        }
 
+        // Pasar filtros a la vista para que se mantengan seleccionados
+        ViewBag.Estado = estado;
+        ViewBag.FechaDesde = FechaDesde;
+        ViewBag.FechaHasta = FechaHasta;
+        ViewBag.Dias = Dias;
 
-      ViewBag.Pagina = pagina;
-      var total = repositorio.ObtenerCantidad();
-      ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
-      int totalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
-      var vm = new ContratosIndexViewModel
-      {
-        Contratos = contratos,
-        Inquilinos = repositorioInquilino.ObtenerTodos(),
-        Inmuebles = repositorioInmueble.ObtenerTodos(),
-        Dni = dni,
-        Nombre = nombre,
-        Apellido = apellido,
-        Pagina = pagina,
-        TotalPaginas = totalPaginas
-      };
+        // Construir ViewModel
+        var vm = new ContratosIndexViewModel
+        {
+            Contratos = contratos,
+            Inquilinos = repositorioInquilino.ObtenerTodos(),
+            Inmuebles = repositorioInmueble.ObtenerTodos(),
+            Estado = estado,
+            FechaDesde = FechaDesde,
+            FechaHasta = FechaHasta,
+            Dias = Dias,
+            Pagina = pagina,
+            TotalPaginas = ViewBag.TotalPaginas
+        };
 
-      return View(vm);
+        return View(vm);
     }
+    catch (Exception ex)
+    {
+        Console.WriteLine($"Error en Index Contratos: {ex}");
+        TempData["ErrorMessage"] = "Ocurrió un error al cargar los contratos.";
+        TempData["AlertType"] = "danger";
+
+        return View(new ContratosIndexViewModel
+        {
+            Contratos = new List<Contrato>()
+        });
+    }
+}
 
 
     // GET: Contratos/Details/5

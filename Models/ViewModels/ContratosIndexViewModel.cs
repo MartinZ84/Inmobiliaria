@@ -15,6 +15,11 @@ namespace Inmobiliaria.Models.ViewModels
         public string? Nombre { get; set; }
         public string? Apellido { get; set; }
 
+        public string? Estado { get; set; }
+        public DateTime? FechaDesde { get; set; }
+        public DateTime? FechaHasta { get; set; }    
+        public int? Dias { get; set; }
+
         // Paginación
         public int Pagina { get; set; } = 1;
         public int TotalPaginas { get; set; } = 1;
