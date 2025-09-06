@@ -12,10 +12,102 @@
 @await Html.PartialAsync("_AutoDismissAlert")
 
 <!-- Botón Nuevo -->
-<div class="mb-3">
+@* <div class="mb-3">
     <a asp-action="Create" class="btn btn-primary">
         <i class="bi bi-plus-circle me-1"></i>Nuevo
     </a>
+</div> *@
+
+<!-- Sección de filtros y botón crear -->
+<div class="row mb-3">
+    <div class="col-md-10">
+        <!-- Formulario de filtros -->
+        <form method="get" asp-action="Index" id="formFiltros">
+            <div class="card">
+                <div class="card-header">
+                    <h6 class="mb-0">
+                        <button class="btn btn-link p-0 text-decoration-none" type="button" data-bs-toggle="collapse" data-bs-target="#filtrosCollapse" aria-expanded="false" aria-controls="filtrosCollapse">
+                            <i class="bi bi-funnel me-2"></i>Filtros de búsqueda
+                            <i class="bi bi-chevron-down ms-1"></i>
+                        </button>
+                    </h6>
+                </div>
+                <div class="collapse" id="filtrosCollapse">
+                    <div class="card-body">
+                        <div class="row g-3">
+                            <div class="col-md-3">
+                                <label for="Estado" class="form-label">Estado</label>
+                                <select id="Estado" name="Estado" class="form-control" style="width:100%">
+                                    <option value="">Seleccione estado...</option>
+                                    <option value="Vigente">Vigente</option>
+                                    <option value="No vigente">No vigente</option>
+                                    <option value="Revocado">Revocado</option>
+                                 </select>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="FechaDesde" class="form-label">Fecha desde</label>
+                                @if (ViewBag.FechaDesde != null)
+                                {
+                                    var fechaInicio = ViewBag.FechaDesde.ToString("yyyy-MM-dd");
+                                    <input type="date" name="FechaDesde" id="FechaDesde" class="form-control"
+                                        value=@fechaInicio />
+                                }
+                                else
+                                {
+                                    <input type="date" name="FechaDesde" id="FechaDesde" value="" min="" max=""
+                                        class="form-control" />
+                                }
+                                <span for="FechaDesde" class="text-danger"></span>
+                            </div>
+                            <div class=" col-md-3">
+                                <label for="fechaHasta" class="form-label">Fecha hasta</label>
+                                @if (ViewBag.FechaHasta != null)
+                                {
+                                    var fechaFin = ViewBag.FechaHasta.ToString("yyyy-MM-dd");
+                                    <input type="date" name="fechaHasta" id="fechaHasta" class="form-control" value=@fechaFin />
+                                }
+                                else
+                                {
+
+                                    <input type="date" name="fechaHasta" id="fechaHasta" value="" class="form-control" />
+                                }
+                                <span for="fechaHasta" class="text-danger"></span>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="Dias" class="form-label">Terminan dentro de los proximos días</label>
+                                <select id="Dias" name="Dias" class="form-control" style="width:100%">
+                                     <option value="">Seleccione días...</option>
+                                    <option value=30>30</option>
+                                    <option value=60>60</option>
+                                    <option value=90>90</option>
+                                 </select>
+                            </div>
+                        </div>
+                        
+                        <div class="row mt-3">
+                            <div class="col-12">
+                                <button type="submit" class="btn btn-outline-primary me-2">
+                                    <i class="bi bi-search me-1"></i>Buscar
+                                </button>
+                                <button type="button" class="btn btn-outline-secondary" id="btnLimpiar">
+                                    <i class="bi bi-eraser me-1"></i>Limpiar
+                                </button>
+                                <small class="text-muted ms-3">
+                                    <i class="bi bi-info-circle me-1"></i>
+                                    Puede usar uno o varios criterios de búsqueda
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="col-md-2 d-flex align-items-start">
+        <a asp-action="Create" class="btn btn-primary w-100">
+            <i class="bi bi-plus-circle me-1"></i>Nuevo
+        </a>
+    </div>
 </div>
 
 <!-- Tabla de contratos -->
@@ -134,3 +226,58 @@
         }
     </ul>
 </nav>
+<script>
+$(document).ready(function() {
+     $('#filtrosCollapse').addClass('show');
+    // Botón limpiar filtros
+    $('#btnLimpiar').click(function() {
+        $('#Estado').val('');
+        $('#FechaDesde').val('');
+        $('#fechaHasta').val('');
+        $('#Dias').val('');
+        @* $('#formFiltros').submit(); // opcional: recarga la lista limpia *@
+    });
+
+    // Mostrar filtros si hay criterios de búsqueda activos
+    @if (!string.IsNullOrEmpty(ViewBag.Estado?.ToString()) || 
+         ViewBag.FechaDesde != null || 
+         ViewBag.FechaHasta != null || 
+         !string.IsNullOrEmpty(ViewBag.Dias?.ToString()))
+    {
+        <text>
+        $('#filtrosCollapse').addClass('show');
+        </text>
+    }
+
+    // Búsqueda en tiempo real (opcional)
+    let searchTimeout;
+    $('#Estado, #FechaDesde, #fechaHasta, #Dias').on('input change', function() {
+        clearTimeout(searchTimeout);
+        searchTimeout = setTimeout(function() {
+            // Si querés búsqueda automática, descomentá esta línea
+            // $('#formFiltros').submit();
+        }, 1000); 
+    });
+
+    // Resaltar campos con filtros activos
+    $('#Estado, #FechaDesde, #fechaHasta, #Dias').each(function() {
+        if ($(this).val()) {
+            $(this).addClass('border-primary');
+        }
+    });
+});
+
+$(document).ready(function() {
+    // Verificamos si ViewBag tiene valores
+    var estado = '@(ViewBag.Estado ?? "")';
+    var fechaDesde = '@(ViewBag.FechaDesde != null ? ((DateTime)ViewBag.FechaDesde).ToString("yyyy-MM-dd") : "")';
+    var fechaHasta = '@(ViewBag.FechaHasta != null ? ((DateTime)ViewBag.FechaHasta).ToString("yyyy-MM-dd") : "")';
+    var dias = '@(ViewBag.Dias != null ? ViewBag.Dias.ToString() : "")';
+
+    // Seteamos solo si tienen valor
+    if (estado) $('#Estado').val(estado);
+    if (fechaDesde) $('#FechaDesde').val(fechaDesde);
+    if (fechaHasta) $('#fechaHasta').val(fechaHasta);
+    if (dias) $('#Dias').val(dias);
+});
+</script>
