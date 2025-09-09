@@ -46,7 +46,9 @@ namespace Inmobiliaria.Models.Repositorio
 							Id = reader.GetInt32(nameof(Contrato.Id)),
 							FechaInicio = reader.GetDateTime(nameof(Contrato.FechaInicio)),
 							FechaFin = reader.GetDateTime(nameof(Contrato.FechaFin)),
-							FechaFinAnt = reader.GetDateTime(nameof(Contrato.FechaFinAnt)),
+							FechaFinAnt = reader.IsDBNull(reader.GetOrdinal(nameof(Contrato.FechaFinAnt)))
+								? (DateTime?)null
+								: reader.GetDateTime(reader.GetOrdinal(nameof(Contrato.FechaFinAnt))),
 							Estado = reader.GetString(nameof(Contrato.Estado)),
 							Precio = reader.GetInt32(nameof(Contrato.Precio)),
 							InquilinoId = reader.GetInt32(nameof(Contrato.InquilinoId)),

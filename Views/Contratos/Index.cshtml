@@ -135,7 +135,7 @@
                         <td>@contrato.Inquilino?.Dni - @contrato.Inquilino?.Nombre @contrato.Inquilino?.Apellido </td>
                         <td>@contrato.Inmueble?.Id - @contrato.Inmueble?.Direccion</td>
                         <td>@contrato.FechaInicio.ToShortDateString()</td>
-                        <td>@contrato.FechaFinAnt?.ToShortDateString()</td>
+                        <td>@contrato.FechaFin.ToShortDateString()</td>
                         <td>@contrato.Precio.ToString("C")</td>
                         <td>@contrato.Estado</td>
                         <td>
@@ -170,11 +170,15 @@
                                             <i class="bi bi-arrow-clockwise text-primary"></i> Renovar contrato
                                         </a>
                                     </li>
-                                      <li>
+                                    @if(contrato.Estado == "Vigente"){
+                                         <li>
                                          <a class="dropdown-item" asp-action="Revocar" asp-route-id="@contrato.Id">
                                             <i class="bi bi-dash-circle text-primary"></i> Revocar contrato
                                         </a>
                                       </li>
+                                    }
+                                 
+                                     
                                       
                                    
                                 </ul>

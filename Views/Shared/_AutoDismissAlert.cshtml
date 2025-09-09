@@ -18,7 +18,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         var alerts = document.querySelectorAll('.auto-dismiss-alert');
         alerts.forEach(function(alert) {
-            var dismissTime = parseInt(alert.getAttribute('data-dismiss-time')) || 5000;
+            var dismissTime = parseInt(alert.getAttribute('data-dismiss-time')) || 30000;
             setTimeout(function() {
                 if (alert && !alert.classList.contains('d-none')) {
                     var bsAlert = new bootstrap.Alert(alert);

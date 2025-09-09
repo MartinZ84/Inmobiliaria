@@ -13,6 +13,12 @@ namespace Inmobiliaria.Models.ViewModels
         public int MesesCumplidos { get; set; }
         public decimal Multa { get; set; } // Calculada
 
+        public int TotalMeses { get; set; }
+
+        public int PagosPendientes { get; set; }
+
+        public int MesesPagados { get; set; }
+
         // Nuevo
         public string EstadoPago { get; set; }
         public List<SelectListItem> EstadosPago { get; set; } = new List<SelectListItem>

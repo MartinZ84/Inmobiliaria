@@ -96,10 +96,13 @@ namespace Inmobiliaria.Models.Repositorio
 			{
 				string sql = "UPDATE Pagos SET " +
 					// "NroPago=@nroPago, FechaPago=@fechaPago, Importe=@importe, ContratoId=@contratoId " +
-					"Concepto=@concepto " +
+					" FechaPago=@fechaPago, Importe=@importe, Concepto=@concepto, Estado=@estado " +
 					"WHERE Id = @id";
 				using (MySqlCommand command = new MySqlCommand(sql, connection))
 				{
+					command.Parameters.AddWithValue("@fechaPago", pago.FechaPago);
+					command.Parameters.AddWithValue("@importe", pago.Importe);
+					command.Parameters.AddWithValue("@estado", pago.Estado);
 					command.Parameters.AddWithValue("@concepto", pago.Concepto);
 					command.Parameters.AddWithValue("@id", pago.Id);
 					connection.Open();
@@ -207,6 +210,30 @@ namespace Inmobiliaria.Models.Repositorio
 				}
 			}
 			return nroPago + 1;
+		}
+
+		public int ObtenerCantidadPagosAbonados(int id)
+		{
+			int nroPago = 0;
+			using (MySqlConnection connection = new MySqlConnection(connectionString))
+			{
+				string sql = "SELECT COUNT(nroPago) FROM pagos WHERE contratoId=@id AND estado='Abonado'";
+
+				using (MySqlCommand command = new MySqlCommand(sql, connection))
+				{
+					// command.Parameters.Add("@id", SqlDbType.Int).Value = id;
+					// command.CommandType = CommandType.Text;
+					command.Parameters.AddWithValue($"@{nameof(id)}", 	id);
+					connection.Open();
+					var reader = command.ExecuteReader();
+					if (reader.Read())
+					{
+						nroPago = reader.GetInt32(0);
+					}
+					connection.Close();
+				}
+			}
+			return nroPago ;
 		}
 
 	}

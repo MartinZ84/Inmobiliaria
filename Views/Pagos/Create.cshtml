@@ -12,6 +12,8 @@
 
 <h4 class="mt-4"> Crear Pago del contrato N° @ContratoId</h4>
 <hr />
+@await Html.PartialAsync("_AutoDismissAlert")
+
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
