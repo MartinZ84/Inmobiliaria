@@ -538,7 +538,7 @@ namespace Inmobiliaria.Controllers
         InmuebleDireccion = contrato.Inmueble.Direccion,
         FechaInicio = contrato.FechaInicio,
         FechaFin = contrato.FechaFin,
-        FechaFinAnt = contrato.FechaFinAnt,
+        FechaFinAnt = DateTime.Today.Date,
         Precio = contrato.Precio,
         MesesCumplidos = mesesCumplidos,
         Multa = multa,
@@ -548,32 +548,45 @@ namespace Inmobiliaria.Controllers
       return View(vm);
     }
 
-[HttpPost]
-[ValidateAntiForgeryToken]
-public IActionResult RevocarConfirmar(int id, decimal multa, string estadoPago)
-{
-    var contrato = repositorio.ObtenerPorId(id);
-    if (contrato == null) return NotFound();
-
-    // Actualizar contrato
-    contrato.FechaFinAnt = DateTime.Today;
-    contrato.Estado = "Revocado";
-    repositorio.Modificacion(contrato);
-
-    // Crear registro de pago de multa
-    var pago = new Pago
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult RevocarConfirmar(int id, decimal multa, string estadoPago, DateTime fechaFinAnt)
     {
-        ContratoId = contrato.Id,
-        FechaPago = DateTime.Today,
-        Importe = multa,
-        Estado = estadoPago // Puede ser Pendiente, Abonado, Anulado
-    };
-    repositorioPago.Alta(pago);
+      try
+      {
+        if (multa < 0) throw new Exception("La multa no puede ser negativa");
+        if (string.IsNullOrWhiteSpace(estadoPago) || !(new[] { "Pendiente", "Abonado", "Anulado" }.Contains(estadoPago)))
+          throw new Exception("Estado de pago inválido");
 
-    // repositorio.GuardarCambios();
+        var contrato = repositorio.ObtenerPorId(id);
+        if (contrato == null) return NotFound();
 
-    return RedirectToAction("Index");
-}
+        // Actualizar contrato
+        contrato.FechaFinAnt = fechaFinAnt;
+        contrato.Estado = "Revocado";
+        repositorio.Modificacion(contrato);
+
+        // Crear registro de pago de multa
+        var pago = new Pago
+        {
+          ContratoId = contrato.Id,
+          FechaPago = DateTime.Today,
+          Importe = multa,
+          Estado = estadoPago // Puede ser Pendiente, Abonado, Anulado
+        };
+        repositorioPago.Alta(pago);
+
+    
+
+        return RedirectToAction("Index");
+      }
+      catch (Exception ex)
+      {
+        TempData["ErrorMessage"] = ex.Message;
+        return RedirectToAction("Revocar", new { id = id });
+      }
+
+    }
 
 
   }

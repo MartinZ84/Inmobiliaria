@@ -135,7 +135,7 @@
                         <td>@contrato.Inquilino?.Dni - @contrato.Inquilino?.Nombre @contrato.Inquilino?.Apellido </td>
                         <td>@contrato.Inmueble?.Id - @contrato.Inmueble?.Direccion</td>
                         <td>@contrato.FechaInicio.ToShortDateString()</td>
-                        <td>@contrato.FechaFin.ToShortDateString()</td>
+                        <td>@contrato.FechaFinAnt?.ToShortDateString()</td>
                         <td>@contrato.Precio.ToString("C")</td>
                         <td>@contrato.Estado</td>
                         <td>

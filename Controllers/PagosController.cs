@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Inmobiliaria.Models;
 using Inmobiliaria.Models.Repositorio;
 using Inmobiliaria.Models.Entidades;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Inmobiliaria.Controllers
 {
@@ -61,6 +62,12 @@ namespace Inmobiliaria.Controllers
       ViewBag.nroPago = repositorio.ObtenerCantidadPagos(id);
       var contrato = repoContrato.ObtenerPorId(id);
       ViewBag.importe = contrato.Precio;
+      ViewBag.EstadosPago = new List<SelectListItem>
+      {
+          new SelectListItem { Value = "Pendiente", Text = "Pendiente" },
+          new SelectListItem { Value = "Abonado", Text = "Abonado" },
+          new SelectListItem { Value = "Anulado", Text = "Anulado" }
+      };
       return View();
     }
 
@@ -81,7 +88,7 @@ namespace Inmobiliaria.Controllers
         pago.Importe = pago.Importe;
         pago.ContratoId = pago.ContratoId;
         pago.Concepto = pago.Concepto;
-        pago.Estado = "Abonado";
+        pago.Estado = pago.Estado;
         if (pago.FechaPago > DateTime.Now)
         {
           TempData["ErrorMessage"] = "La fecha de pago no puede ser mayor a la fecha actual.";

@@ -29,7 +29,7 @@ namespace Inmobiliaria.Models.Repositorio
 			IList<Contrato> res = new List<Contrato>();
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
-				string sql = @$"SELECT c.Id, FechaInicio, FechaFin, c.Estado, c.Precio, InquilinoId, InmuebleId, " +
+				string sql = @$"SELECT c.Id, FechaInicio,FechaFin, FechaFinAnt, c.Estado, c.Precio, InquilinoId, InmuebleId, " +
 					" inq.Nombre, inq.Apellido, inm.Id, inm.Direccion " +
 					" FROM Contratos c INNER JOIN Inquilinos inq ON c.InquilinoId = inq.Id " +
 					"INNER JOIN Inmuebles inm ON inm.Id= c.InmuebleId " + "ORDER BY c.FechaInicio ASC " +
@@ -46,6 +46,7 @@ namespace Inmobiliaria.Models.Repositorio
 							Id = reader.GetInt32(nameof(Contrato.Id)),
 							FechaInicio = reader.GetDateTime(nameof(Contrato.FechaInicio)),
 							FechaFin = reader.GetDateTime(nameof(Contrato.FechaFin)),
+							FechaFinAnt = reader.GetDateTime(nameof(Contrato.FechaFinAnt)),
 							Estado = reader.GetString(nameof(Contrato.Estado)),
 							Precio = reader.GetInt32(nameof(Contrato.Precio)),
 							InquilinoId = reader.GetInt32(nameof(Contrato.InquilinoId)),
@@ -83,7 +84,7 @@ namespace Inmobiliaria.Models.Repositorio
 
 			using (var connection = new MySqlConnection(connectionString))
 			{
-				var sql = @$"SELECT c.Id, FechaInicio, FechaFin, c.Estado, c.Precio, InquilinoId, InmuebleId, " +
+				var sql = @$"SELECT c.Id, FechaInicio, FechaFin, FechaFinAnt, c.Estado, c.Precio, InquilinoId, InmuebleId, " +
 					" inq.Nombre, inq.Apellido, inm.Id, inm.Direccion " +
 					" FROM Contratos c INNER JOIN Inquilinos inq ON c.InquilinoId = inq.Id " +
 					"INNER JOIN Inmuebles inm ON inm.Id= c.InmuebleId " +					
@@ -114,7 +115,7 @@ namespace Inmobiliaria.Models.Repositorio
 				// Filtro por fecha de inicio y fin
 				if (fechaDesde.HasValue && fechaHasta.HasValue)
 				{
-					sql += " AND c.fechaInicio >= @fechaDesde AND c.fechaFin <= @fechaHasta ";
+					sql += " AND c.fechaInicio >= @fechaDesde AND c.fechaFinAnt <= @fechaHasta ";
 					parameters.Add(new MySqlParameter("@fechaDesde", fechaDesde.Value));
 					parameters.Add(new MySqlParameter("@fechaHasta", fechaHasta.Value));
 				}
@@ -125,7 +126,7 @@ namespace Inmobiliaria.Models.Repositorio
 				}
 				else if (fechaHasta.HasValue) // Solo fecha hasta
 				{
-					sql += " AND c.fechaFin <= @fechaHasta ";
+					sql += " AND c.fechaFinAnt <= @fechaHasta ";
 					parameters.Add(new MySqlParameter("@fechaHasta", fechaHasta.Value));
 				}
 
@@ -170,6 +171,7 @@ namespace Inmobiliaria.Models.Repositorio
 								Id = reader.GetInt32(nameof(Contrato.Id)),
 								FechaInicio = reader.GetDateTime(nameof(Contrato.FechaInicio)),
 								FechaFin = reader.GetDateTime(nameof(Contrato.FechaFin)),
+								FechaFinAnt = reader.GetDateTime(nameof(Contrato.FechaFinAnt)),
 								Estado = reader.GetString(nameof(Contrato.Estado)),
 								Precio = reader.GetInt32(nameof(Contrato.Precio)),
 								InquilinoId = reader.GetInt32(nameof(Contrato.InquilinoId)),
@@ -253,7 +255,8 @@ namespace Inmobiliaria.Models.Repositorio
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
 				string sql = "UPDATE Contratos SET " +
-					"FechaInicio=@fechaInicio, FechaFin=@fechaFin, Estado=@estado, Precio=@precio, InquilinoId=@inquilinoId, InmuebleId=@inmuebleId , FechaFinAnt=@fechaFinAnt " +
+					//	"FechaInicio=@fechaInicio, FechaFin=@fechaFin, Estado=@estado, Precio=@precio, InquilinoId=@inquilinoId, InmuebleId=@inmuebleId , FechaFinAnt=@fechaFinAnt " +
+					"Estado=@estado, Precio=@precio, FechaFinAnt=@fechaFinAnt " +
 					"WHERE Id = @id";
 				using (MySqlCommand command = new MySqlCommand(sql, connection))
 				{
