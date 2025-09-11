@@ -244,11 +244,48 @@ namespace Inmobiliaria.Controllers
       ViewBag.Inquilino = repositorioInquilino.ObtenerPorId(contrato.InquilinoId);
       ViewBag.Inmueble = repositorioInmueble.ObtenerPorId(contrato.InmuebleId);
       ViewBag.Propietario = repositorioPropietario.ObtenerPorId(ViewBag.Inmueble.PropietarioId);
+
+      
+    int totalMeses = ((contrato.FechaFin.Year - contrato.FechaInicio.Year) * 12) +
+                     (contrato.FechaFin.Month - contrato.FechaInicio.Month);
+
+    int mesesCumplidos = ((DateTime.Today.Year - contrato.FechaInicio.Year) * 12) +
+                         (DateTime.Today.Month - contrato.FechaInicio.Month);
+
+    mesesCumplidos = Math.Min(mesesCumplidos, totalMeses);
+    //Traigo todos los pagos del contrato
+    var pagosAbonados = repositorioPago.ObtenerCantidadPagosAbonados(contrato.Id);
+    int pagosPendientes = Math.Max(mesesCumplidos - pagosAbonados, 0);
+
+    // Verifico si hay pagos pendientes
+    bool tienePagosPendientes = pagosAbonados < mesesCumplidos;
+
+    if (tienePagosPendientes)
+    {
+        TempData["ErrorMessage"] = "El contrato tiene pagos pendientes.";
+        //return RedirectToAction("Detalles", new { id = contrato.Id });
+    }
+
+      var vm = new ContratoRevocarViewModel
+    {
+      Id = contrato.Id,
+      InquilinoNombre = contrato.Inquilino.Nombre + " " + contrato.Inquilino.Apellido,
+      InmuebleDireccion = contrato.Inmueble.Direccion,
+      FechaInicio = contrato.FechaInicio,
+      FechaFin = contrato.FechaFinAnt ?? contrato.FechaFin,
+      FechaFinAnt = contrato.FechaFinAnt,
+      Precio = contrato.Precio,
+      TotalMeses = totalMeses,
+      MesesCumplidos = mesesCumplidos,
+      MesesPagados = pagosAbonados,          
+      PagosPendientes = pagosPendientes
+    };
+
       if (TempData.ContainsKey("Mensaje"))
         ViewBag.Mensaje = TempData["Mensaje"];
       if (TempData.ContainsKey("ErrorMessage"))
         ViewBag.Error = TempData["ErrorMessage"];
-      return View(contrato);
+      return View(vm);
 
 
     }

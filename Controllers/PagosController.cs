@@ -34,6 +34,23 @@ namespace Inmobiliaria.Controllers
     public ActionResult Index(int id)
     {
       var pagos = repositorio.ObtenerPagosPorContrato(id);
+      var contrato = repoContrato.ObtenerPorId(id);
+      if (contrato == null) return NotFound();
+      int totalMeses = ((contrato.FechaFin.Year - contrato.FechaInicio.Year) * 12) +
+                  (contrato.FechaFin.Month - contrato.FechaInicio.Month);
+
+      int mesesCumplidos = ((DateTime.Today.Year - contrato.FechaInicio.Year) * 12) +
+                           (DateTime.Today.Month - contrato.FechaInicio.Month);
+
+      mesesCumplidos = Math.Min(mesesCumplidos, totalMeses);
+      //Traigo todos los pagos del contrato
+      var pagosAbonados = repositorio.ObtenerCantidadPagosAbonados(contrato.Id);
+      int pagosPendientes = Math.Max(mesesCumplidos - pagosAbonados, 0);
+      ViewBag.PagosPendientes = pagosPendientes;
+      // ViewBag.Contrato = contrato;
+      ViewBag.mesesCumplidos = mesesCumplidos;
+      ViewBag.totalMeses = totalMeses;
+      ViewBag.PagosAbonados = pagosAbonados;
       ViewBag.ContratoId = id;
       return View(pagos);
     }
@@ -75,8 +92,8 @@ namespace Inmobiliaria.Controllers
 
       if (tienePagosPendientes)
       {
-        TempData["ErrorMessage"] = "El contrato tiene " + pagosPendientes + " pagos pendientes. ";
-        
+        TempData["InfoMessage"] = "El contrato tiene " + pagosPendientes + " pagos pendientes. ";
+
       }
 
       String fechaActual = DateTime.Now.ToString("dd/MM/yyyy");
@@ -101,6 +118,20 @@ namespace Inmobiliaria.Controllers
     {
       try
       {
+       var contrato = repoContrato.ObtenerPorId(pago.ContratoId);
+        
+      int totalMeses = ((contrato.FechaFin.Year - contrato.FechaInicio.Year) * 12) +
+                       (contrato.FechaFin.Month - contrato.FechaInicio.Month);
+
+     
+    
+      var pagosAbonados = repositorio.ObtenerCantidadPagosAbonados(contrato.Id);
+      if (pagosAbonados >= totalMeses)
+      {
+        TempData["ErrorMessage"] = "No se pueden registrar más pagos, los pagos del contrato ya han sido completado.";
+        return RedirectToAction("Index", new { id = pago.ContratoId });
+      }
+    
         // pago.NroPago = int.Parse(Request.Form["NroPago"]);
         // pago.FechaPago = DateTime.Parse(Request.Form["FechaPago"]);
         // pago.Importe= decimal.Parse(Request.Form["Importe"]);
