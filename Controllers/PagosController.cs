@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Inmobiliaria.Models;
 using Inmobiliaria.Models.Repositorio;
 using Inmobiliaria.Models.Entidades;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Inmobiliaria.Controllers
 {
@@ -33,6 +34,23 @@ namespace Inmobiliaria.Controllers
     public ActionResult Index(int id)
     {
       var pagos = repositorio.ObtenerPagosPorContrato(id);
+      var contrato = repoContrato.ObtenerPorId(id);
+      if (contrato == null) return NotFound();
+      int totalMeses = ((contrato.FechaFin.Year - contrato.FechaInicio.Year) * 12) +
+                  (contrato.FechaFin.Month - contrato.FechaInicio.Month);
+
+      int mesesCumplidos = ((DateTime.Today.Year - contrato.FechaInicio.Year) * 12) +
+                           (DateTime.Today.Month - contrato.FechaInicio.Month);
+
+      mesesCumplidos = Math.Min(mesesCumplidos, totalMeses);
+      //Traigo todos los pagos del contrato
+      var pagosAbonados = repositorio.ObtenerCantidadPagosAbonados(contrato.Id);
+      int pagosPendientes = Math.Max(mesesCumplidos - pagosAbonados, 0);
+      ViewBag.PagosPendientes = pagosPendientes;
+      // ViewBag.Contrato = contrato;
+      ViewBag.mesesCumplidos = mesesCumplidos;
+      ViewBag.totalMeses = totalMeses;
+      ViewBag.PagosAbonados = pagosAbonados;
       ViewBag.ContratoId = id;
       return View(pagos);
     }
@@ -56,11 +74,39 @@ namespace Inmobiliaria.Controllers
 
     public ActionResult Create(int id)
     {
+      var contrato = repoContrato.ObtenerPorId(id);
+      if (contrato == null) return NotFound();
+
+      int totalMeses = ((contrato.FechaFin.Year - contrato.FechaInicio.Year) * 12) +
+                       (contrato.FechaFin.Month - contrato.FechaInicio.Month);
+
+      int mesesCumplidos = ((DateTime.Today.Year - contrato.FechaInicio.Year) * 12) +
+                           (DateTime.Today.Month - contrato.FechaInicio.Month);
+
+      mesesCumplidos = Math.Min(mesesCumplidos, totalMeses);
+      //Traigo todos los pagos del contrato
+      var pagosAbonados = repositorio.ObtenerCantidadPagosAbonados(contrato.Id);
+      int pagosPendientes = Math.Max(mesesCumplidos - pagosAbonados, 0);
+      bool tienePagosPendientes = pagosAbonados < mesesCumplidos;
+
+
+      if (tienePagosPendientes)
+      {
+        TempData["InfoMessage"] = "El contrato tiene " + pagosPendientes + " pagos pendientes. ";
+
+      }
+
       String fechaActual = DateTime.Now.ToString("dd/MM/yyyy");
       ViewBag.ContratoId = id;
       ViewBag.nroPago = repositorio.ObtenerCantidadPagos(id);
-      var contrato = repoContrato.ObtenerPorId(id);
+
       ViewBag.importe = contrato.Precio;
+      ViewBag.EstadosPago = new List<SelectListItem>
+      {
+          new SelectListItem { Value = "Pendiente", Text = "Pendiente" },
+          new SelectListItem { Value = "Abonado", Text = "Abonado" },
+          new SelectListItem { Value = "Anulado", Text = "Anulado" }
+      };
       return View();
     }
 
@@ -72,6 +118,20 @@ namespace Inmobiliaria.Controllers
     {
       try
       {
+       var contrato = repoContrato.ObtenerPorId(pago.ContratoId);
+        
+      int totalMeses = ((contrato.FechaFin.Year - contrato.FechaInicio.Year) * 12) +
+                       (contrato.FechaFin.Month - contrato.FechaInicio.Month);
+
+     
+    
+      var pagosAbonados = repositorio.ObtenerCantidadPagosAbonados(contrato.Id);
+      if (pagosAbonados >= totalMeses)
+      {
+        TempData["ErrorMessage"] = "No se pueden registrar más pagos, los pagos del contrato ya han sido completado.";
+        return RedirectToAction("Index", new { id = pago.ContratoId });
+      }
+    
         // pago.NroPago = int.Parse(Request.Form["NroPago"]);
         // pago.FechaPago = DateTime.Parse(Request.Form["FechaPago"]);
         // pago.Importe= decimal.Parse(Request.Form["Importe"]);
@@ -81,7 +141,7 @@ namespace Inmobiliaria.Controllers
         pago.Importe = pago.Importe;
         pago.ContratoId = pago.ContratoId;
         pago.Concepto = pago.Concepto;
-        pago.Estado = "Abonado";
+        pago.Estado = pago.Estado;
         if (pago.FechaPago > DateTime.Now)
         {
           TempData["ErrorMessage"] = "La fecha de pago no puede ser mayor a la fecha actual.";
@@ -111,6 +171,12 @@ namespace Inmobiliaria.Controllers
     {
       var pago = repositorio.ObtenerPorId(id);
       ViewBag.ContratoId = pago.ContratoId;
+      ViewBag.EstadosPago = new List<SelectListItem>
+      {
+          new SelectListItem { Value = "Pendiente", Text = "Pendiente" },
+          new SelectListItem { Value = "Abonado", Text = "Abonado" },
+          new SelectListItem { Value = "Anulado", Text = "Anulado" }
+      };
       return View(pago);
     }
 
@@ -169,6 +235,24 @@ namespace Inmobiliaria.Controllers
         ViewBag.StackTrate = ex.StackTrace;
         return View(pay);
       }
+    }
+
+    public ActionResult CreatePagoFromRevocar(int id)
+    {
+      var pago = repositorio.ObtenerPorId(id);
+      ViewBag.ContratoId = pago.ContratoId;
+      ViewBag.nroPago = repositorio.ObtenerCantidadPagos(pago.ContratoId);
+      ViewBag.importe = pago.Importe;
+      ViewBag.concepto = pago.Concepto;
+      ViewBag.estado = pago.Estado;
+
+      ViewBag.EstadosPago = new List<SelectListItem>
+      {
+          new SelectListItem { Value = "Pendiente", Text = "Pendiente" },
+          new SelectListItem { Value = "Abonado", Text = "Abonado" },
+          new SelectListItem { Value = "Anulado", Text = "Anulado" }
+      };
+      return View("Edit", pago);
     }
   }
 }

@@ -74,7 +74,7 @@
                                 <span for="fechaHasta" class="text-danger"></span>
                             </div>
                             <div class="col-md-3">
-                                <label for="Dias" class="form-label">Terminan dentro de los proximos días</label>
+                                <label for="Dias" class="form-label">Terminan en los proximos días</label>
                                 <select id="Dias" name="Dias" class="form-control" style="width:100%">
                                      <option value="">Seleccione días...</option>
                                     <option value=30>30</option>
@@ -170,11 +170,15 @@
                                             <i class="bi bi-arrow-clockwise text-primary"></i> Renovar contrato
                                         </a>
                                     </li>
-                                      <li>
+                                    @if(contrato.Estado == "Vigente"){
+                                         <li>
                                          <a class="dropdown-item" asp-action="Revocar" asp-route-id="@contrato.Id">
                                             <i class="bi bi-dash-circle text-primary"></i> Revocar contrato
                                         </a>
                                       </li>
+                                    }
+                                 
+                                     
                                       
                                    
                                 </ul>

@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using Microsoft.AspNetCore.Mvc.Rendering;
 
 namespace Inmobiliaria.Models.Entidades;
 
@@ -26,9 +27,16 @@ public class Pago
   [Display(Name = "Concepto")]
   [Required]
   public string? Concepto { get; set; }
-  
-      
+
+
   [Display(Name = "Estado")]
   public string? Estado { get; set; }
+  
+       public List<SelectListItem> EstadosPago { get; set; } = new List<SelectListItem>
+    {
+        new SelectListItem { Value = "Pendiente", Text = "Pendiente" },
+        new SelectListItem { Value = "Abonado", Text = "Abonado" },
+        new SelectListItem { Value = "Anulado", Text = "Anulado" }
+    };
     
   }

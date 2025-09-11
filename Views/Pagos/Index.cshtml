@@ -6,70 +6,92 @@
 }
 
 <h3 class="mt-4">Pagos del contrato N° @ContratoId</h3>
-<hr>
-<p>
+<small class="text-muted d-block mb-3">
+   <i class="bi bi-info-circle me-1"></i>
+   Información de pagos del contrato.
+</small>
 
-    <div class="row justify-content-between">
-        @Html.ActionLink("Nuevo pago", "Create", new { id = @ContratoId }, new { @class = "btn btn-primary col-2" })
-        <a asp-controller="Contratos" asp-action="Index" class="btn btn-secondary col-2">Volver a contratos</a>
-
+<div class="row text-center mb-4">
+    <div class="col-md-3 col-6 mb-2">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <i class="bi bi-calendar-check fs-3 text-primary"></i>
+                <h6 class="mt-2">Meses cumplidos</h6>
+                <p class="fs-5 fw-bold mb-0">@ViewBag.mesesCumplidos</p>
+            </div>
+        </div>
     </div>
+    <div class="col-md-3 col-6 mb-2">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <i class="bi bi-calendar-range fs-3 text-secondary"></i>
+                <h6 class="mt-2">Meses totales</h6>
+                <p class="fs-5 fw-bold mb-0">@ViewBag.totalMeses</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6 mb-2">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <i class="bi bi-cash-coin fs-3 text-success"></i>
+                <h6 class="mt-2">Pagos abonados</h6>
+                <p class="fs-5 fw-bold mb-0">@ViewBag.PagosAbonados</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6 mb-2">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <i class="bi bi-exclamation-circle fs-3 text-danger"></i>
+                <h6 class="mt-2">Pagos pendientes</h6>
+                <p class="fs-5 fw-bold mb-0">@ViewBag.PagosPendientes</p>
+            </div>
+        </div>
+    </div>
+</div>
 
-</p>
-<table class="table">
-    <thead>
+<hr />
+
+@if (ViewBag.PagosAbonados < ViewBag.totalMeses)
+{
+    <div class="row justify-content-between mb-3">
+        <a asp-action="Create" asp-route-id="@ContratoId" class="btn btn-primary col-2">Nuevo pago</a>
+        <a asp-controller="Contratos" asp-action="Index" class="btn btn-secondary col-2">Volver a contratos</a>
+    </div>
+}
+else
+{
+    <div class="row justify-content-between mb-3">
+           <a class="btn btn-primary col-2 disabled" tabindex="-1" aria-disabled="true">Nuevo pago</a>
+        <a asp-controller="Contratos" asp-action="Index" class="btn btn-secondary col-2">Volver a contratos</a>
+    </div>
+}
+
+
+<table class="table table-striped align-middle shadow-sm">
+    <thead class="table-light">
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.NroPago)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.FechaPago)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Importe)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Concepto)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Estado)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ContratoId)
-            </th>
-            <th>Acciones    
-
-            </th>
+            <th>@Html.DisplayNameFor(model => model.Id)</th>
+            <th>@Html.DisplayNameFor(model => model.NroPago)</th>
+            <th>@Html.DisplayNameFor(model => model.FechaPago)</th>
+            <th>@Html.DisplayNameFor(model => model.Importe)</th>
+            <th>@Html.DisplayNameFor(model => model.Concepto)</th>
+            <th>@Html.DisplayNameFor(model => model.Estado)</th>
+            <th>@Html.DisplayNameFor(model => model.ContratoId)</th>
+            <th>Acciones</th>
         </tr>
     </thead>
     <tbody>
         @foreach (var item in Model)
         {
             <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.NroPago)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.FechaPago)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Importe)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Concepto)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Estado)
-                <td>
-                    @Html.DisplayFor(modelItem => item.ContratoId)
-                </td>
-               
+                <td>@Html.DisplayFor(modelItem => item.Id)</td>
+                <td>@Html.DisplayFor(modelItem => item.NroPago)</td>
+                <td>@Html.DisplayFor(modelItem => item.FechaPago)</td>
+                <td>@Html.DisplayFor(modelItem => item.Importe)</td>
+                <td>@Html.DisplayFor(modelItem => item.Concepto)</td>
+                <td>@Html.DisplayFor(modelItem => item.Estado)</td>
+                <td>@Html.DisplayFor(modelItem => item.ContratoId)</td>
                 <td>
                     <div class="dropdown">
                         <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">
@@ -85,19 +107,16 @@
                                 <a class="dropdown-item" asp-action="Details" asp-route-id="@item.Id">
                                     <i class="bi bi-info-circle text-warning"></i> Detalles
                                 </a>
-                            </li>                        
+                            </li>
                             <li>
                                 <a class="dropdown-item" asp-action="Delete" asp-route-id="@item.Id">
                                     <i class="bi bi-trash text-danger"></i> Anular
                                 </a>
-                            </li>     
-
-
+                            </li>
                         </ul>
                     </div>
                 </td>
             </tr>
-
         }
     </tbody>
 </table>

@@ -1,0 +1,184 @@
+@model Inmobiliaria.Models.ViewModels.ContratoRevocarViewModel
+
+<h4 class="mt-4">Revocar Contrato N° @Model.Id</h4>
+<small class="text-muted">
+    <i class="bi bi-info-circle me-1"></i>
+    Al revocar el contrato debera abonar una multa.Si se
+    cumplió menos de la mitad del tiempo original de alquiler, deberá
+    pagar 2 (dos) meses extra de alquiler de multa. Caso contrario, sólo uno.
+</small>
+
+<hr />
+@await Html.PartialAsync("_AutoDismissAlert")
+<form asp-action="RevocarConfirmar" method="post" id="revocarForm">
+    <dl class="row">
+        <dt class="col-sm-3">Inquilino</dt>
+        <dd class="col-sm-9">@Model.InquilinoNombre</dd>
+
+        <dt class="col-sm-3">Inmueble</dt>
+        <dd class="col-sm-9">@Model.InmuebleDireccion</dd>
+
+        <dt class="col-sm-3">Fecha Inicio</dt>
+        <dd class="col-sm-9">@Model.FechaInicio.ToShortDateString()</dd>
+
+        <dt class="col-sm-3">Fecha Fin Original</dt>
+        <dd class="col-sm-9">@Model.FechaFin.ToShortDateString()</dd>
+
+        @* <dt class="col-sm-3">Fecha Fin Anticipada</dt>
+        <dd class="col-sm-9">@Model.FechaFinAnt?.ToShortDateString()</dd> *@
+
+        <dt class="col-sm-3">Precio Mensual</dt>
+        <dd class="col-sm-9">@Model.Precio.ToString("C")</dd>
+
+         <dt class="col-sm-3">Meses duracion original del contrato</dt>
+        <dd class="col-sm-9">@Model.TotalMeses</dd>
+
+        <dt class="col-sm-3">Meses cumplidos</dt>
+        <dd class="col-sm-9">@Model.MesesCumplidos</dd>
+
+        <dt class="col-sm-3">Meses pagados</dt>
+        <dd class="col-sm-9">@Model.MesesPagados</dd>
+
+        <dt class="col-sm-3">Meses pendientes de pago</dt>
+        <dd class="col-sm-9">@Model.PagosPendientes</dd>
+
+        <dt class="col-sm-3">Multa a pagar</dt>
+        <dd class="col-sm-9">@Model.Multa.ToString("C")</dd>
+
+        <dt class="col-sm-3">Fecha Revocacion</dt>
+        <dd class="col-sm-9">
+            <div class="row">
+                <div class="col-sm-6 col-md-4 col-lg-3">
+                    <input type="date" id="fechaFinAnt" name="fechaFinAnt"
+                        value="@DateTime.Today.ToString("yyyy-MM-dd")" class="form-control" required />
+                    <div class="invalid-feedback">
+                        La fecha de revocación debe ser mayor a la fecha de inicio.
+                    </div>
+                </div>
+            </div>
+        </dd>
+
+        <dt class="col-sm-3">Estado del pago</dt>
+        <dd class="col-sm-9">
+            <div class="row">
+                <div class="col-sm-6 col-md-4 col-lg-3">
+                    <select asp-for="EstadoPago" asp-items="Model.EstadosPago" class="form-select"></select>
+                </div>
+            </div>
+        </dd>
+    </dl>
+
+    <input type="hidden" id="fechaInicio" value="@Model.FechaInicio.ToString("yyyy-MM-dd")" />
+    <input type="hidden" name="id" value="@Model.Id" />
+    <input type="hidden" name="multa" value="@Model.Multa" />
+    @if (@ViewBag.TienePagosPendientes)
+    {
+        <button type="submit" class="btn btn-danger" disabled>
+            <i class="bi bi-dash-circle me-1"></i> Revocar Contrato
+        </button>
+    }
+    else
+    {
+        <button type="submit" class="btn btn-danger">
+            <i class="bi bi-dash-circle me-1"></i> Revocar Contrato
+        </button>
+    }
+
+    <a class="btn btn-outline-primary ms-2" asp-controller="Pagos" asp-action="Index" asp-route-id="@Model.Id">
+        <i class="bi bi-cash-stack text-secondary"></i> Pagos
+    </a>
+
+    <a asp-action="Index" class="btn btn-secondary ms-2">
+        <i class="bi bi-arrow-left me-1"></i> Volver al listado
+    </a>
+</form>
+
+
+@* <div class="card">
+    <div class="card-body">
+        <dl class="row">
+            <dt class="col-sm-3">Inquilino</dt>
+            <dd class="col-sm-9">@Model.InquilinoNombre</dd>
+
+            <dt class="col-sm-3">Inmueble</dt>
+            <dd class="col-sm-9">@Model.InmuebleDireccion</dd>
+
+            <dt class="col-sm-3">Fecha Inicio</dt>
+            <dd class="col-sm-9">@Model.FechaInicio.ToShortDateString()</dd>
+
+            <dt class="col-sm-3">Fecha Fin Original</dt>
+            <dd class="col-sm-9">@Model.FechaFin.ToShortDateString()</dd>
+
+            <dt class="col-sm-3">Fecha Fin Anticipada</dt>
+            <dd class="col-sm-9">@Model.FechaFinAnt?.ToShortDateString()</dd>
+
+            <dt class="col-sm-3">Precio Mensual</dt>
+            <dd class="col-sm-9">@Model.Precio.ToString("C")
+
+            <dt class="col-sm-3">Meses cumplidos</dt>
+            <dd class="col-sm-9">@Model.MesesCumplidos</dd>
+
+            <dt class="col-sm-3">Multa a pagar</dt>
+            <dd class="col-sm-9">@Model.Multa.ToString("C")</dd>
+
+            <dt class="col-sm-3">Fecha Revocacion</dt>
+            <dd class="col-sm-9">
+                 <div class="row">
+                    <div class="col-sm-6 col-md-4 col-lg-3">
+                        <input type="date" id="fechaFinAnt" name="fechaFinAnt"
+                            value="@DateTime.Today.ToString("yyyy-MM-dd")"
+                            class="form-control" required />
+                            <div class="invalid-feedback">
+                                La fecha de revocación debe ser mayor a la fecha de inicio.
+                            </div>
+                    </div>
+                 </div>
+            </dd>
+
+            <dt class="col-sm-3">Estado del pago</dt>
+            <dd class="col-sm-9">
+                <div class="row">
+                    <div class="col-sm-6 col-md-4 col-lg-3">
+                        <select asp-for="EstadoPago" asp-items="Model.EstadosPago" class="form-select"></select>
+                    </div>
+                </div>
+            </dd>
+        </dl> *@
+
+@* <form asp-action="RevocarConfirmar" method="post" id="revocarForm">
+            <input type="hidden" id="fechaInicio" value="@Model.FechaInicio.ToString("yyyy-MM-dd")" />
+            <input type="hidden" name="id" value="@Model.Id" />
+            <input type="hidden" name="multa" value="@Model.Multa" />
+
+            <button type="submit" class="btn btn-danger">
+                <i class="bi bi-dash-circle me-1"></i> Revocar Contrato
+            </button>
+            <a asp-action="Index" class="btn btn-secondary ms-2">
+                <i class="bi bi-arrow-left me-1"></i> Volver al listado
+            </a>
+        </form> *@
+</div>
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        $("#revocarForm").on("submit", function (e) {
+            let fechaInicio = new Date($("#fechaInicio").val());
+            let fechaRevocacion = new Date($("#fechaFinAnt").val());
+
+            if (fechaRevocacion <= fechaInicio) {
+                e.preventDefault(); // bloquea envío del form
+
+                $("#fechaFinAnt").addClass("is-invalid");
+            } else {
+                $("#fechaFinAnt").removeClass("is-invalid");
+            }
+        });
+        // Quitar el error cuando el usuario cambia la fecha
+        $("#fechaFinAnt").on("change input", function () {
+            $(this).removeClass("is-invalid");
+        });
+
+    });
+</script>
