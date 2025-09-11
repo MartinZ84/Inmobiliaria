@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 06-09-2025 a las 17:06:12
+-- Tiempo de generación: 11-09-2025 a las 18:15:45
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -45,16 +45,17 @@ CREATE TABLE `contratos` (
 --
 
 INSERT INTO `contratos` (`id`, `fechaInicio`, `fechaFin`, `estado`, `precio`, `inquilinoId`, `inmuebleId`, `fechaFinAnt`, `usuarioIdAlta`, `usuarioIdBaja`) VALUES
-(49, '2022-04-21', '2025-04-21', 'Vigente', 30000, 3, 1, '2025-04-21', 1, NULL),
+(49, '2022-04-21', '2025-04-21', 'Vigente', 20555, 3, 1, '2025-04-21', 1, NULL),
 (51, '2022-04-22', '2024-04-22', 'Vigente', 30000, 3, 3, '2024-04-22', 1, NULL),
 (52, '2022-05-01', '2022-07-01', 'Vigente', 30000, 3, 7, '2022-07-01', 1, NULL),
-(53, '2022-07-02', '2022-08-01', 'Vigente', 50000, 3, 7, '2022-08-01', 1, NULL),
-(65, '2025-09-02', '2027-09-02', 'No vigente', 5454, 7, 25, '2027-09-02', 1, NULL),
-(66, '2025-09-02', '2026-09-02', 'Vigente', 55555, 3, 22, '2026-09-02', 1, NULL),
+(53, '2025-07-05', '2026-07-01', 'Revocado', 50000, 3, 7, '2025-09-09', 1, NULL),
+(65, '2025-09-16', '2026-09-22', 'Vigente', 250000, 3, 26, '2026-09-22', 1, NULL),
+(66, '2025-07-02', '2026-09-02', 'Revocado', 55555, 3, 22, '2025-09-11', 1, NULL),
 (67, '2025-09-02', '2027-09-02', 'No vigente', 345235, 7, 23, '2027-09-02', 1, NULL),
-(68, '2025-09-05', '2025-10-05', 'Vigente', 5000000, 9, 1, '2025-10-05', 1, NULL),
-(74, '2025-09-05', '2025-11-05', 'No vigente', 11223, 3, 20, '2025-11-05', 1, NULL),
-(76, '2025-09-06', '2025-12-05', 'Vigente', 4555000, 7, 13, '2025-12-05', 1, NULL);
+(68, '2025-09-05', '2025-10-05', 'Revocado', 5000000, 9, 1, '2025-09-09', 1, NULL),
+(74, '2025-09-05', '2025-11-05', 'No vigente', 1299900, 3, 20, '2025-11-05', 1, NULL),
+(80, '2025-09-11', '2027-09-11', 'Vigente', 1234567890, 24, 27, '2027-09-11', 1, NULL),
+(81, '2026-09-23', '2027-09-23', 'Vigente', 55500000, 3, 26, '2027-09-23', 1, NULL);
 
 -- --------------------------------------------------------
 
@@ -88,11 +89,12 @@ INSERT INTO `inmuebles` (`id`, `direccion`, `ambientes`, `superficie`, `tipInmId
 (13, 'Colon 2542, Mendoza Capital', 4, 76, 2, 'Comercial', 67000, 0, 0, 1, 13, '/uploads/inmuebles/11e57bcf-c516-44a6-96f5-eb01c9d54029_Ubicacion terreno.png'),
 (14, 'Belgrano 45, San Luis', 5, 90, 1, 'Comercial', 80000, 0, 0, 3, 14, NULL),
 (20, 'Chacabuco 584', 3, 100, 1, 'Residencial', 1000000, NULL, NULL, 1, 14, '/uploads/inmuebles/ed8c04bc-c1fd-4fdf-b10b-dd882bc64e1b_Captura de pantalla 2025-07-13 123409.png'),
-(22, 'San Martin 89', 4, 152, 2, 'Residencial', 4545, 53, 54, 1, 4, '/uploads/inmuebles/916529eb-81ee-4537-a56d-0cbfc58ad753_Terreno venta.png'),
+(22, 'Este voy a dar de baja', 4, 152, 2, 'Residencial', 4545, 53, 54, 3, 4, '/uploads/inmuebles/916529eb-81ee-4537-a56d-0cbfc58ad753_Terreno venta.png'),
 (23, 'Peron 111, Mercedes', 2, 30, 3, 'Residencial', 100000, 45445, 56445, 1, 4, '/uploads/inmuebles/7e50ceee-67af-480e-88d4-cd20f3779d85_Terreno Barrancas.png'),
 (24, 'Salta 458, Salta Capital', 5, 100, 1, 'Residencial', 5222, 546, 56, 2, 11, '/uploads/inmuebles/69d76abd-5c7c-4c8d-932c-b6e59e380ce5_sudamerica.jpg'),
-(25, 'Mexico 6347, San Luis Capital', 2, 100, 3, 'Residencial', 45455, 45, 45, 1, 6, NULL),
-(26, 'Junin 545 Capital', 5, 40, 2, 'Residencial', 46666000, 88, 8707, 1, 1, NULL);
+(25, 'Mexico 6347, San Luis Capital', 2, 100, 3, 'Residencial', 45455, 45, 45, 3, 6, NULL),
+(26, 'Junin 545 Capital', 5, 40, 2, 'Residencial', 46666000, 88, 8707, 1, 1, NULL),
+(27, 'Ruta 7 km 800 puerta 6', 10, 5000, 3, 'Comercial', 86000000, 545, 87451, 1, 1, '/uploads/inmuebles/67938a3e-2818-41a4-b739-cb342177677b_casagob.jpg');
 
 -- --------------------------------------------------------
 
@@ -115,11 +117,12 @@ CREATE TABLE `inquilinos` (
 
 INSERT INTO `inquilinos` (`id`, `nombre`, `apellido`, `dni`, `telefono`, `email`) VALUES
 (3, 'Laura', 'Inquilino', '45666878', '45468888', 'jose@inquilino.com'),
-(7, 'Jose', 'Sexto', '45666878', '2645548844', 'marilauzan@gmail.com'),
+(7, 'Jose', 'Sexto', '45453533', '2645548844', 'marilau@gmail.com'),
 (9, 'Roberto', 'Monez Ruiz', '5343233', '45455444', 'monezruiz@gobernator.com'),
 (13, 'Carla', 'Peterson', '1234567', '45468888', 'juna@palomino.com'),
 (20, 'Pablo', 'Podesta', '6776576', '5844558748', 'mirco@gmail.com'),
-(21, 'Sofia', 'Lorens', '47874554', '0000', 'sofia@lorenz.com.ar');
+(21, 'Sofia', 'Lorens', '47874554', '0000', 'sofia@lorenz.com.ar'),
+(24, 'Cluadio', 'Coggi', '12435435', '24243213', 'claudio@gov.com');
 
 -- --------------------------------------------------------
 
@@ -144,20 +147,29 @@ CREATE TABLE `pagos` (
 --
 
 INSERT INTO `pagos` (`id`, `nroPago`, `fechaPago`, `importe`, `contratoId`, `usuarioIdAlta`, `usuarioIdBaja`, `concepto`, `estado`) VALUES
-(33, 1, '2022-04-22 00:00:00', 30000.00, 49, NULL, NULL, NULL, NULL),
-(35, 1, '2022-04-22 00:00:00', 30000.00, 51, NULL, NULL, NULL, NULL),
-(36, 0, '2025-09-04 10:28:18', 5454.00, 65, NULL, NULL, NULL, NULL),
-(37, 0, '2025-09-04 10:28:18', 5454.00, 65, NULL, NULL, NULL, NULL),
-(38, 1, '2025-09-04 00:00:00', 50000.00, 53, NULL, NULL, 'PAgo 1', NULL),
-(39, 1, '2025-09-04 00:00:00', 30000.00, 52, NULL, NULL, 'Pago alquiler 1', NULL),
+(33, 1, '2022-04-22 00:00:00', 30000.00, 49, NULL, NULL, NULL, 'Abonado'),
+(35, 1, '2022-04-22 00:00:00', 30000.00, 51, NULL, NULL, NULL, 'Abonado'),
+(36, 0, '2025-09-04 10:28:18', 5454.00, 65, NULL, NULL, NULL, 'Abonado'),
+(37, 0, '2025-09-04 10:28:18', 5454.00, 65, NULL, NULL, NULL, 'Abonado'),
+(39, 1, '2025-09-04 00:00:00', 30000.00, 52, NULL, NULL, 'Pago alquiler 1', 'Abonado'),
 (40, 2, '2025-09-04 00:00:00', 30000.00, 51, NULL, NULL, 'PAgo 2', 'Anulado'),
 (41, 1, '2025-09-04 00:00:00', 55555.00, 66, NULL, NULL, 'Pago 1', 'Anulado'),
 (42, 0, '2025-09-05 09:51:58', 345235.00, 67, NULL, NULL, 'Pago por revocación antes de la mitad del contrato', 'Debe'),
 (43, 0, '2025-09-05 09:51:58', 345235.00, 67, NULL, NULL, 'Pago por revocación antes de la mitad del contrato', 'Debe'),
 (44, 1, '2025-09-05 00:00:00', 5000000.00, 68, NULL, NULL, 'PAgo 1', 'Anulado'),
-(45, 0, '2025-09-05 21:04:19', 11223.00, 74, NULL, NULL, 'Pago por revocación antes de la mitad del contrato', NULL),
-(46, 0, '2025-09-05 21:04:19', 11223.00, 74, NULL, NULL, 'Pago por revocación antes de la mitad del contrato', NULL),
-(47, 3, '2025-09-06 00:00:00', 11223.00, 74, NULL, NULL, 'Pago alquiler 3', 'Abonado');
+(45, 0, '2025-09-05 21:04:19', 11223.00, 74, NULL, NULL, 'Pago por revocación antes de la mitad del contrato', 'Anulado'),
+(46, 0, '2025-09-05 21:04:19', 11223.00, 74, NULL, NULL, 'Pago por revocación antes de la mitad del contrato', 'Anulado'),
+(47, 3, '2025-09-06 00:00:00', 11223.00, 74, NULL, NULL, 'Pago alquiler 3', 'Abonado'),
+(49, 2, '2025-09-07 00:00:00', 5000000.00, 68, NULL, NULL, 'Pago alquiler 1', 'Abonado'),
+(54, 2, '2025-09-09 00:00:00', 55555.00, 66, NULL, NULL, 'PAgo 2', 'Anulado'),
+(55, 3, '2025-09-09 00:00:00', 55555.00, 66, NULL, NULL, 'Pago alquiler bienes 1', 'Abonado'),
+(56, 4, '2025-09-09 00:00:00', 55555.00, 66, NULL, NULL, 'Pago alquiler bienes 1', 'Abonado'),
+(57, 3, '2025-09-09 00:00:00', 5000000.00, 68, NULL, NULL, 'Pago 3', 'Pendiente'),
+(62, 1, '2025-09-09 00:00:00', 50000.00, 53, NULL, NULL, 'Pago atrassado 1', 'Abonado'),
+(63, 2, '2025-09-09 00:00:00', 50000.00, 53, NULL, NULL, 'Pago atrasado 2', 'Abonado'),
+(65, 3, '2025-09-09 00:00:00', 100000.00, 53, NULL, NULL, 'Pago multa por revocación de contrato', 'Abonado'),
+(66, 3, '2025-09-11 00:00:00', 30000.00, 51, NULL, NULL, 'Pago 3', 'Abonado'),
+(67, 5, '2025-09-11 00:00:00', 111110.00, 66, NULL, NULL, 'Pago multa por revocación de contrato', 'Abonado');
 
 -- --------------------------------------------------------
 
@@ -184,7 +196,8 @@ INSERT INTO `propietarios` (`id`, `nombre`, `apellido`, `dni`, `telefono`, `emai
 (6, 'Juan', 'Palomino', '12550550', '264545444', 'juan@palomino.com'),
 (11, 'Jaime', 'Guido', '10545221', '1577858788', 'jaime@mail.com'),
 (13, 'Carlos', 'Fernandez', '28990654', '45455444', 'carlos@fernandez.com'),
-(14, 'Pablo', 'Granados', '45666878', '0', 'pablo@granados.com');
+(14, 'Pablo', 'Granados', '45666878', '0', 'pablo@granados.com'),
+(34, 'juan', 'Salvo', '32524564', '325246', 'retete@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -205,7 +218,8 @@ INSERT INTO `tiposinmuebles` (`id`, `descripcion`) VALUES
 (1, 'Casa'),
 (2, 'Departamento'),
 (3, 'Oficina'),
-(4, 'Galpone');
+(4, 'Galpon'),
+(5, 'Dormitorio');
 
 -- --------------------------------------------------------
 
@@ -296,37 +310,37 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `contratos`
 --
 ALTER TABLE `contratos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=77;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
 
 --
 -- AUTO_INCREMENT de la tabla `inmuebles`
 --
 ALTER TABLE `inmuebles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=27;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
 
 --
 -- AUTO_INCREMENT de la tabla `inquilinos`
 --
 ALTER TABLE `inquilinos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=23;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=48;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
 
 --
 -- AUTO_INCREMENT de la tabla `propietarios`
 --
 ALTER TABLE `propietarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=34;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
 
 --
 -- AUTO_INCREMENT de la tabla `tiposinmuebles`
 --
 ALTER TABLE `tiposinmuebles`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
