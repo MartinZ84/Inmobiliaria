@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Inmobiliaria.Models.Repositorio;
 using Inmobiliaria.Models.Entidades;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Inmobiliaria.Controllers
 {
@@ -21,6 +22,7 @@ namespace Inmobiliaria.Controllers
     // }
 
     // Método Index actualizado para manejar filtros
+     [Authorize(Policy = "Empleado")]
     public ActionResult Index(string? dni = null, string? nombre = null,
         string? apellido = null, string? email = null, int pagina = 1)
     {

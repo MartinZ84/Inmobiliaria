@@ -68,7 +68,7 @@
     <header>
         <nav class="navbar navbar-light custom-navbar border-bottom box-shadow">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Inmobiliaria Z&VC asociados</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Inmobiliaria Z&C asociados</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -78,7 +78,15 @@
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
+            
             <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                @if (User.Identity.IsAuthenticated)
+                      {	
+                      
+                        @* <a class="btn btn-primary py-2 d-none d-md-inline-block float-right" asp-controller="Usuarios" asp-action="Login"><span class="lnr lnr-enter"></span> Acceder</a>
+                      }
+                      else{ *@
+                        @* <a class="btn btn-primary py-2 d-none d-md-inline-block float-right" asp-controller="Usuarios" asp-action="Logout"><span class="lnr lnr-exit"></span> Salir</a> *@
                 <ul class="nav flex-column components">
                     <li class="nav-item">
                         <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index" onclick="setActiveMenu(this)">
@@ -120,7 +128,7 @@
                         </ul>
                     </li>
                     
-                    <li class="nav-item"></li>
+                    <li class="nav-item">
                         <a class="nav-link text-white" asp-area="" asp-controller="TiposInmueble" asp-action="Index">
                             <i class="bi bi-building"></i> Tipos de Inmueble
                         </a>
@@ -130,7 +138,7 @@
                             <i class="bi bi-file-earmark-text"></i> Contratos
                         </a>
                     </li>
-                     @*
+                
                     @if (User.IsInRole("Administrador") || User.IsInRole("SuperAdministrador"))
                     {
                         <li class="nav-item">
@@ -156,8 +164,12 @@
                                 </a>
                             </li>
                         </ul>
-                    </li> *@
+                    </li> 
                 </ul>
+              
+
+                      }
+                
             </nav>
             <!-- Main content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 pb-3">

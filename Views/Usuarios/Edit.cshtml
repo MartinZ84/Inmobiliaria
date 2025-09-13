@@ -1,0 +1,144 @@
+@model Inmobiliaria.Models.Usuario
+@{
+    ViewData["Title"] = "Editar Usuario";
+}
+
+<div class="container py-5">
+    <div class="row mb-4 align-items-center">
+        <div class="col-md-6">
+            <h2 class="">Editar Usuario</h2>
+        </div>
+        <div class="col-md-6 text-md-end">
+            <a asp-action="Index" class="btn btn-secondary ">
+                <i class="bi bi-arrow-left-circle me-1"></i> Volver a usuarios
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <!-- Formulario de datos y avatar -->
+        <div class="col-12 col-md-6">
+            <div class="card shadow rounded-4 border-0">
+                <div class="card-body">
+                    <h5 class="card-title mb-4 fw-bold text-primary">Datos del Usuario</h5>
+
+                    <form asp-action="Edit" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <input asp-for="Id" class="form-control mb-3" type="hidden" />
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Nombre" class="form-control" placeholder="Nombre" />
+                            <label for="Nombre">Nombre</label>
+                            <span asp-validation-for="Nombre" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Apellido" class="form-control" placeholder="Apellido" />
+                            <label for="Apellido">Apellido</label>
+                            <span asp-validation-for="Apellido" class="text-danger small"></span>
+                        </div>
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Email" class="form-control" placeholder="Email" />
+                            <label for="Email">Email</label>
+                            <span asp-validation-for="Email" class="text-danger small"></span>
+                        </div>
+
+                        @if (User.IsInRole("Administrador") || User.IsInRole("SuperAdministrador"))
+                        {
+                            <div class="mb-3">
+                                <label class="form-label fw-bold">Rol</label>
+                                <select class="form-select" name="Rol">
+                                   @foreach (var kvp in (IDictionary<int, string>)ViewBag.Roles)
+                                  {
+                                    @:<option @(kvp.Key == Model.Rol ? "selected" : "") value="@kvp.Key">@kvp.Value</option>
+                                  }
+                                </select>
+                                
+                                <span asp-validation-for="Rol" class="text-danger small"></span>
+                            </div>
+                        }
+
+                        <div class="text-center mb-3">
+    <label class="form-label d-block fw-bold">Avatar actual</label>
+    <img id="avatarPreview" 
+         src="@(string.IsNullOrEmpty(Model.Avatar) 
+                    ? "https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mm&f=y" 
+                    : Model.Avatar)" 
+         class="rounded-circle shadow-sm mb-3"
+         style="width: 140px; height: 140px; object-fit: cover;" />
+</div>
+
+<div class="mb-3">
+    <label class="form-label fw-bold">Cambiar Avatar</label>
+    <input type="file" name="AvatarFile" id="AvatarFile" class="form-control" accept="image/*" />
+    <span asp-validation-for="Avatar" class="text-danger small"></span>
+</div>
+
+                        <div class="text-center">
+                            <input type="submit" value="Guardar" class="btn btn-primary fw-bold px-5" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Formulario de cambio de contraseña -->
+        <div class="col-12 col-md-6">
+            <div class="card shadow rounded-4 border-0">
+                <div class="card-body">
+                    <h5 class="card-title mb-4 fw-bold text-primary">Cambiar Contraseña</h5>
+
+                    <form asp-action="Edit">
+                        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                        <input asp-for="Id" class="form-control" type="hidden" />
+
+                        <div class="form-floating mb-3">
+                            <input asp-for="Clave" class="form-control" placeholder="Nueva contraseña" />
+                            <label for="Clave">Nueva contraseña</label>
+                            <span asp-validation-for="Clave" class="text-danger small"></span>
+                        </div>
+
+                        <div class="text-center">
+                            <input type="submit" value="Cambiar" class="btn btn-primary fw-bold px-5" />
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    <style>
+        .avatar-hover {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .avatar-hover:hover {
+            transform: scale(1.08);
+            box-shadow: 0 0 20px rgba(13, 110, 253, 0.5);
+        }
+    </style>
+
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+
+ <script>
+        const avatarInput = document.getElementById('AvatarFile');
+        const avatarPreview = document.getElementById('avatarPreview');
+
+        avatarInput.addEventListener('change', function() {
+            const file = this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    avatarPreview.src = e.target.result; // Actualiza la imagen
+                }
+                reader.readAsDataURL(file); // Lee el archivo como DataURL
+            }
+        });
+    </script>

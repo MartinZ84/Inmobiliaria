@@ -2,17 +2,30 @@ using System.Data;
 using MySql.Data.MySqlClient;
 using Inmobiliaria.Models.Entidades;
 using Inmobiliaria.Models.Enums;
+using Microsoft.Extensions.Logging;
 
 namespace Inmobiliaria.Models.Repositorio
 {
-    public class RepositorioInmueble
+    public class RepositorioInmueble: RepositorioBase
     {
-        private readonly string connectionString;
 
-        public RepositorioInmueble(IConfiguration configuration)
+        public RepositorioInmueble(IConfiguration configuration, ILogger<RepositorioInmueble> logger)
+        	: base(configuration)
+	
         {
-            connectionString = configuration.GetConnectionString("DefaultConnection")!;
+            _logger = logger;
         }
+
+	public RepositorioInmueble(IConfiguration configuration) : base(configuration)
+	{
+	}
+        // private readonly string connectionString;
+
+        // public RepositorioInmueble(IConfiguration configuration)
+        // {
+        //     connectionString = configuration.GetConnectionString("DefaultConnection")!;
+        // }
+        	private readonly ILogger<RepositorioInmueble> _logger;
 
         public IList<Inmueble> ObtenerTodos()
         {
