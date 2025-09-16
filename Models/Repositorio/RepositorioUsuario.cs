@@ -32,13 +32,13 @@ namespace Inmobiliaria.Models.Repositorio
 					{
 						Usuario e = new Usuario
 						{
-							Id = reader.GetInt32(0),
-							Nombre = reader.GetString(1),
-							Apellido = reader.GetString(2),
-							Avatar = reader["Avatar"].ToString(),
-							Email = reader.GetString(4),
-							Clave = reader.GetString(5),
-							Rol = reader.GetInt32(6),
+							Id = reader.GetInt32(nameof(Usuario.Id)),
+							Nombre = reader.GetString(nameof(Usuario.Nombre)),
+							Apellido = reader.GetString(nameof(Usuario.Apellido)),
+							Avatar = reader[nameof(Usuario.Avatar)].ToString(),
+							Email = reader.GetString(nameof(Usuario.Email)),
+							Clave = reader.GetString(nameof(Usuario.Clave)),
+							Rol = reader.GetInt32(nameof(Usuario.Rol)),
 						};
 						res.Add(e);
 					}

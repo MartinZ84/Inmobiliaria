@@ -5,7 +5,7 @@ namespace Inmobiliaria.Models
 {
 	public enum enRoles
 	{
-		SuperAdministrador = 1,
+		//SuperAdministrador = 1,
 		Administrador = 2,
 		Empleado = 3,
 	}
