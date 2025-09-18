@@ -30,7 +30,7 @@ namespace Inmobiliaria.Controllers
 
     }
     // GET: Pagos
-
+    [Authorize(Policy = "Empleado")]
     public ActionResult Index(int id)
     {
       var pagos = repositorio.ObtenerPagosPorContrato(id);
@@ -54,7 +54,7 @@ namespace Inmobiliaria.Controllers
       ViewBag.ContratoId = id;
       return View(pagos);
     }
-
+    [Authorize(Policy = "Empleado")]
     public ActionResult Details(int id)
     {
       var pago = repositorio.ObtenerPorId(id);
@@ -71,7 +71,7 @@ namespace Inmobiliaria.Controllers
     }
 
     // GET: Pagos/Create
-
+    [Authorize(Policy = "Empleado")]
     public ActionResult Create(int id)
     {
       var contrato = repoContrato.ObtenerPorId(id);
@@ -113,7 +113,7 @@ namespace Inmobiliaria.Controllers
     // POST: Pagos/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
-
+    [Authorize]
     public ActionResult Create(Pago pago)
     {
       try
@@ -166,7 +166,7 @@ namespace Inmobiliaria.Controllers
     }
 
     // GET: Pagos/Edit/5
-
+    [Authorize(Policy = "Empleado")]
     public ActionResult Edit(int id)
     {
       var pago = repositorio.ObtenerPorId(id);
@@ -184,7 +184,7 @@ namespace Inmobiliaria.Controllers
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-
+    [Authorize(Policy = "Empleado")]
     public ActionResult Edit(int id, Pago pago)
     {
       try
@@ -204,7 +204,7 @@ namespace Inmobiliaria.Controllers
     }
 
     // GET: Pagos/Delete/5
-
+    [Authorize(Policy = "Empleado")]
     public ActionResult Delete(int id)
     {
       var pago = repositorio.ObtenerPorId(id);
@@ -218,6 +218,7 @@ namespace Inmobiliaria.Controllers
     // POST: Pagos/Delete/5
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Policy = "Empleado")]
     public ActionResult Delete(int id, Pago pago)
     {
       try

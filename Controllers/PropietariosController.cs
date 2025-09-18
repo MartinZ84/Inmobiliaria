@@ -78,7 +78,7 @@ namespace Inmobiliaria.Controllers
     }
 
     // GET: Propietarios/Details/5
-    // [Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Empleado")]
     public ActionResult Details(int id)
     {
       var propietario = repositorio.ObtenerPorId(id);
@@ -109,7 +109,7 @@ namespace Inmobiliaria.Controllers
 
 
     // GET: Propietarios/Create
-    // [Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Empleado")]
     public ActionResult Create()
     {
       return View();
@@ -119,6 +119,7 @@ namespace Inmobiliaria.Controllers
 
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Policy = "Empleado")]
     public ActionResult Create(Propietario p)
     {
       try
@@ -158,7 +159,7 @@ namespace Inmobiliaria.Controllers
     }
 
     // GET: Propietarios/Edit/5
-    // [Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Empleado")]
     public ActionResult Edit(int id)
     {
       try
@@ -180,7 +181,7 @@ namespace Inmobiliaria.Controllers
     // POST: Propietarios/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    // // [Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Empleado")]
     public ActionResult Edit(int id, Propietario p)
     {
       // Propietario ? propEdit= null;
@@ -222,7 +223,7 @@ namespace Inmobiliaria.Controllers
     }
 
     // GET: Propietarios/Delete/5
-    // [Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Empleado")]
     public ActionResult Delete(int id)
     {
       try
@@ -245,7 +246,7 @@ namespace Inmobiliaria.Controllers
     // POST: Propietarios/Delete/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    // [Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Empleado")]
     public ActionResult Delete(int id, Propietario propietario)
     {
       try

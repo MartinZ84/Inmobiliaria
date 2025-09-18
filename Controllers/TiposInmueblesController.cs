@@ -1,6 +1,9 @@
 using Microsoft.AspNetCore.Mvc;
 using Inmobiliaria.Models.Repositorio;
 using Inmobiliaria.Models.Entidades;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 namespace Inmobiliaria.Controllers{
     public class TiposInmuebleController : Controller
     {
@@ -14,6 +17,7 @@ namespace Inmobiliaria.Controllers{
             this.Inm = Inm;
             this.webHostEnvironment = webHostEnvironment;
         }
+        [Authorize]
         public ActionResult Index(string? Descripcion = null)
         {
             try
@@ -32,7 +36,7 @@ namespace Inmobiliaria.Controllers{
                 return View(new List<TipoInmueble>());
             }
         }
-
+        [Authorize(Policy = "Administrador")]
         public ActionResult Create()
         {
             var tipos = repositorio.GetTipos();
@@ -41,6 +45,7 @@ namespace Inmobiliaria.Controllers{
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "Administrador")]
         public async Task<ActionResult> Create(TipoInmueble tip)
         {
             try
@@ -76,6 +81,7 @@ namespace Inmobiliaria.Controllers{
                 return RedirectToAction(nameof(Create));
             }
         }
+        [Authorize(Policy = "Administrador")]
         public ActionResult Edit(int id)
         {
             try
@@ -100,6 +106,7 @@ namespace Inmobiliaria.Controllers{
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "Administrador")]
         public async Task<ActionResult> Edit(int id, TipoInmueble tip)
         {
             try
@@ -124,6 +131,7 @@ namespace Inmobiliaria.Controllers{
                 return View(tip);
             }
         }
+        [Authorize(Policy = "Administrador")]
         public ActionResult Delete(int id)
         {
             try
@@ -153,6 +161,7 @@ namespace Inmobiliaria.Controllers{
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "Administrador")]
         public ActionResult Delete(int id, TipoInmueble tip)
         {
             try
