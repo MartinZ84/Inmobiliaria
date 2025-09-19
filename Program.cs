@@ -151,31 +151,54 @@ builder.Services.AddAuthorization(options =>
 });
 
 // Autenticación: Cookies + JWT
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddCookie(options =>
-{
-    options.LoginPath = "/Usuarios/Login";
-    options.LogoutPath = "/Home/Logout";
-    options.AccessDeniedPath = "/Home/Restringido";
-})
-.AddJwtBearer(options =>
-{
-    options.TokenValidationParameters = new TokenValidationParameters
+// builder.Services.AddAuthentication(options =>
+// {
+//     options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+//     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+// })
+// .AddCookie(options =>
+// {
+//     options.LoginPath = "/Usuarios/Login";
+//     options.LogoutPath = "/Home/Logout";
+//     options.AccessDeniedPath = "/Home/Restringido";
+// })
+// .AddJwtBearer(options =>
+// {
+//     options.TokenValidationParameters = new TokenValidationParameters
+//     {
+//         ValidateIssuer = true,
+//         ValidateAudience = true,
+//         ValidateLifetime = true,
+//         ValidateIssuerSigningKey = true,
+//         ValidIssuer = builder.Configuration["TokenAuthentication:Issuer"],
+//         ValidAudience = builder.Configuration["TokenAuthentication:Audience"],
+//         IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(
+//             builder.Configuration["TokenAuthentication:SecretKey"]))
+//     };
+// });
+
+
+builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options =>
     {
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidateLifetime = true,
-        ValidateIssuerSigningKey = true,
-        ValidIssuer = builder.Configuration["TokenAuthentication:Issuer"],
-        ValidAudience = builder.Configuration["TokenAuthentication:Audience"],
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(
-            builder.Configuration["TokenAuthentication:SecretKey"]))
-    };
-});
+        options.LoginPath = "/Usuarios/Login";
+        options.LogoutPath = "/Home/Logout";
+        options.AccessDeniedPath = "/Home/Restringido";
+    })
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["TokenAuthentication:Issuer"],
+            ValidAudience = builder.Configuration["TokenAuthentication:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(
+                Encoding.ASCII.GetBytes(builder.Configuration["TokenAuthentication:SecretKey"]))
+        };
+    });
 
 var app = builder.Build();
 
