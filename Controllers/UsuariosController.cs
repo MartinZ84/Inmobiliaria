@@ -28,11 +28,41 @@ namespace Inmobiliaria.Controllers
         }
         // GET: Usuarios
         [Authorize(Policy = "Administrador")]
-        public ActionResult Index()
+        public ActionResult Index(string? nombre = null, string? apellido = null, string? email = null, int pagina = 1)
         {
-            var usuarios = repositorio.ObtenerTodos();
-            return View(usuarios);
+            try
+            {
+                IList<Usuario> Usuarios;
+                var tamaño = 6;
 
+                if (!string.IsNullOrWhiteSpace(nombre) || !string.IsNullOrWhiteSpace(apellido) || !string.IsNullOrWhiteSpace(email))
+                {
+                    Usuarios = repositorio.BuscarUsuariosConValidacion(nombre, apellido, email, pagina, tamaño);
+                    var total = Usuarios.Count;
+                    ViewBag.Pagina = pagina;
+                    ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
+                }
+                else
+                {
+                    Usuarios = repositorio.ObtenerLista(pagina, tamaño);
+                    ViewBag.Pagina = pagina;
+                    var total = repositorio.ObtenerCantidad();
+                    ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
+                }
+        
+                ViewBag.nombre = nombre;
+                ViewBag.apellido = apellido;
+                ViewBag.email = email;
+
+                return View(Usuarios);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+                TempData["ErrorMessage"] = "Ocurrió un error al cargar los Usuarios.";
+                TempData["AlertType"] = "danger";
+                return View(new List<Usuario>());
+            }
         }
 
         // GET: Usuarios/Details/5
