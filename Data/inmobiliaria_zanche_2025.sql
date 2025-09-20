@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-09-2025 a las 20:32:06
+-- Tiempo de generación: 20-09-2025 a las 20:42:21
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -153,28 +153,28 @@ CREATE TABLE `pagos` (
 
 INSERT INTO `pagos` (`id`, `nroPago`, `fechaPago`, `importe`, `contratoId`, `usuarioIdAlta`, `usuarioIdBaja`, `concepto`, `estado`) VALUES
 (33, 1, '2022-04-22 00:00:00', 30000.00, 49, 1, 5, NULL, 'Anulado'),
-(35, 1, '2022-04-22 00:00:00', 30000.00, 51, NULL, NULL, 'c', 'Abonado'),
-(36, 0, '2025-09-04 00:00:00', 5454.00, 65, NULL, NULL, 'Pago alquiler bienes 1', 'Abonado'),
-(37, 0, '2025-09-04 10:28:18', 5454.00, 65, NULL, 5, NULL, 'Anulado'),
-(39, 1, '2025-09-04 00:00:00', 30000.00, 52, NULL, NULL, 'Pago alquiler 1', 'Abonado'),
-(40, 2, '2025-09-04 00:00:00', 30000.00, 51, NULL, NULL, 'PAgo 2', 'Anulado'),
-(41, 1, '2025-09-04 00:00:00', 55555.00, 66, NULL, NULL, 'Pago 1', 'Anulado'),
-(42, 0, '2025-09-05 09:51:58', 345235.00, 67, NULL, NULL, 'Pago por revocación antes de la mitad del contrato', 'Debe'),
-(43, 0, '2025-09-05 09:51:58', 345235.00, 67, NULL, NULL, 'Pago por revocación antes de la mitad del contrato', 'Debe'),
-(44, 1, '2025-09-05 00:00:00', 5000000.00, 68, NULL, NULL, 'PAgo 1', 'Anulado'),
-(45, 0, '2025-09-05 21:04:19', 11223.00, 74, NULL, NULL, 'Pago por revocación antes de la mitad del contrato', 'Anulado'),
-(46, 0, '2025-09-05 21:04:19', 11223.00, 74, NULL, NULL, 'Pago por revocación antes de la mitad del contrato', 'Anulado'),
-(47, 3, '2025-09-06 00:00:00', 11223.00, 74, NULL, NULL, 'Pago alquiler 3', 'Abonado'),
-(49, 2, '2025-09-07 00:00:00', 5000000.00, 68, NULL, NULL, 'Pago alquiler 1', 'Abonado'),
-(54, 2, '2025-09-09 00:00:00', 55555.00, 66, NULL, NULL, 'PAgo 2', 'Anulado'),
-(55, 3, '2025-09-09 00:00:00', 55555.00, 66, NULL, NULL, 'Pago alquiler bienes 1', 'Abonado'),
-(56, 4, '2025-09-09 00:00:00', 55555.00, 66, NULL, NULL, 'Pago alquiler bienes 1', 'Abonado'),
-(57, 3, '2025-09-09 00:00:00', 5000000.00, 68, NULL, NULL, 'Pago 3', 'Pendiente'),
-(62, 1, '2025-09-09 00:00:00', 50000.00, 53, NULL, NULL, 'Pago atrassado 1', 'Abonado'),
-(63, 2, '2025-09-09 00:00:00', 50000.00, 53, NULL, NULL, 'Pago atrasado 2', 'Abonado'),
-(65, 3, '2025-09-09 00:00:00', 100000.00, 53, NULL, NULL, 'Pago multa por revocación de contrato', 'Abonado'),
-(66, 3, '2025-09-11 00:00:00', 30000.00, 51, NULL, NULL, 'Pago 3', 'Abonado'),
-(67, 5, '2025-09-11 00:00:00', 111110.00, 66, NULL, NULL, 'Pago multa por revocación de contrato', 'Abonado'),
+(35, 1, '2022-04-22 00:00:00', 30000.00, 51, 1, NULL, 'c', 'Abonado'),
+(36, 0, '2025-09-04 00:00:00', 5454.00, 65, 1, NULL, 'Pago alquiler bienes 1', 'Abonado'),
+(37, 0, '2025-09-04 10:28:18', 5454.00, 65, 3, 5, NULL, 'Anulado'),
+(39, 1, '2025-09-04 00:00:00', 30000.00, 52, 3, NULL, 'Pago alquiler 1', 'Abonado'),
+(40, 2, '2025-09-04 00:00:00', 30000.00, 51, 3, NULL, 'PAgo 2', 'Anulado'),
+(41, 1, '2025-09-04 00:00:00', 55555.00, 66, 3, NULL, 'Pago 1', 'Anulado'),
+(42, 0, '2025-09-05 09:51:58', 345235.00, 67, 3, NULL, 'Pago por revocación antes de la mitad del contrato', 'Debe'),
+(43, 0, '2025-09-05 09:51:58', 345235.00, 67, 3, NULL, 'Pago por revocación antes de la mitad del contrato', 'Debe'),
+(44, 1, '2025-09-05 00:00:00', 5000000.00, 68, 3, NULL, 'PAgo 1', 'Anulado'),
+(45, 0, '2025-09-05 21:04:19', 11223.00, 74, 3, NULL, 'Pago por revocación antes de la mitad del contrato', 'Anulado'),
+(46, 0, '2025-09-05 21:04:19', 11223.00, 74, 3, NULL, 'Pago por revocación antes de la mitad del contrato', 'Anulado'),
+(47, 3, '2025-09-06 00:00:00', 11223.00, 74, 3, NULL, 'Pago alquiler 3', 'Abonado'),
+(49, 2, '2025-09-07 00:00:00', 5000000.00, 68, 3, NULL, 'Pago alquiler 1', 'Abonado'),
+(54, 2, '2025-09-09 00:00:00', 55555.00, 66, 3, NULL, 'PAgo 2', 'Anulado'),
+(55, 3, '2025-09-09 00:00:00', 55555.00, 66, 3, NULL, 'Pago alquiler bienes 1', 'Abonado'),
+(56, 4, '2025-09-09 00:00:00', 55555.00, 66, 7, 5, 'Pago alquiler bienes 1', 'Anulado'),
+(57, 3, '2025-09-09 00:00:00', 5000000.00, 68, 5, NULL, 'Pago 3', 'Pendiente'),
+(62, 1, '2025-09-09 00:00:00', 50000.00, 53, 5, NULL, 'Pago atrassado 1', 'Abonado'),
+(63, 2, '2025-09-09 00:00:00', 50000.00, 53, 3, NULL, 'Pago atrasado 2', 'Abonado'),
+(65, 3, '2025-09-09 00:00:00', 100000.00, 53, 3, NULL, 'Pago multa por revocación de contrato', 'Abonado'),
+(66, 3, '2025-09-11 00:00:00', 30000.00, 51, 5, NULL, 'Pago 3', 'Abonado'),
+(67, 5, '2025-09-11 00:00:00', 111110.00, 66, 2, NULL, 'Pago multa por revocación de contrato', 'Abonado'),
 (68, 3, '2025-09-20 00:00:00', 250000.00, 65, 3, NULL, 'Pago alquiler 3', 'Abonado'),
 (69, 2, '2025-09-20 00:00:00', 30000.00, 52, 5, NULL, 'PAgo 2', 'Abonado'),
 (70, 3, '2025-09-20 00:00:00', 30000.00, 52, NULL, NULL, 'Pago multa por revocación de contrato', 'Abonado'),
