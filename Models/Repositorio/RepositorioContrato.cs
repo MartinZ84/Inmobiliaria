@@ -30,7 +30,7 @@ namespace Inmobiliaria.Models.Repositorio
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
 				string sql = @$"SELECT c.Id, FechaInicio,FechaFin, FechaFinAnt, c.Estado, c.Precio, InquilinoId, InmuebleId, " +
-					" inq.Nombre, inq.Apellido, inm.Id, inm.Direccion " +
+					" inq.Nombre, inq.Apellido, inm.Id, inm.Direccion, c.UsuarioIdAlta, c.UsuarioIdBaja " +
 					" FROM Contratos c INNER JOIN Inquilinos inq ON c.InquilinoId = inq.Id " +
 					"INNER JOIN Inmuebles inm ON inm.Id= c.InmuebleId " + "ORDER BY c.FechaInicio ASC " +
 					$"LIMIT {tamPagina} OFFSET {(paginaNro - 1) * tamPagina}";
@@ -64,7 +64,12 @@ namespace Inmobiliaria.Models.Repositorio
 								Id = reader.GetInt32(nameof(Inmueble.Id)),
 								Direccion = reader.GetString(nameof(Inmueble.Direccion)),
 							},
-
+							UsuarioIdAlta = reader.IsDBNull(reader.GetOrdinal(nameof(Contrato.UsuarioIdAlta)))
+								? (int?)null
+								: reader.GetInt32(reader.GetOrdinal(nameof(Contrato.UsuarioIdAlta))),
+							UsuarioIdBaja = reader.IsDBNull(reader.GetOrdinal(nameof(Contrato.UsuarioIdBaja)))
+								? (int?)null
+								: reader.GetInt32(reader.GetOrdinal(nameof(Contrato.UsuarioIdBaja))),
 						};
 						res.Add(contrato);
 					}
@@ -87,7 +92,7 @@ namespace Inmobiliaria.Models.Repositorio
 			using (var connection = new MySqlConnection(connectionString))
 			{
 				var sql = @$"SELECT c.Id, FechaInicio, FechaFin, FechaFinAnt, c.Estado, c.Precio, InquilinoId, InmuebleId, " +
-					" inq.Nombre, inq.Apellido, inm.Id, inm.Direccion " +
+					" inq.Nombre, inq.Apellido, inm.Id, inm.Direccion, c.UsuarioIdAlta, c.UsuarioIdBaja " +
 					" FROM Contratos c INNER JOIN Inquilinos inq ON c.InquilinoId = inq.Id " +
 					"INNER JOIN Inmuebles inm ON inm.Id= c.InmuebleId " +					
 					"WHERE 1=1 ";
@@ -210,7 +215,7 @@ namespace Inmobiliaria.Models.Repositorio
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
 				string sql = $"INSERT INTO Contratos (FechaInicio, FechaFin, Estado, Precio, InquilinoId, InmuebleId , fechaFinAnt, UsuarioIdAlta ) " +
-					"VALUES (@fechaInicio, @fechaFin, @estado, @precio, @InquilinoId, @InmuebleId, @fechaFinAnt, @UsuarioAlta);" +
+					"VALUES (@fechaInicio, @fechaFin, @estado, @precio, @InquilinoId, @InmuebleId, @fechaFinAnt, @UsuarioIdAlta);" +
 					"SELECT LAST_INSERT_ID();";//devuelve el id insertado (LAST_INSERT_ID para mysql)
 				using (var command = new MySqlCommand(sql, connection))
 				{
@@ -222,7 +227,7 @@ namespace Inmobiliaria.Models.Repositorio
 					command.Parameters.AddWithValue($"@{nameof(contrato.InquilinoId)}", contrato.InquilinoId);
 					command.Parameters.AddWithValue($"@{nameof(contrato.InmuebleId)}", contrato.InmuebleId);
 					command.Parameters.AddWithValue($"@{nameof(contrato.FechaFinAnt)}", contrato.FechaFinAnt);
-					command.Parameters.AddWithValue($"@{nameof(contrato.UsuarioAlta)}", contrato.UsuarioAlta);
+					command.Parameters.AddWithValue($"@{nameof(contrato.UsuarioIdAlta)}", contrato.UsuarioIdAlta);
 
 
 					connection.Open();
@@ -258,7 +263,7 @@ namespace Inmobiliaria.Models.Repositorio
 			{
 				string sql = "UPDATE Contratos SET " +
 					//	"FechaInicio=@fechaInicio, FechaFin=@fechaFin, Estado=@estado, Precio=@precio, InquilinoId=@inquilinoId, InmuebleId=@inmuebleId , FechaFinAnt=@fechaFinAnt " +
-					"Estado=@estado, Precio=@precio, FechaFinAnt=@fechaFinAnt " +
+					"Estado=@estado, Precio=@precio, FechaFinAnt=@fechaFinAnt , UsuarioIdBaja=@usuarioIdBaja " +
 					"WHERE Id = @id";
 				using (MySqlCommand command = new MySqlCommand(sql, connection))
 				{
@@ -269,10 +274,10 @@ namespace Inmobiliaria.Models.Repositorio
 					command.Parameters.AddWithValue("@inquilinoId", contrato.InquilinoId);
 					command.Parameters.AddWithValue("@inmuebleId", contrato.InmuebleId);
 					command.Parameters.AddWithValue($"@{nameof(contrato.FechaFinAnt)}", contrato.FechaFinAnt);
-
+					command.Parameters.AddWithValue($"@{nameof(contrato.UsuarioIdBaja)}", contrato.UsuarioIdBaja);
 					command.Parameters.AddWithValue("@Id", contrato.Id);				
 
-					connection.Open();
+					connection.Open();	
 					res = command.ExecuteNonQuery();
 					connection.Close();
 				}
@@ -287,7 +292,7 @@ namespace Inmobiliaria.Models.Repositorio
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
 				string sql = $"SELECT c.Id, FechaInicio, FechaFin, c.Estado, c.Precio, InquilinoId, InmuebleId," +
-							$" inq.Nombre, inq.Apellido, inm.Id, inm.Direccion " +
+							$" inq.Nombre, inq.Apellido, inm.Id, inm.Direccion, c.UsuarioIdAlta, c.UsuarioIdBaja " +
 							$" FROM Contratos c INNER JOIN Inquilinos inq ON c.InquilinoId = inq.Id " +
 							$"INNER JOIN Inmuebles inm ON inm.Id= c.InmuebleId " +
 							"WHERE c.Id = @id";
@@ -320,7 +325,12 @@ namespace Inmobiliaria.Models.Repositorio
 								Id = reader.GetInt32(nameof(Inmueble.Id)),
 								Direccion = reader.GetString(nameof(Inmueble.Direccion)),
 							},
-
+							UsuarioIdAlta = reader.IsDBNull(reader.GetOrdinal(nameof(Contrato.UsuarioIdAlta)))
+								? (int?)null
+								: reader.GetInt32(reader.GetOrdinal(nameof(Contrato.UsuarioIdAlta))),
+							UsuarioIdBaja = reader.IsDBNull(reader.GetOrdinal(nameof(Contrato.UsuarioIdBaja)))
+								? (int?)null
+								: reader.GetInt32(reader.GetOrdinal(nameof(Contrato.UsuarioIdBaja))),
 						};
 					}
 					connection.Close();

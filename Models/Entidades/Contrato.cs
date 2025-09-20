@@ -27,12 +27,15 @@ namespace Inmobiliaria.Models.Entidades
     public Inquilino? Inquilino { get; set; }
     public Inmueble? Inmueble { get; set; }
 
-    public int? UsuarioAlta { get; set; }
-    public int? UsuarioBaja { get; set; }
+    public int? UsuarioIdAlta { get; set; }
+    public int? UsuarioIdBaja { get; set; }
+
+    public string? UsuarioAlta { get; set; }
+    public string? UsuarioBaja { get; set; }
 
     public Usuario? Usuario { get; set; }
 
     public DateTime? FechaFinAnt { get; set; }
-   
+
   }
 }

@@ -1,13 +1,15 @@
 ﻿@{
-    ViewData["Title"] = "Inmobiliaria Z&VC asociados";
+    ViewData["Title"] = "Inmobiliaria Z&C asociados";
 }
 
 <div class="text-center">
-    <h1 class="display-4">Inmobiliaria Z&VC asociados</h1>
+    <h1 class="display-4">Inmobiliaria Z&C asociados</h1>
     <p class="lead">
-        Bienvenido a la inmobiliaria Z&VC asociados
+        Bienvenido a la inmobiliaria Z&C asociados
     </p>
-     @* <a class="btn btn-primary py-2" asp-controller="Usuarios" asp-action="Login"><span class="lnr lnr-enter"></span> Iniciar Sesión</a> *@
+    @if (!User.Identity.IsAuthenticated)
+    {
+        <a class="btn btn-primary py-2" asp-controller="Usuarios" asp-action="Login"><span class="lnr lnr-enter"></span> Iniciar Sesión</a>
+    }
+  
 </div>
-
-   @* <a class="btn btn-primary py-2" asp-controller="Usuarios" asp-action="Login"><span class="lnr lnr-enter"></span> Iniciar Sesión</a> *@

@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Inmobiliaria.Models;
+using Inmobiliaria.Models.ViewModels;
 
 namespace Inmobiliaria.Controllers;
 
@@ -19,6 +20,12 @@ public class HomeController : Controller
     }
 
     public IActionResult Privacy()
+    {
+        return View();
+    }
+
+
+    public ActionResult Restringido()
     {
         return View();
     }

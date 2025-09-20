@@ -9,6 +9,7 @@ using Inmobiliaria.Models;
 using Inmobiliaria.Models.Repositorio;
 using Inmobiliaria.Models.Entidades;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Security.Claims;
 
 namespace Inmobiliaria.Controllers
 {
@@ -19,6 +20,7 @@ namespace Inmobiliaria.Controllers
     RepositorioInmueble repoInmueble;
     RepositorioInquilino repoInquilino;
     RepositorioPropietario repoPropietario;
+    RepositorioUsuario repoUsuario;
     public PagosController(IConfiguration config)
     {
 
@@ -27,13 +29,30 @@ namespace Inmobiliaria.Controllers
       repoInmueble = new RepositorioInmueble(config);
       repoInquilino = new RepositorioInquilino(config);
       repoPropietario = new RepositorioPropietario(config);
+      repoUsuario = new RepositorioUsuario(config);
 
     }
     // GET: Pagos
-
+    [Authorize(Policy = "Empleado")]
     public ActionResult Index(int id)
     {
       var pagos = repositorio.ObtenerPagosPorContrato(id);
+      var usuarioAlta = new Usuario();
+      var usuarioBaja = new Usuario();
+      foreach (var pago in pagos)
+      {
+        pago.Contrato = repoContrato.ObtenerPorId(pago.ContratoId);
+        usuarioAlta   = pago.usuarioIdAlta.HasValue ? repoUsuario.ObtenerPorId(pago.usuarioIdAlta.Value) : null;
+        if(usuarioAlta != null)
+        {
+          pago.UsuarioAlta = usuarioAlta.Nombre + " " + usuarioAlta.Apellido;
+        }
+        usuarioBaja = pago.usuarioIdBaja.HasValue ? repoUsuario.ObtenerPorId(pago.usuarioIdBaja.Value) : null;
+        if (usuarioBaja != null)
+        {
+          pago.UsuarioBaja = usuarioBaja.Nombre + " " + usuarioBaja.Apellido;
+        }
+      }
       var contrato = repoContrato.ObtenerPorId(id);
       if (contrato == null) return NotFound();
       int totalMeses = ((contrato.FechaFin.Year - contrato.FechaInicio.Year) * 12) +
@@ -54,7 +73,7 @@ namespace Inmobiliaria.Controllers
       ViewBag.ContratoId = id;
       return View(pagos);
     }
-
+    [Authorize(Policy = "Empleado")]
     public ActionResult Details(int id)
     {
       var pago = repositorio.ObtenerPorId(id);
@@ -63,6 +82,20 @@ namespace Inmobiliaria.Controllers
       ViewBag.Inquilino = repoInquilino.ObtenerPorId(ViewBag.Contrato.InquilinoId);
       ViewBag.Inmueble = repoInmueble.ObtenerPorId(ViewBag.Contrato.InmuebleId);
       ViewBag.Propietario = repoPropietario.ObtenerPorId(ViewBag.Inmueble.PropietarioId);
+      var usuarioAlta = new Usuario();
+      var usuarioBaja = new Usuario();     
+     
+        usuarioAlta   = pago.usuarioIdAlta.HasValue ? repoUsuario.ObtenerPorId(pago.usuarioIdAlta.Value) : null;
+        if(usuarioAlta != null)
+        {
+          pago.UsuarioAlta = usuarioAlta.Nombre + " " + usuarioAlta.Apellido;
+        }
+        usuarioBaja = pago.usuarioIdBaja.HasValue ? repoUsuario.ObtenerPorId(pago.usuarioIdBaja.Value) : null;
+        if (usuarioBaja != null)
+        {
+          pago.UsuarioBaja = usuarioBaja.Nombre + " " + usuarioBaja.Apellido;
+        }
+      
       if (TempData.ContainsKey("Mensaje"))
         ViewBag.Mensaje = TempData["Mensaje"];
       if (TempData.ContainsKey("Error"))
@@ -71,7 +104,7 @@ namespace Inmobiliaria.Controllers
     }
 
     // GET: Pagos/Create
-
+    [Authorize(Policy = "Empleado")]
     public ActionResult Create(int id)
     {
       var contrato = repoContrato.ObtenerPorId(id);
@@ -113,7 +146,7 @@ namespace Inmobiliaria.Controllers
     // POST: Pagos/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
-
+    [Authorize]
     public ActionResult Create(Pago pago)
     {
       try
@@ -142,6 +175,8 @@ namespace Inmobiliaria.Controllers
         pago.ContratoId = pago.ContratoId;
         pago.Concepto = pago.Concepto;
         pago.Estado = pago.Estado;
+        int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int userId);              
+            pago.usuarioIdAlta = userId;
         if (pago.FechaPago > DateTime.Now)
         {
           TempData["ErrorMessage"] = "La fecha de pago no puede ser mayor a la fecha actual.";
@@ -166,7 +201,7 @@ namespace Inmobiliaria.Controllers
     }
 
     // GET: Pagos/Edit/5
-
+    [Authorize(Policy = "Empleado")]
     public ActionResult Edit(int id)
     {
       var pago = repositorio.ObtenerPorId(id);
@@ -184,7 +219,7 @@ namespace Inmobiliaria.Controllers
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-
+    [Authorize(Policy = "Empleado")]
     public ActionResult Edit(int id, Pago pago)
     {
       try
@@ -204,7 +239,7 @@ namespace Inmobiliaria.Controllers
     }
 
     // GET: Pagos/Delete/5
-
+    [Authorize(Policy = "Empleado")]
     public ActionResult Delete(int id)
     {
       var pago = repositorio.ObtenerPorId(id);
@@ -218,12 +253,19 @@ namespace Inmobiliaria.Controllers
     // POST: Pagos/Delete/5
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Policy = "Empleado")]
     public ActionResult Delete(int id, Pago pago)
     {
       try
       {
         pago = repositorio.ObtenerPorId(id);
-        repositorio.Baja(id);
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim))
+        {
+          TempData["Error"] = "No se pudo obtener el identificador de usuario.";
+          return View(pago);
+        }
+        repositorio.Baja(id, int.Parse(userIdClaim));
         TempData["Mensaje"] = "Eliminación realizada correctamente";
         return RedirectToAction
         ("Index", new { id = pago.ContratoId });

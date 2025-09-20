@@ -28,6 +28,17 @@ public class Pago
   [Required]
   public string? Concepto { get; set; }
 
+  [Display(Name = "Usuario Alta")]
+  public int? usuarioIdAlta{ get; set; }
+
+  [Display(Name = "Usuario Baja")]
+  public int? usuarioIdBaja { get; set; }
+
+    [Display(Name = "Usuario Alta")]
+  public string? UsuarioAlta{ get; set; }
+
+  [Display(Name = "Usuario Baja")]
+  public string? UsuarioBaja { get; set; }
 
   [Display(Name = "Estado")]
   public string? Estado { get; set; }

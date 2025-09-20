@@ -1,0 +1,127 @@
+﻿@* @model Inmobiliaria.Models.ViewModels.LoginViewModel
+
+<div class="text-center">
+  <h1 class="display-4">Inmobiliaria Z&C asociados</h1>
+  <p class="lead">
+    Ingrese sus credenciales.
+  </p>
+</div>
+<div class="container mt-5">
+  <div class="row">
+    <div class="col-md-4 offset-md-4">
+      <div class="card">
+        <div class="card-header text-center">
+          <h3>Iniciar Sesión</h3>
+        </div>
+        <div class="card-body">
+          <form asp-controller="Usuarios" asp-action="Login">
+            <div class="form-group">
+              <label for="">Usuario</label>
+
+              <input asp-for="Usuario" class="form-control" placeholder="Usuario" autofocus />
+              <span asp-validation-for="Usuario" class="text-danger"></span>
+            </div>
+            <br>
+
+            <div class="form-group">
+              <label asp-for="Clave" class="control-label"></label>
+              <input asp-for="Clave" class="form-control" placeholder="Contraseña" id="password" />
+              <span asp-validation-for="Clave" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+
+
+              <div class="form-group form-check">
+                <input type="checkbox" class="form-check-input" id="checkbox" name="checkbox">
+                <label class="form-check-label" for="checkbox">Mostrar contraseña</label>
+              </div>
+            </div>
+            <br>
+            <button type="submit" class="btn btn-primary btn-block">Iniciar Sesión</button>
+          </form>
+        </div>
+        <div class="card-footer">
+          <a href="#">¿Olvidaste tu contraseña?</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+@section Scripts {
+  @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+  }
+} *@
+
+
+@model Inmobiliaria.Models.ViewModels.LoginViewModel
+
+<div class="d-flex justify-content-center align-items-center vh-100" style="background-color: #f8f9fa;">
+    <div class="card shadow-lg rounded-3" style="width: 100%; max-width: 400px;">
+        <div class="card-header text-center bg-primary text-white">
+            <h3 class="mb-0">Iniciar Sesión</h3>
+        </div>
+        <div class="card-body p-4">
+            <div class="text-center mb-3">
+                <h4 class="text-primary">Inmobiliaria Z&C Asociados</h4>
+                <p class="text-muted">Ingrese sus credenciales</p>
+            </div>
+
+            @* Mensaje de error general *@
+            @if (ViewData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <i class="bi bi-exclamation-triangle me-2"></i>
+                    @ViewData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <form asp-controller="Usuarios" asp-action="Login" method="post">
+                <div class="mb-3">
+                    <label asp-for="Usuario" class="form-label">Usuario</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-person-fill"></i></span>
+                        <input asp-for="Usuario" class="form-control" placeholder="Usuario" autofocus />
+                    </div>
+                    <span asp-validation-for="Usuario" class="text-danger small"></span>
+                </div>
+
+                <div class="mb-3">
+                    <label asp-for="Clave" class="form-label">Contraseña</label>
+                    <div class="input-group">
+                        <span class="input-group-text"><i class="bi bi-lock-fill"></i></span>
+                        <input asp-for="Clave" type="password" class="form-control" placeholder="Contraseña" id="password" />
+                    </div>
+                    <span asp-validation-for="Clave" class="text-danger small"></span>
+                </div>
+
+                <div class="form-check mb-3">
+                    <input type="checkbox" class="form-check-input" id="showPassword">
+                    <label class="form-check-label" for="showPassword">Mostrar contraseña</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 py-2">Iniciar Sesión</button>
+            </form>
+        </div>
+        <div class="card-footer text-center">
+            <a href="#" class="text-decoration-none">¿Olvidaste tu contraseña?</a>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+  @{
+    await Html.RenderPartialAsync("_ValidationScriptsPartial");
+  }
+  }
+
+    <script>
+        // Mostrar/ocultar contraseña
+        document.getElementById('showPassword').addEventListener('change', function () {
+            const password = document.getElementById('password');
+            password.type = this.checked ? 'text' : 'password';
+        });
+    </script>

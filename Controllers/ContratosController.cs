@@ -8,6 +8,10 @@ using Microsoft.AspNetCore.Mvc;
 using Inmobiliaria.Models.Entidades;
 using Inmobiliaria.Models.Repositorio;
 using Inmobiliaria.Models.ViewModels;
+using System.Security.Claims;
+using MySqlX.XDevAPI;
+using Google.Protobuf.WellKnownTypes;
+using Inmobiliaria.Models;
 
 namespace Inmobiliaria.Controllers
 {
@@ -19,9 +23,12 @@ namespace Inmobiliaria.Controllers
     private readonly RepositorioInmueble repositorioInmueble;
     private readonly RepositorioTipoInmueble repoTipoInm;
     private readonly RepositorioPago repositorioPago;
+    private readonly RepositorioUsuario repositorioUsuario;
     private readonly IWebHostEnvironment webHostEnvironment;
 
-    public ContratosController(RepositorioContrato repositorio, RepositorioPago repositorioPago, RepositorioPropietario repositorioPropietario, RepositorioTipoInmueble repoTipoInm, RepositorioInquilino repositorioInquilino, RepositorioInmueble repositorioInmueble, IWebHostEnvironment webHostEnvironment)
+    public ContratosController(RepositorioContrato repositorio, RepositorioPago repositorioPago, RepositorioPropietario repositorioPropietario,
+    RepositorioTipoInmueble repoTipoInm, RepositorioInquilino repositorioInquilino, RepositorioInmueble repositorioInmueble, IWebHostEnvironment webHostEnvironment
+    , RepositorioUsuario repositorioUsuario)
     {
       this.repositorio = repositorio;
       this.repositorioPropietario = repositorioPropietario;
@@ -30,131 +37,10 @@ namespace Inmobiliaria.Controllers
       this.repositorioPago = repositorioPago;
       this.repositorioInquilino = repositorioInquilino;
       this.repositorioInmueble = repositorioInmueble;
-
+      this.repositorioUsuario = repositorioUsuario;
     }
-    // GET: Contratos
-    //[Authorize(Policy = "Empleado")]
-    //   public ActionResult Index()
-    // {
-    //     var listaContratos = repositorio.ObtenerTodos();
-    //     var listaInquilinos = repositorioInquilino.ObtenerTodos();
-    //     var listaInmuebles = repositorioInmueble.ObtenerTodos();
 
-    //     var vm = new ContratosIndexViewModel
-    //     {
-    //         Contratos = listaContratos,
-    //         Inquilinos = listaInquilinos,
-    //         Inmuebles = listaInmuebles,
-    //         Cantidad = listaContratos.Count()
-    //     };
-
-    //     return View(vm);
-    // }
-
-    // private void GenerarPagosPorRevocacion(Contrato contrato)
-    // {
-    //   var pagos = new List<Pago>();
-    //   var hoy = DateTime.Now;
-    //   var mitad = contrato.FechaInicio.AddDays((contrato.FechaFin - contrato.FechaInicio).TotalDays / 2);
-
-    //   int cantidadPagos = hoy < mitad ? 2 : 1;
-
-    //   for (int i = 0; i < cantidadPagos; i++)
-    //   {
-    //     pagos.Add(new Pago
-    //     {
-    //       ContratoId = contrato.Id,
-    //       FechaPago = hoy,
-    //       Importe = contrato.Precio,
-    //       Concepto = hoy < mitad ? "Pago por revocación antes de la mitad del contrato" : "Pago por revocación después de la mitad del contrato",
-
-    //     });
-    //   }
-
-    //   foreach (var pago in pagos)
-    //   {
-    //     repositorioPago.Alta(pago);
-    //   }
-    // }
-    // public IActionResult Revocar(int id)
-    // {
-    //   try
-    //   {
-    //     var contrato = repositorio.ObtenerPorId(id);
-    //     if (contrato.Estado == "No vigente")
-    //     {
-    //       TempData["ErrorMessage"] = "El contrato ya está revocado";
-    //       return RedirectToAction(nameof(Index));
-    //     }
-    //     var mitad = contrato.FechaInicio.AddDays((contrato.FechaFin - contrato.FechaInicio).TotalDays / 2);
-    //     if (DateTime.Now < mitad)
-    //     {
-    //       GenerarPagosPorRevocacion(contrato);
-    //       contrato.Estado = "No vigente";
-    //       repositorio.Modificacion(contrato);
-    //       TempData["SuccessMessage"] = "Contrato revocado exitosamente";
-    //       return RedirectToAction(nameof(Index));
-    //     }
-    //     else
-    //     {
-    //       GenerarPagosPorRevocacion(contrato);
-    //       contrato.Estado = "No vigente";
-    //       repositorio.Modificacion(contrato);
-    //       TempData["SuccessMessage"] = "Contrato revocado exitosamente";
-    //       return RedirectToAction(nameof(Index));
-    //     }
-    //   }
-    //   catch (Exception ex)
-    //   {
-    //     TempData["ErrorMessage"] = ex.Message;
-    //     return RedirectToAction(nameof(Index));
-    //   }
-    // }
-    // public IActionResult Index(string? estado, DateTime? FechaDesde, DateTime? FechaHasta, int? Dias, int pagina = 1)
-    // {
-    //   var tamaño = 10;
-    //   var contratos = repositorio.ObtenerTodos(pagina, tamaño);
-
-    //   foreach (var contrato in contratos)
-    //   {
-    //     contrato.Inquilino = repositorioInquilino.ObtenerPorId(contrato.InquilinoId);
-    //     contrato.Inmueble = repositorioInmueble.ObtenerPorId(contrato.InmuebleId);
-    //   }
-
-    //   // // Aquí podés aplicar filtros si querés, ejemplo por inquilino:
-    //   // if (!string.IsNullOrEmpty(dni))
-    //   //   contratos = contratos.Where(c => c.Inquilino.Dni.Contains(dni)).ToList();
-
-    //   // if (!string.IsNullOrEmpty(nombre))
-    //   //   contratos = contratos.Where(c => c.Inquilino.Nombre.Contains(nombre)).ToList();
-
-    //   // if (!string.IsNullOrEmpty(apellido))
-    //   //   contratos = contratos.Where(c => c.Inquilino.Apellido.Contains(apellido)).ToList();
-
-
-    //   ViewBag.Pagina = pagina;
-    //   var total = repositorio.ObtenerCantidad();
-    //   ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
-    //   int totalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
-    //   var vm = new ContratosIndexViewModel
-    //   {
-    //     Contratos = contratos,
-    //     Inquilinos = repositorioInquilino.ObtenerTodos(),
-    //     Inmuebles = repositorioInmueble.ObtenerTodos(),
-    //     // Dni = dni,
-    //     // Nombre = nombre,
-    //     // Apellido = apellido,
-    //     Estado = estado,
-    //     FechaDesde = FechaDesde,
-    //     FechaHasta = FechaHasta,
-    //     Dias = Dias,
-    //     Pagina = pagina,
-    //     TotalPaginas = totalPaginas
-    //   };
-
-    //   return View(vm);
-    // }
-
+    [Authorize(Policy = "Empleado")]
     public IActionResult Index(string? estado, DateTime? FechaDesde, DateTime? FechaHasta, int? Dias, int pagina = 1)
     {
       try
@@ -191,19 +77,34 @@ namespace Inmobiliaria.Controllers
           ViewBag.Pagina = pagina;
           ViewBag.TotalPaginas = total % tamaño == 0 ? total / tamaño : total / tamaño + 1;
         }
-
+        var usuarioAlta = new Models.Usuario();
+        var usuarioBaja = new Models.Usuario();
         // Completar navegación (rellenar Inquilino e Inmueble)
         foreach (var contrato in contratos)
         {
           contrato.Inquilino = repositorioInquilino.ObtenerPorId(contrato.InquilinoId);
           contrato.Inmueble = repositorioInmueble.ObtenerPorId(contrato.InmuebleId);
+
+
+          if (contrato.UsuarioIdAlta.HasValue)
+          {
+            usuarioAlta = repositorioUsuario.ObtenerPorId((int)contrato.UsuarioIdAlta);
+            contrato.UsuarioAlta = usuarioAlta.Nombre + " " + usuarioAlta.Apellido;
+          }
+          if (contrato.UsuarioIdBaja.HasValue)
+          {
+            usuarioBaja = repositorioUsuario.ObtenerPorId((int)contrato.UsuarioIdBaja);
+            contrato.UsuarioBaja = usuarioBaja.Nombre + " " + usuarioBaja.Apellido;
+          }
         }
+
 
         // Pasar filtros a la vista para que se mantengan seleccionados
         ViewBag.Estado = estado;
         ViewBag.FechaDesde = FechaDesde;
         ViewBag.FechaHasta = FechaHasta;
         ViewBag.Dias = Dias;
+
 
         // Construir ViewModel
         var vm = new ContratosIndexViewModel
@@ -216,7 +117,9 @@ namespace Inmobiliaria.Controllers
           FechaHasta = FechaHasta,
           Dias = Dias,
           Pagina = pagina,
-          TotalPaginas = ViewBag.TotalPaginas
+          TotalPaginas = ViewBag.TotalPaginas,
+          usuarioAlta = usuarioAlta.Nombre + " " + usuarioAlta.Apellido,
+          usuarioBaja = usuarioBaja.Nombre + " " + usuarioBaja.Apellido
         };
 
         return View(vm);
@@ -236,7 +139,7 @@ namespace Inmobiliaria.Controllers
 
 
     // GET: Contratos/Details/5
-    //[Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Empleado")]
     public ActionResult Details(int id)
     {
 
@@ -245,41 +148,55 @@ namespace Inmobiliaria.Controllers
       ViewBag.Inmueble = repositorioInmueble.ObtenerPorId(contrato.InmuebleId);
       ViewBag.Propietario = repositorioPropietario.ObtenerPorId(ViewBag.Inmueble.PropietarioId);
 
-      
-    int totalMeses = ((contrato.FechaFin.Year - contrato.FechaInicio.Year) * 12) +
-                     (contrato.FechaFin.Month - contrato.FechaInicio.Month);
 
-    int mesesCumplidos = ((DateTime.Today.Year - contrato.FechaInicio.Year) * 12) +
-                         (DateTime.Today.Month - contrato.FechaInicio.Month);
+      int totalMeses = ((contrato.FechaFin.Year - contrato.FechaInicio.Year) * 12) +
+                       (contrato.FechaFin.Month - contrato.FechaInicio.Month);
 
-    mesesCumplidos = Math.Min(mesesCumplidos, totalMeses);
-    //Traigo todos los pagos del contrato
-    var pagosAbonados = repositorioPago.ObtenerCantidadPagosAbonados(contrato.Id);
-    int pagosPendientes = Math.Max(mesesCumplidos - pagosAbonados, 0);
+      int mesesCumplidos = ((DateTime.Today.Year - contrato.FechaInicio.Year) * 12) +
+                           (DateTime.Today.Month - contrato.FechaInicio.Month);
 
-    // Verifico si hay pagos pendientes
-    bool tienePagosPendientes = pagosAbonados < mesesCumplidos;
+      mesesCumplidos = Math.Min(mesesCumplidos, totalMeses);
+      //Traigo todos los pagos del contrato
+      var pagosAbonados = repositorioPago.ObtenerCantidadPagosAbonados(contrato.Id);
+      int pagosPendientes = Math.Max(mesesCumplidos - pagosAbonados, 0);
 
-    if (tienePagosPendientes)
-    {
+      // Verifico si hay pagos pendientes
+      bool tienePagosPendientes = pagosAbonados < mesesCumplidos;
+
+      if (tienePagosPendientes)
+      {
         TempData["ErrorMessage"] = "El contrato tiene pagos pendientes.";
         //return RedirectToAction("Detalles", new { id = contrato.Id });
-    }
+      }
+
+      var usuarioAlta = new Models.Usuario();
+      var usuarioBaja = new Models.Usuario();
+
+      if (contrato.UsuarioIdAlta.HasValue)
+      {
+        usuarioAlta = repositorioUsuario.ObtenerPorId((int)contrato.UsuarioIdAlta);
+      }
+      if (contrato.UsuarioIdBaja.HasValue)
+      {
+        usuarioBaja = repositorioUsuario.ObtenerPorId((int)contrato.UsuarioIdBaja);
+      }
 
       var vm = new ContratoRevocarViewModel
-    {
-      Id = contrato.Id,
-      InquilinoNombre = contrato.Inquilino.Nombre + " " + contrato.Inquilino.Apellido,
-      InmuebleDireccion = contrato.Inmueble.Direccion,
-      FechaInicio = contrato.FechaInicio,
-      FechaFin = contrato.FechaFinAnt ?? contrato.FechaFin,
-      FechaFinAnt = contrato.FechaFinAnt,
-      Precio = contrato.Precio,
-      TotalMeses = totalMeses,
-      MesesCumplidos = mesesCumplidos,
-      MesesPagados = pagosAbonados,          
-      PagosPendientes = pagosPendientes
-    };
+      {
+        Id = contrato.Id,
+        InquilinoNombre = contrato.Inquilino.Nombre + " " + contrato.Inquilino.Apellido,
+        InmuebleDireccion = contrato.Inmueble.Direccion,
+        FechaInicio = contrato.FechaInicio,
+        FechaFin = contrato.FechaFinAnt ?? contrato.FechaFin,
+        FechaFinAnt = contrato.FechaFinAnt,
+        Precio = contrato.Precio,
+        TotalMeses = totalMeses,
+        MesesCumplidos = mesesCumplidos,
+        MesesPagados = pagosAbonados,
+        PagosPendientes = pagosPendientes,
+        UsuarioAlta = usuarioAlta.Nombre + " " + usuarioAlta.Apellido,
+        UsuarioBaja = usuarioBaja.Nombre + " " + usuarioBaja.Apellido
+      };
 
       if (TempData.ContainsKey("Mensaje"))
         ViewBag.Mensaje = TempData["Mensaje"];
@@ -291,7 +208,7 @@ namespace Inmobiliaria.Controllers
     }
 
     // GET: Contratos/Create
-    // [Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Empleado")]
     public ActionResult Create()
     {
       TempData.Remove("returnUrl");
@@ -309,7 +226,7 @@ namespace Inmobiliaria.Controllers
       return View();
     }
 
-    // [Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Empleado")]
     public ActionResult CreateByInmId(int id)
     {
       TempData.Remove("returnUrl");
@@ -325,7 +242,7 @@ namespace Inmobiliaria.Controllers
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    // [Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Empleado")]
     public ActionResult Create(Contrato contrato)
     {
 
@@ -367,7 +284,9 @@ namespace Inmobiliaria.Controllers
           }
           else
           {
-            contrato.UsuarioAlta = 1; // TODO: ver usuario logueado
+            int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int userId);
+            contrato.UsuarioIdAlta = userId;
+
             res = repositorio.Alta(contrato);
             if (res > 0)
             {
@@ -416,13 +335,14 @@ namespace Inmobiliaria.Controllers
     }
 
     // GET: Contratos/Edit/5
-    //[Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Empleado")]
     public ActionResult Edit(int id)
     {
       var contrato = repositorio.ObtenerPorId(id);
 
       ViewBag.Inquilinos = repositorioInquilino.ObtenerTodos();
       ViewBag.Inmuebles = repositorioInmueble.ObtenerTodos();
+      
       if (TempData.ContainsKey("Mensaje"))
         ViewBag.Mensaje = TempData["Mensaje"];
       if (TempData.ContainsKey("Error"))
@@ -433,7 +353,7 @@ namespace Inmobiliaria.Controllers
     // POST: Contratos/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    //[Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Empleado")]
     public ActionResult Edit(int id, Contrato contrato)
     {
       try
@@ -463,7 +383,7 @@ namespace Inmobiliaria.Controllers
     }
 
     // GET: Contratos/Delete/5
-    //[Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Administrador")]
     public ActionResult Delete(int id)
     {
       var contrato = repositorio.ObtenerPorId(id);
@@ -477,12 +397,11 @@ namespace Inmobiliaria.Controllers
     // POST: Contratos/Delete/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    // [Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Administrador")]
     public ActionResult Delete(int id, Contrato contrato)
     {
       try
       {
-
         repositorio.Baja(id);
         TempData["Mensaje"] = "Eliminación realizada correctamente";
         return RedirectToAction(nameof(Index));
@@ -497,7 +416,7 @@ namespace Inmobiliaria.Controllers
     }
 
     // GET: Contratos/Renovar/5
-    //[Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Empleado")]
     public ActionResult Renovar(int id)
     {
       TempData.Remove("returnUrl");
@@ -535,7 +454,7 @@ namespace Inmobiliaria.Controllers
     }
 
     // GET: Contratos
-    //[Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Empleado")]
     public ActionResult ContratosVigentes()
     {
       var lista = repositorio.ObtenerTodosVigentes();
@@ -545,7 +464,7 @@ namespace Inmobiliaria.Controllers
       return View(lista);
     }
 
-    //[Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Empleado")]
     public ActionResult ContratosNoVigentes()
     {
       var lista = repositorio.ObtenerTodosNoVigentes();
@@ -556,83 +475,58 @@ namespace Inmobiliaria.Controllers
     }
 
 
-    // public IActionResult Revocar(int id)
-    // {
-    //   var contrato = repositorio.ObtenerPorId(id);
-    //   if (contrato == null) return NotFound();
 
-    //   int totalMeses = ((contrato.FechaFin.Year - contrato.FechaInicio.Year) * 12) +
-    //                    (contrato.FechaFin.Month - contrato.FechaInicio.Month);
-    //   int mesesCumplidos = ((DateTime.Today.Year - contrato.FechaInicio.Year) * 12) +
-    //                        (DateTime.Today.Month - contrato.FechaInicio.Month);
-
-    //   decimal multa = (mesesCumplidos < totalMeses / 2) ? contrato.Precio * 2 : contrato.Precio;
-
-    //   var vm = new ContratoRevocarViewModel
-    //   {
-    //     Id = contrato.Id,
-    //     InquilinoNombre = contrato.Inquilino.Nombre + " " + contrato.Inquilino.Apellido,
-    //     InmuebleDireccion = contrato.Inmueble.Direccion,
-    //     FechaInicio = contrato.FechaInicio,
-    //     FechaFin = contrato.FechaFin,
-    //     FechaFinAnt = DateTime.Today.Date,
-    //     Precio = contrato.Precio,
-    //     MesesCumplidos = mesesCumplidos,
-    //     Multa = multa,
-    //     EstadoPago = "Pendiente" // Por defecto
-    //   };
-
-    //   return View(vm);
-    // }
-    public IActionResult Revocar(int id) 
-{
-    var contrato = repositorio.ObtenerPorId(id);
-    if (contrato == null) return NotFound();
-
-    int totalMeses = ((contrato.FechaFin.Year - contrato.FechaInicio.Year) * 12) +
-                     (contrato.FechaFin.Month - contrato.FechaInicio.Month);
-
-    int mesesCumplidos = ((DateTime.Today.Year - contrato.FechaInicio.Year) * 12) +
-                         (DateTime.Today.Month - contrato.FechaInicio.Month);
-
-    mesesCumplidos = Math.Min(mesesCumplidos, totalMeses);
-    //Traigo todos los pagos del contrato
-    var pagosAbonados = repositorioPago.ObtenerCantidadPagosAbonados(contrato.Id);
-    int pagosPendientes = Math.Max(mesesCumplidos - pagosAbonados, 0);
-
-    // Verifico si hay pagos pendientes
-    bool tienePagosPendientes = pagosAbonados < mesesCumplidos;
-
-    if (tienePagosPendientes)
+    [Authorize(Policy = "Empleado")]
+    public IActionResult Revocar(int id)
     {
+      var contrato = repositorio.ObtenerPorId(id);
+      if (contrato == null) return NotFound();
+
+      int totalMeses = ((contrato.FechaFin.Year - contrato.FechaInicio.Year) * 12) +
+                       (contrato.FechaFin.Month - contrato.FechaInicio.Month);
+
+      int mesesCumplidos = ((DateTime.Today.Year - contrato.FechaInicio.Year) * 12) +
+                           (DateTime.Today.Month - contrato.FechaInicio.Month);
+
+      mesesCumplidos = Math.Min(mesesCumplidos, totalMeses);
+      //Traigo todos los pagos del contrato
+      var pagosAbonados = repositorioPago.ObtenerCantidadPagosAbonados(contrato.Id);
+      int pagosPendientes = Math.Max(mesesCumplidos - pagosAbonados, 0);
+
+      // Verifico si hay pagos pendientes
+      bool tienePagosPendientes = pagosAbonados < mesesCumplidos;
+
+      if (tienePagosPendientes)
+      {
         TempData["ErrorMessage"] = "El contrato tiene pagos pendientes. No se puede revocar hasta regularizar.";
         //return RedirectToAction("Detalles", new { id = contrato.Id });
+      }
+
+      decimal multa = (mesesCumplidos < totalMeses / 2) ? contrato.Precio * 2 : contrato.Precio;
+
+      var vm = new ContratoRevocarViewModel
+      {
+        Id = contrato.Id,
+        InquilinoNombre = contrato.Inquilino.Nombre + " " + contrato.Inquilino.Apellido,
+        InmuebleDireccion = contrato.Inmueble.Direccion,
+        FechaInicio = contrato.FechaInicio,
+        FechaFin = contrato.FechaFinAnt ?? contrato.FechaFin,
+        FechaFinAnt = contrato.FechaFinAnt,
+        Precio = contrato.Precio,
+        TotalMeses = totalMeses,
+        MesesCumplidos = mesesCumplidos,
+        MesesPagados = pagosAbonados,
+        Multa = multa,
+        EstadoPago = "Pendiente", // Por defecto
+        PagosPendientes = pagosPendientes
+      };
+
+      ViewBag.TienePagosPendientes = tienePagosPendientes;
+      ViewBag.PagosPendientes = pagosPendientes;
+      return View(vm);
     }
 
-    decimal multa = (mesesCumplidos < totalMeses / 2) ? contrato.Precio * 2 : contrato.Precio;
-
-    var vm = new ContratoRevocarViewModel
-    {
-      Id = contrato.Id,
-      InquilinoNombre = contrato.Inquilino.Nombre + " " + contrato.Inquilino.Apellido,
-      InmuebleDireccion = contrato.Inmueble.Direccion,
-      FechaInicio = contrato.FechaInicio,
-      FechaFin = contrato.FechaFinAnt ?? contrato.FechaFin,
-      FechaFinAnt = contrato.FechaFinAnt,
-      Precio = contrato.Precio,
-      TotalMeses = totalMeses,
-      MesesCumplidos = mesesCumplidos,
-      MesesPagados = pagosAbonados,
-      Multa = multa,
-      EstadoPago = "Pendiente", // Por defecto
-      PagosPendientes = pagosPendientes
-    };
-
-    ViewBag.TienePagosPendientes = tienePagosPendientes;
-    ViewBag.PagosPendientes = pagosPendientes;
-    return View(vm);
-}
-
+    [Authorize(Policy = "Empleado")]
     [HttpPost]
     [ValidateAntiForgeryToken]
     public IActionResult RevocarConfirmar(int id, decimal multa, string estadoPago, DateTime fechaFinAnt)
@@ -649,6 +543,8 @@ namespace Inmobiliaria.Controllers
         // Actualizar contrato
         contrato.FechaFinAnt = fechaFinAnt;
         contrato.Estado = "Revocado";
+        int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int userId);
+        contrato.UsuarioIdBaja = userId;
         repositorio.Modificacion(contrato);
 
         // Crear registro de pago de multa
@@ -662,11 +558,11 @@ namespace Inmobiliaria.Controllers
           Estado = estadoPago, // Puede ser Pendiente, Abonado, Anulado
           Concepto = "Pago multa por revocación de contrato"
         };
-      
+
         var pagoId = repositorioPago.Alta(pago);
         return RedirectToAction("CreatePagoFromRevocar", "Pagos", new { id = pagoId });
-        
-        
+
+
 
         // return RedirectToAction("Index");
       }

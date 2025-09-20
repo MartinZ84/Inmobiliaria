@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -17,46 +18,46 @@
 
     <!-- JS de Select2 -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    
+
     <style>
         /* Estilos para el submenú colapsible */
         .submenu-arrow {
             transition: transform 0.3s ease;
             font-size: 0.8rem;
         }
-        
+
         .submenu-arrow.rotated {
             transform: rotate(90deg);
         }
-        
+
         .nav-link:hover .submenu-arrow {
             color: #fff !important;
         }
-        
+
         /* Estilos para los elementos del submenú */
         .nav-item .nav-item .nav-link {
             font-size: 0.9rem;
             padding-left: 2rem !important;
         }
-        
+
         .nav-item .nav-item .nav-link:hover {
             background-color: rgba(255, 255, 255, 0.1);
             border-radius: 0.25rem;
         }
-        
+
         /* Estilos para elementos activos/con foco */
         .nav-link.active {
             background-color: rgba(255, 255, 255, 0.2) !important;
             border-radius: 0.25rem;
             font-weight: bold;
         }
-        
+
         .nav-item .nav-item .nav-link.active {
             background-color: rgba(255, 255, 255, 0.25) !important;
             color: #fff !important;
             font-weight: bold;
         }
-        
+
         /* Efecto de enfoque para el menú padre cuando tiene submenú activo */
         .nav-link.parent-active {
             background-color: rgba(255, 255, 255, 0.1) !important;
@@ -64,100 +65,173 @@
         }
     </style>
 </head>
+
 <body>
-    <header>
+    @* <header>
         <nav class="navbar navbar-light custom-navbar border-bottom box-shadow">
             <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Inmobiliaria Z&VC asociados</a>
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Inmobiliaria Z&C asociados</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#sidebarMenu" aria-controls="sidebarMenu" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
+            </div>
+        </nav>
+    </header> *@
+    <header>
+        <nav class="navbar navbar-expand-lg navbar-light custom-navbar border-bottom box-shadow">
+            <div class="container-fluid">
+                <!-- Marca -->
+                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">
+                    Inmobiliaria Z&C asociados
+                </a>
+
+                <!-- Botón colapsable (mobile) -->
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarHeader"
+                    aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <!-- Contenido colapsable -->
+                <div class="collapse navbar-collapse" id="navbarHeader">
+                    <ul class="navbar-nav ms-auto">
+                        <!-- Dropdown usuario -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle fw-bold text-light bg-dark rounded px-2" href="#"
+                                id="userMenu" role="button" data-bs-toggle="dropdown" aria-expanded="false"
+                                style="border: 1px solid #dee2e6;">
+                                <i class="bi bi-person-circle me-1 text-warning"></i>
+                                <span>@User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value</span>
+
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userMenu">
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Usuarios" asp-action="Perfil">
+                                        <i class="bi bi-person-badge me-1"></i> Perfil
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Usuarios" asp-action="Logout">
+                                        <i class="bi bi-box-arrow-right me-1"></i> Salir
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
+                    </ul>
+                </div>
             </div>
         </nav>
     </header>
     <div class="container-fluid">
         <div class="row">
             <!-- Sidebar -->
+
             <nav id="sidebarMenu" class="col-md-3 col-lg-2 d-md-block sidebar collapse">
-                <ul class="nav flex-column components">
-                    <li class="nav-item">
-                        <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index" onclick="setActiveMenu(this)">
-                            <i class="bi bi-house-door"></i> Inicio
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" asp-area="" asp-controller="Propietarios" asp-action="Index" onclick="setActiveMenu(this)">
-                            <i class="bi bi-person-badge"></i> Propietarios
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white" asp-area="" asp-controller="Inquilinos" asp-action="Index" onclick="setActiveMenu(this)">
-                            <i class="bi bi-people"></i> Inquilinos
-                        </a>
-                    </li>
-                    
-                    <!-- Menú de Inmuebles con submenú colapsible -->
-                    <li class="nav-item">
-                        <a class="nav-link text-white" href="#" id="inmueblesToggle" onclick="toggleSubmenu('inmueblesSubmenu', this)">
-                            <i class="bi bi-building"></i> Inmuebles <i class="bi bi-chevron-right float-end submenu-arrow"></i>
-                        </a>
-                        <ul class="nav flex-column ms-3" id="inmueblesSubmenu" style="display: none;">
-                            <li class="nav-item">
-                                <a class="nav-link text-white-50 py-1" asp-controller="Inmuebles" asp-action="Index" onclick="setActiveSubmenu(this, 'inmueblesToggle'); return true;">
-                                    <i class="bi bi-list-ul"></i> Todos
-                                </a>
-                            </li>
-                            @* <li class="nav-item">
+                @if (User.Identity.IsAuthenticated)
+                {
+
+                    @* <a class="btn btn-primary py-2 d-none d-md-inline-block float-right" asp-controller="Usuarios" asp-action="Login"><span class="lnr lnr-enter"></span> Acceder</a>
+                      }
+                      else{ *@
+                    @* <a class="btn btn-primary py-2 d-none d-md-inline-block float-right" asp-controller="Usuarios" asp-action="Logout"><span class="lnr lnr-exit"></span> Salir</a> *@
+                    <ul class="nav flex-column components">
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Home" asp-action="Index"
+                                onclick="setActiveMenu(this)">
+                                <i class="bi bi-house-door"></i> Inicio
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Propietarios" asp-action="Index"
+                                onclick="setActiveMenu(this)">
+                                <i class="bi bi-person-badge"></i> Propietarios
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Inquilinos" asp-action="Index"
+                                onclick="setActiveMenu(this)">
+                                <i class="bi bi-people"></i> Inquilinos
+                            </a>
+                        </li>
+
+                        <!-- Menú de Inmuebles con submenú colapsible -->
+                        <li class="nav-item">
+                            <a class="nav-link text-white" href="#" id="inmueblesToggle"
+                                onclick="toggleSubmenu('inmueblesSubmenu', this)">
+                                <i class="bi bi-building"></i> Inmuebles <i
+                                    class="bi bi-chevron-right float-end submenu-arrow"></i>
+                            </a>
+                            <ul class="nav flex-column ms-3" id="inmueblesSubmenu" style="display: none;">
+                                <li class="nav-item">
+                                    <a class="nav-link text-white-50 py-1" asp-controller="Inmuebles" asp-action="Index"
+                                        onclick="setActiveSubmenu(this, 'inmueblesToggle'); return true;">
+                                        <i class="bi bi-list-ul"></i> Todos
+                                    </a>
+                                </li>
+                                @* <li class="nav-item">
                                 <a class="nav-link text-white-50 py-1" asp-controller="Inmuebles" asp-action="Index" asp-route-estado="Disponible" onclick="setActiveSubmenu(this, 'inmueblesToggle'); return true;">
                                     <i class="bi bi-check-circle"></i> Inmuebles Disponibles
                                 </a>
                             </li> *@
-                            <li class="nav-item">
-                                <a class="nav-link text-white-50 py-1" asp-controller="Inmuebles" asp-action="Index" asp-route-estado="3" onclick="setActiveSubmenu(this, 'inmueblesToggle'); return true;">
-                                    <i class="bi bi-x-circle"></i> Inmuebles dados de baja
-                                </a>
-                            </li>
-                        </ul>
-                    </li>
-                    
-                    <li class="nav-item"></li>
-                        <a class="nav-link text-white" asp-area="" asp-controller="TiposInmueble" asp-action="Index">
-                            <i class="bi bi-building"></i> Tipos de Inmueble
-                        </a>
-                    </li>
-                     <li class="nav-item">
-                        <a class="nav-link text-white" asp-area="" asp-controller="Contratos" asp-action="Index">
-                            <i class="bi bi-file-earmark-text"></i> Contratos
-                        </a>
-                    </li>
-                     @*
-                    @if (User.IsInRole("Administrador") || User.IsInRole("SuperAdministrador"))
-                    {
+                                <li class="nav-item">
+                                    <a class="nav-link text-white-50 py-1" asp-controller="Inmuebles" asp-action="Index"
+                                        asp-route-estado="3"
+                                        onclick="setActiveSubmenu(this, 'inmueblesToggle'); return true;">
+                                        <i class="bi bi-x-circle"></i> Inmuebles dados de baja
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+
                         <li class="nav-item">
-                            <a class="nav-link text-white" asp-area="" asp-controller="Usuarios" asp-action="Index">
-                                <i class="bi bi-person-gear"></i> Usuarios
+                            <a class="nav-link text-white" asp-area="" asp-controller="TiposInmueble" asp-action="Index">
+                                <i class="bi bi-building"></i> Tipos de Inmueble
                             </a>
                         </li>
-                    }
-                    <!-- Menú desplegable ejemplo -->
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" href="#" id="sidebarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                            <i class="bi bi-gear"></i> Opciones
-                        </a>
-                        <ul class="dropdown-menu" aria-labelledby="sidebarDropdown">
-                            <li>
-                                <a class="dropdown-item" asp-controller="Usuarios" asp-action="Perfil">
-                                    <i class="bi bi-person-circle"></i> Perfil
+                        <li class="nav-item">
+                            <a class="nav-link text-white" asp-area="" asp-controller="Contratos" asp-action="Index">
+                                <i class="bi bi-file-earmark-text"></i> Contratos
+                            </a>
+                        </li>
+
+                        @if (User.IsInRole("Administrador") || User.IsInRole("SuperAdministrador"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-white" asp-area="" asp-controller="Usuarios" asp-action="Index">
+                                    <i class="bi bi-person-gear"></i> Usuarios
                                 </a>
                             </li>
-                            <li>
-                                <a class="dropdown-item" asp-controller="Usuarios" asp-action="Logout">
-                                    <i class="bi bi-box-arrow-right"></i> Salir
+                        }
+                        <!-- Menú desplegable ejemplo -->
+                        @* <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-white" href="#" id="sidebarDropdown" role="button"
+                                data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="bi bi-gear"></i> Opciones
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="sidebarDropdown">
+                                <a class="btn btn-primary dropdown-toggle text-light" href="#" role="button" id="userMenu"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                                    data-reference="parent" data-display="static">
+                                    <i class="fa-solid fa-user"></i> @User.Identity.Name
                                 </a>
-                            </li>
-                        </ul>
-                    </li> *@
-                </ul>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Usuarios" asp-action="Perfil">
+                                        <i class="bi bi-person-circle"></i> Perfil
+                                    </a>
+                                </li>
+                                <li>
+                                    <a class="dropdown-item" asp-controller="Usuarios" asp-action="Logout">
+                                        <i class="bi bi-box-arrow-right"></i> Salir
+                                    </a>
+                                </li>
+
+                            </ul>
+                        </li> *@
+                    </ul>
+
+
+                }
+
             </nav>
             <!-- Main content -->
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 pb-3">
@@ -185,20 +259,21 @@
             </main>
         </div>
     </div>
-   <footer class="border-top footer text-center fixed-bottom bg-light">
+    <footer class="border-top footer text-center fixed-bottom bg-light">
         <div class="container">
-            &copy; 2025 - Inmobiliaria Z&VC asociados - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2025 - Inmobiliaria Z&VC asociados - <a asp-area="" asp-controller="Home"
+                asp-action="Privacy">Privacy</a>
         </div>
     </footer>
 
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    
+
     <script>
         function toggleSubmenu(submenuId, toggleElement) {
             const submenu = document.getElementById(submenuId);
             const arrow = toggleElement.querySelector('.submenu-arrow');
-            
+
             if (submenu.style.display === 'none' || submenu.style.display === '') {
                 submenu.style.display = 'block';
                 arrow.classList.add('rotated');
@@ -207,16 +282,16 @@
                 arrow.classList.remove('rotated');
             }
         }
-        
+
         function setActiveMenu(element) {
             // Remover clase active de todos los enlaces principales
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('active', 'parent-active');
             });
-            
+
             // Agregar clase active al elemento clickeado
             element.classList.add('active');
-            
+
             // Cerrar todos los submenús
             document.querySelectorAll('[id$="Submenu"]').forEach(submenu => {
                 submenu.style.display = 'none';
@@ -225,22 +300,22 @@
                 arrow.classList.remove('rotated');
             });
         }
-        
+
         function setActiveSubmenu(element, parentId) {
             // Remover clase active de todos los enlaces
             document.querySelectorAll('.nav-link').forEach(link => {
                 link.classList.remove('active', 'parent-active');
             });
-            
+
             // Agregar clase active al submenú clickeado
             element.classList.add('active');
-            
+
             // Agregar clase parent-active al menú padre
             const parentElement = document.getElementById(parentId);
             if (parentElement) {
                 parentElement.classList.add('parent-active');
             }
-            
+
             // Asegurar que el submenú permanezca abierto
             const submenu = document.getElementById('inmueblesSubmenu');
             const arrow = parentElement ? parentElement.querySelector('.submenu-arrow') : null;
@@ -248,27 +323,27 @@
                 submenu.style.display = 'block';
                 arrow.classList.add('rotated');
             }
-            
+
             // Guardar el estado en sessionStorage para mantenerlo después de la navegación
             sessionStorage.setItem('activeSubmenu', element.textContent.trim());
             sessionStorage.setItem('submenuOpen', 'true');
         }
-        
+
         // Función para mantener el estado activo al cargar la página
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             const currentPath = window.location.pathname.toLowerCase();
             const urlParams = new URLSearchParams(window.location.search);
-            
+
             // Si estamos en la página de inmuebles
             if (currentPath.includes('/inmuebles')) {
                 const estado = urlParams.get('estado');
-                
+
                 // Activar el menú padre de inmuebles
                 const parentToggle = document.getElementById('inmueblesToggle');
                 if (parentToggle) {
                     parentToggle.classList.add('parent-active');
                 }
-                
+
                 // Mostrar el submenú
                 const submenu = document.getElementById('inmueblesSubmenu');
                 const arrow = parentToggle ? parentToggle.querySelector('.submenu-arrow') : null;
@@ -276,7 +351,7 @@
                     submenu.style.display = 'block';
                     arrow.classList.add('rotated');
                 }
-                
+
                 // Activar el submenú correspondiente
                 let activeSubmenuLink = null;
                 if (estado === 'Disponible') {
@@ -287,7 +362,7 @@
                     // Para "Todos" (sin parámetro de estado)
                     activeSubmenuLink = submenu.querySelector('a:not([asp-route-estado])');
                 }
-                
+
                 if (activeSubmenuLink) {
                     activeSubmenuLink.classList.add('active');
                 }
@@ -306,7 +381,8 @@
             }
         });
     </script>
-    
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
+
 </html>

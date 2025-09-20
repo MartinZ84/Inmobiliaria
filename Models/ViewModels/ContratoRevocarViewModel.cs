@@ -21,6 +21,10 @@ namespace Inmobiliaria.Models.ViewModels
 
         // Nuevo
         public string EstadoPago { get; set; }
+
+        public string UsuarioAlta { get; set; }
+       
+        public string UsuarioBaja { get; set; }
         public List<SelectListItem> EstadosPago { get; set; } = new List<SelectListItem>
     {
         new SelectListItem { Value = "Pendiente", Text = "Pendiente" },

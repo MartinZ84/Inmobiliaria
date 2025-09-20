@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Inmobiliaria.Models.Repositorio;
 using Inmobiliaria.Models.Entidades;
+using Microsoft.AspNetCore.Authorization;
 namespace Inmobiliaria.Controllers
 {
   public class InquilinosController : Controller
@@ -73,7 +74,7 @@ public ActionResult Index(string? dni = null, string? nombre = null,
 }
 
     // GET: Inquilinos/Details/5
-    // [Authorize(Policy = "Empleado")]
+   [Authorize(Policy = "Empleado")]
     public ActionResult Details(int id)
     {
       var inquilino = repositorio.ObtenerPorId(id);
@@ -81,7 +82,7 @@ public ActionResult Index(string? dni = null, string? nombre = null,
     }
 
     // GET: Inquilinos/Create
-    // [Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Empleado")]
     public ActionResult Create()
     {
       return View();
@@ -90,6 +91,7 @@ public ActionResult Index(string? dni = null, string? nombre = null,
     // POST: Inquilinos/Create
     [HttpPost]
     [ValidateAntiForgeryToken]
+    [Authorize(Policy = "Empleado")]
     public ActionResult Create(Inquilino inquilino)
     {
       try
@@ -128,7 +130,7 @@ public ActionResult Index(string? dni = null, string? nombre = null,
       }
     }
     // GET: Inquilinos/Edit/5
-    // [Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Empleado")]
     public ActionResult Edit(int id)
     {
       try
@@ -147,7 +149,7 @@ public ActionResult Index(string? dni = null, string? nombre = null,
     // POST: Inquilinos/Edit/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    // [Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Empleado")]
     public ActionResult Edit(int id, Inquilino i)
     {
       // Inquilino? inquilinoEdit;
@@ -187,7 +189,7 @@ public ActionResult Index(string? dni = null, string? nombre = null,
     }
 
     // GET: Inquilinos/Delete/5
-    // [Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Administrador")]
     public ActionResult Delete(int id)
     {
       try
@@ -209,7 +211,7 @@ public ActionResult Index(string? dni = null, string? nombre = null,
     // POST: Inquilinos/Delete/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    // [Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Administrador")]
     public ActionResult Delete(int id, Inquilino i)
     {
       try
@@ -226,7 +228,6 @@ public ActionResult Index(string? dni = null, string? nombre = null,
         return View(inq);
       }
     }
-    
      public ActionResult Buscar(string? dni, string? nombre, string? apellido, string? email)
     {
       try

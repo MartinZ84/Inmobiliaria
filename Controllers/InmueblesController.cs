@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Inmobiliaria.Models.Repositorio;
 using Inmobiliaria.Models.Entidades;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 using Inmobiliaria.Helpers;
 using Inmobiliaria.Models.Enums;
 
@@ -181,6 +182,7 @@ namespace Inmobiliaria.Controllers
         }
 
         // GET: Inmuebles/Create
+        [Authorize]
         public ActionResult Create()
         {
             // Obtener lista de propietarios para el dropdown
@@ -198,6 +200,7 @@ namespace Inmobiliaria.Controllers
         // POST: Inmuebles/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<ActionResult> Create(Inmueble inmueble, List<IFormFile> imagenesArchivos)
         {
             try
@@ -261,6 +264,7 @@ namespace Inmobiliaria.Controllers
         }
 
         // GET: Inmuebles/Edit/5
+        [Authorize]
         public ActionResult Edit(int id)
         {
             try
@@ -307,6 +311,7 @@ namespace Inmobiliaria.Controllers
         // POST: Inmuebles/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize]
         public async Task<ActionResult> Edit(int id, Inmueble inmueble, List<IFormFile> imagenesArchivos, string? imagenesExistentes)
         {
             try
@@ -382,6 +387,7 @@ namespace Inmobiliaria.Controllers
         }
 
         // GET: Inmuebles/Delete/5
+        [Authorize(Policy = "Administrador")]
         public ActionResult Delete(int id)
         {
             try
@@ -425,6 +431,7 @@ namespace Inmobiliaria.Controllers
         // POST: Inmuebles/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Policy = "Administrador")]
         public ActionResult Delete(int id, Inmueble inmueble)
         {
             try

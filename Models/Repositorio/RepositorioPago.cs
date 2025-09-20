@@ -1,5 +1,6 @@
 using MySql.Data.MySqlClient;
 using Inmobiliaria.Models.Entidades;
+using System.Security.Claims;
 
 namespace Inmobiliaria.Models.Repositorio
 {
@@ -50,8 +51,8 @@ namespace Inmobiliaria.Models.Repositorio
 
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
-				string sql = $"INSERT INTO Pagos (NroPago, FechaPago, Importe, ContratoId, Concepto, Estado) " +
-					"VALUES (@nroPago, @fechaPago, @importe, @contratoId, @Concepto, @Estado); " +
+				string sql = $"INSERT INTO Pagos (NroPago, FechaPago, Importe, ContratoId, Concepto, Estado, UsuarioIdAlta) " +
+					"VALUES (@nroPago, @fechaPago, @importe, @contratoId, @Concepto, @Estado, @usuarioIdAlta); " +
 					"SELECT LAST_INSERT_ID();";//devuelve el id insertado (LAST_INSERT_ID para mysql)
 				using (var command = new MySqlCommand(sql, connection))
 				{
@@ -62,6 +63,7 @@ namespace Inmobiliaria.Models.Repositorio
 					command.Parameters.AddWithValue($"@{nameof(pago.ContratoId)}", pago.ContratoId);
 					command.Parameters.AddWithValue($"@{nameof(pago.Concepto)}", pago.Concepto);
 					command.Parameters.AddWithValue($"@{nameof(pago.Estado)}", pago.Estado);
+					command.Parameters.AddWithValue($"@{nameof(pago.usuarioIdAlta)}", pago.usuarioIdAlta);
 					connection.Open();
 					res = Convert.ToInt32(command.ExecuteScalar());
 					pago.Id = res;
@@ -71,16 +73,18 @@ namespace Inmobiliaria.Models.Repositorio
 			return res;
 		}
 
-		public int Baja(int id)
+		public int Baja(int id, int usuarioBaja)
 		{
 			int res = -1;
+			
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
 				//string sql = $"DELETE FROM Pagos WHERE Id = {id}";
-				string sql = $"UPDATE Pagos SET Estado='Anulado' WHERE Id = {id}";
+				string sql = $"UPDATE Pagos SET Estado='Anulado', UsuarioIdBaja = @usuarioBaja WHERE Id = {id}";
 				using (MySqlCommand command = new MySqlCommand(sql, connection))
 				{
 					// command.CommandType = CommandType.Text;
+					command.Parameters.AddWithValue("@usuarioBaja", usuarioBaja);
 					connection.Open();
 					res = command.ExecuteNonQuery();
 					connection.Close();
@@ -119,8 +123,7 @@ namespace Inmobiliaria.Models.Repositorio
 			Pago? pago = null;
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
-				string sql = "SELECT p.Id, NroPago, FechaPago,  Importe, ContratoId , concepto, p.Estado " +
-					" " +
+				string sql = "SELECT p.Id, NroPago, FechaPago,  Importe, ContratoId , concepto, p.Estado , p.UsuarioIdAlta, p.UsuarioIdBaja " +
 					" FROM Pagos p INNER JOIN Contratos c ON p.ContratoId = c.Id " +
 							"WHERE p.Id = @id";
 				using (MySqlCommand command = new MySqlCommand(sql, connection))
@@ -139,8 +142,14 @@ namespace Inmobiliaria.Models.Repositorio
 							FechaPago = reader.GetDateTime(nameof(Pago.FechaPago)),
 							Importe = reader.GetDecimal(nameof(Pago.Importe)),
 							ContratoId = reader.GetInt32(nameof(Pago.ContratoId)),
-							Concepto = reader.GetString(nameof(Pago.Concepto)),
-							Estado = reader.GetString(nameof(Pago.Estado))
+							Concepto = reader.IsDBNull(reader.GetOrdinal(nameof(Pago.Concepto))) ? "" : reader.GetString(nameof(Pago.Concepto)),
+							Estado = reader.GetString(nameof(Pago.Estado)),
+							usuarioIdAlta = reader.IsDBNull(reader.GetOrdinal(nameof(Pago.usuarioIdAlta)))
+										? (int?)null
+										: reader.GetInt32(reader.GetOrdinal(nameof(Pago.usuarioIdAlta))),
+							usuarioIdBaja = reader.IsDBNull(reader.GetOrdinal(nameof(Pago.usuarioIdBaja)))
+										? (int?)null
+										: reader.GetInt32(reader.GetOrdinal(nameof(Pago.usuarioIdBaja))),
 						};
 					}
 					connection.Close();
@@ -154,7 +163,7 @@ namespace Inmobiliaria.Models.Repositorio
 			IList<Pago> res = new List<Pago>();
 			using (MySqlConnection connection = new MySqlConnection(connectionString))
 			{
-				string sql = @"SELECT p.Id, NroPago, FechaPago, Importe, ContratoId, Concepto, p.Estado
+				string sql = @"SELECT p.Id, NroPago, FechaPago, Importe, ContratoId, Concepto, p.Estado, p.UsuarioIdAlta, p.UsuarioIdBaja
                        FROM Pagos p 
                        INNER JOIN Contratos c ON p.ContratoId = c.Id
                        WHERE c.Id = @id";
@@ -178,7 +187,13 @@ namespace Inmobiliaria.Models.Repositorio
 										: reader.GetString(nameof(Pago.Concepto)),
 							Estado = reader.IsDBNull(reader.GetOrdinal(nameof(Pago.Estado)))
 										? ""
-										: reader.GetString(nameof(Pago.Estado))
+										: reader.GetString(nameof(Pago.Estado)),
+							usuarioIdAlta = reader.IsDBNull(reader.GetOrdinal(nameof(Pago.usuarioIdAlta)))
+										? (int?)null
+										: reader.GetInt32(reader.GetOrdinal(nameof(Pago.usuarioIdAlta))),
+							usuarioIdBaja = reader.IsDBNull(reader.GetOrdinal(nameof(Pago.usuarioIdBaja)))
+										? (int?)null
+										: reader.GetInt32(reader.GetOrdinal(nameof(Pago.usuarioIdBaja))),
 						};
 						res.Add(pago);
 					}
