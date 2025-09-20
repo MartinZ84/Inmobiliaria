@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 11-09-2025 a las 18:15:45
+-- Tiempo de generación: 20-09-2025 a las 20:32:06
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -45,17 +45,20 @@ CREATE TABLE `contratos` (
 --
 
 INSERT INTO `contratos` (`id`, `fechaInicio`, `fechaFin`, `estado`, `precio`, `inquilinoId`, `inmuebleId`, `fechaFinAnt`, `usuarioIdAlta`, `usuarioIdBaja`) VALUES
-(49, '2022-04-21', '2025-04-21', 'Vigente', 20555, 3, 1, '2025-04-21', 1, NULL),
-(51, '2022-04-22', '2024-04-22', 'Vigente', 30000, 3, 3, '2024-04-22', 1, NULL),
-(52, '2022-05-01', '2022-07-01', 'Vigente', 30000, 3, 7, '2022-07-01', 1, NULL),
-(53, '2025-07-05', '2026-07-01', 'Revocado', 50000, 3, 7, '2025-09-09', 1, NULL),
-(65, '2025-09-16', '2026-09-22', 'Vigente', 250000, 3, 26, '2026-09-22', 1, NULL),
+(49, '2022-04-21', '2025-04-21', 'No vigente', 20555, 3, 1, '2025-04-21', 1, NULL),
+(51, '2022-04-22', '2024-04-22', 'No vigente', 30000, 3, 3, '2024-04-22', 1, NULL),
+(52, '2022-05-01', '2022-07-01', 'Revocado', 30000, 3, 7, '2025-09-20', 1, 5),
+(53, '2025-07-05', '2026-07-01', 'Revocado', 50000, 3, 7, '2025-09-09', 2, NULL),
+(65, '2025-09-16', '2026-09-22', 'Revocado', 250000, 3, 26, '2025-09-20', 1, 3),
 (66, '2025-07-02', '2026-09-02', 'Revocado', 55555, 3, 22, '2025-09-11', 1, NULL),
-(67, '2025-09-02', '2027-09-02', 'No vigente', 345235, 7, 23, '2027-09-02', 1, NULL),
+(67, '2025-09-02', '2027-09-02', 'Vigente', 345235, 7, 23, '2027-09-02', 1, NULL),
 (68, '2025-09-05', '2025-10-05', 'Revocado', 5000000, 9, 1, '2025-09-09', 1, NULL),
-(74, '2025-09-05', '2025-11-05', 'No vigente', 1299900, 3, 20, '2025-11-05', 1, NULL),
-(80, '2025-09-11', '2027-09-11', 'Vigente', 1234567890, 24, 27, '2027-09-11', 1, NULL),
-(81, '2026-09-23', '2027-09-23', 'Vigente', 55500000, 3, 26, '2027-09-23', 1, NULL);
+(74, '2025-09-05', '2025-11-05', 'Vigente', 1299900, 3, 20, '2025-11-05', 1, NULL),
+(80, '2025-09-11', '2027-09-11', 'Vigente', 12347878, 24, 27, NULL, 3, NULL),
+(81, '2026-09-23', '2027-09-23', 'Vigente', 55500000, 3, 26, NULL, 1, NULL),
+(83, '2025-09-20', '2027-09-20', 'Vigente', 89999999, 7, 13, '2027-09-20', 5, NULL),
+(84, '2026-09-23', '2027-09-23', 'Vigente', 787999, 3, 26, '2027-09-23', 5, NULL),
+(85, '2025-09-20', '2027-09-20', 'Vigente', 65788, 3, 29, '2027-09-20', 5, NULL);
 
 -- --------------------------------------------------------
 
@@ -94,7 +97,9 @@ INSERT INTO `inmuebles` (`id`, `direccion`, `ambientes`, `superficie`, `tipInmId
 (24, 'Salta 458, Salta Capital', 5, 100, 1, 'Residencial', 5222, 546, 56, 2, 11, '/uploads/inmuebles/69d76abd-5c7c-4c8d-932c-b6e59e380ce5_sudamerica.jpg'),
 (25, 'Mexico 6347, San Luis Capital', 2, 100, 3, 'Residencial', 45455, 45, 45, 3, 6, NULL),
 (26, 'Junin 545 Capital', 5, 40, 2, 'Residencial', 46666000, 88, 8707, 1, 1, NULL),
-(27, 'Ruta 7 km 800 puerta 6', 10, 5000, 3, 'Comercial', 86000000, 545, 87451, 1, 1, '/uploads/inmuebles/67938a3e-2818-41a4-b739-cb342177677b_casagob.jpg');
+(27, 'Ruta 7 km 800 puerta 6', 10, 5000, 3, 'Comercial', 86000000, 545, 87451, 1, 1, '/uploads/inmuebles/67938a3e-2818-41a4-b739-cb342177677b_casagob.jpg'),
+(28, 'Lopez 4545, San Martin', 5, 20, 1, 'Residencial', 4656878, 346, 564, 3, 34, '/uploads/inmuebles/bfa3326c-82bb-45ec-8244-fa167e89212e_sudamerica.png'),
+(29, 'hghgh 5678, Ciudad de San Luis', 5, 98, 2, 'Comercial', 87, 365437, 7656765, 3, 34, NULL);
 
 -- --------------------------------------------------------
 
@@ -147,10 +152,10 @@ CREATE TABLE `pagos` (
 --
 
 INSERT INTO `pagos` (`id`, `nroPago`, `fechaPago`, `importe`, `contratoId`, `usuarioIdAlta`, `usuarioIdBaja`, `concepto`, `estado`) VALUES
-(33, 1, '2022-04-22 00:00:00', 30000.00, 49, NULL, NULL, NULL, 'Abonado'),
-(35, 1, '2022-04-22 00:00:00', 30000.00, 51, NULL, NULL, NULL, 'Abonado'),
-(36, 0, '2025-09-04 10:28:18', 5454.00, 65, NULL, NULL, NULL, 'Abonado'),
-(37, 0, '2025-09-04 10:28:18', 5454.00, 65, NULL, NULL, NULL, 'Abonado'),
+(33, 1, '2022-04-22 00:00:00', 30000.00, 49, 1, 5, NULL, 'Anulado'),
+(35, 1, '2022-04-22 00:00:00', 30000.00, 51, NULL, NULL, 'c', 'Abonado'),
+(36, 0, '2025-09-04 00:00:00', 5454.00, 65, NULL, NULL, 'Pago alquiler bienes 1', 'Abonado'),
+(37, 0, '2025-09-04 10:28:18', 5454.00, 65, NULL, 5, NULL, 'Anulado'),
 (39, 1, '2025-09-04 00:00:00', 30000.00, 52, NULL, NULL, 'Pago alquiler 1', 'Abonado'),
 (40, 2, '2025-09-04 00:00:00', 30000.00, 51, NULL, NULL, 'PAgo 2', 'Anulado'),
 (41, 1, '2025-09-04 00:00:00', 55555.00, 66, NULL, NULL, 'Pago 1', 'Anulado'),
@@ -169,7 +174,13 @@ INSERT INTO `pagos` (`id`, `nroPago`, `fechaPago`, `importe`, `contratoId`, `usu
 (63, 2, '2025-09-09 00:00:00', 50000.00, 53, NULL, NULL, 'Pago atrasado 2', 'Abonado'),
 (65, 3, '2025-09-09 00:00:00', 100000.00, 53, NULL, NULL, 'Pago multa por revocación de contrato', 'Abonado'),
 (66, 3, '2025-09-11 00:00:00', 30000.00, 51, NULL, NULL, 'Pago 3', 'Abonado'),
-(67, 5, '2025-09-11 00:00:00', 111110.00, 66, NULL, NULL, 'Pago multa por revocación de contrato', 'Abonado');
+(67, 5, '2025-09-11 00:00:00', 111110.00, 66, NULL, NULL, 'Pago multa por revocación de contrato', 'Abonado'),
+(68, 3, '2025-09-20 00:00:00', 250000.00, 65, 3, NULL, 'Pago alquiler 3', 'Abonado'),
+(69, 2, '2025-09-20 00:00:00', 30000.00, 52, 5, NULL, 'PAgo 2', 'Abonado'),
+(70, 3, '2025-09-20 00:00:00', 30000.00, 52, NULL, NULL, 'Pago multa por revocación de contrato', 'Abonado'),
+(71, 2, '2025-09-20 00:00:00', 20555.00, 49, 5, NULL, 'Pago alquiler bienes 1', 'Abonado'),
+(72, 3, '2025-09-20 00:00:00', 20555.00, 49, 5, 5, 'PAgo 2', 'Anulado'),
+(73, 4, '2025-09-20 00:00:00', 500000.00, 65, NULL, NULL, 'Pago multa por revocación de contrato', 'Abonado');
 
 -- --------------------------------------------------------
 
@@ -242,10 +253,11 @@ CREATE TABLE `usuarios` (
 --
 
 INSERT INTO `usuarios` (`id`, `nombre`, `apellido`, `avatar`, `email`, `clave`, `rol`) VALUES
-(1, 'Carla Sofia', 'Peterson', '/Uploads\\avatar_1.jpg', 'carla@peterson.com', 'GjzAhuy78NH4O47XGFAHPsEk/lJVCR72X7szOdJVPJA=', 3),
-(2, 'Pablo', 'Perez', '/Uploads\\avatar_2.jfif', 'pablo@perez.com', 'Es8xLXaQWGPhWN3ndWBEt8ZN7E8T+pDeqi210bMoJsI=', 3),
-(3, 'Martin', 'Reich', '/Uploads\\avatar_3.png', 'martin@reich.com', 'GjzAhuy78NH4O47XGFAHPsEk/lJVCR72X7szOdJVPJA=', 3),
-(5, 'Dora', 'Exloradora', '/Uploads\\avatar_5.png', 'dora@mail.com', 'GjzAhuy78NH4O47XGFAHPsEk/lJVCR72X7szOdJVPJA=', 2);
+(1, 'Carla ', 'Perez', '/Uploads\\avatar_1.jpg', 'carla@peterson.com', 'GjzAhuy78NH4O47XGFAHPsEk/lJVCR72X7szOdJVPJA=', 3),
+(2, 'Pablo', 'Perez', '/Uploads\\avatar_2.png', 'pablo@perez.com', 'Es8xLXaQWGPhWN3ndWBEt8ZN7E8T+pDeqi210bMoJsI=', 3),
+(3, 'Mauro', 'Rol', '/Uploads/avatar_3.jpg', 'maurorol@gmail.com', 'GjzAhuy78NH4O47XGFAHPsEk/lJVCR72X7szOdJVPJA=', 3),
+(5, 'Dora', 'Gutierrez', '/Uploads/avatar_5.jpg', 'dora@gmail.com', 'GjzAhuy78NH4O47XGFAHPsEk/lJVCR72X7szOdJVPJA=', 2),
+(7, 'Francisco Solano', 'Lopez', '/Uploads/avatar_7.jpg', 'francisco@ulp.edu', 'Psz07X3Jwky8U64oY9eZW6TiPo7XEAIrJVv6GCCmPzw=', 3);
 
 --
 -- Índices para tablas volcadas
@@ -310,43 +322,43 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `contratos`
 --
 ALTER TABLE `contratos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=83;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
 
 --
 -- AUTO_INCREMENT de la tabla `inmuebles`
 --
 ALTER TABLE `inmuebles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=28;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
 
 --
 -- AUTO_INCREMENT de la tabla `inquilinos`
 --
 ALTER TABLE `inquilinos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=26;
 
 --
 -- AUTO_INCREMENT de la tabla `pagos`
 --
 ALTER TABLE `pagos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=68;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=74;
 
 --
 -- AUTO_INCREMENT de la tabla `propietarios`
 --
 ALTER TABLE `propietarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
 
 --
 -- AUTO_INCREMENT de la tabla `tiposinmuebles`
 --
 ALTER TABLE `tiposinmuebles`
-  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- Restricciones para tablas volcadas
@@ -375,6 +387,18 @@ ALTER TABLE `pagos`
   ADD CONSTRAINT `FKUSUARIOS_PAGOS_BAJA` FOREIGN KEY (`usuarioIdBaja`) REFERENCES `usuarios` (`id`),
   ADD CONSTRAINT `FK_CONTRATOID` FOREIGN KEY (`contratoId`) REFERENCES `contratos` (`id`),
   ADD CONSTRAINT `FK_USUARIOS_PAGOS_ALTA` FOREIGN KEY (`usuarioIdAlta`) REFERENCES `usuarios` (`id`);
+
+DELIMITER $$
+--
+-- Eventos
+--
+CREATE DEFINER=`root`@`localhost` EVENT `actualizar_estado_contratos` ON SCHEDULE EVERY 1 DAY STARTS '2025-09-20 13:25:58' ON COMPLETION NOT PRESERVE ENABLE DO UPDATE contratos
+    SET estado = 'No vigente'
+    WHERE estado = 'Vigente'
+      AND fechaFinAnt IS NOT NULL
+      AND fechaFinAnt < CURDATE()$$
+
+DELIMITER ;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
