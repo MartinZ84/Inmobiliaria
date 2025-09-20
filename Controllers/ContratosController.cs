@@ -8,6 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using Inmobiliaria.Models.Entidades;
 using Inmobiliaria.Models.Repositorio;
 using Inmobiliaria.Models.ViewModels;
+using System.Security.Claims;
+using MySqlX.XDevAPI;
+using Google.Protobuf.WellKnownTypes;
 
 namespace Inmobiliaria.Controllers
 {
@@ -154,7 +157,7 @@ namespace Inmobiliaria.Controllers
 
     //   return View(vm);
     // }
-
+    [Authorize(Policy = "Empleado")]
     public IActionResult Index(string? estado, DateTime? FechaDesde, DateTime? FechaHasta, int? Dias, int pagina = 1)
     {
       try
@@ -245,41 +248,41 @@ namespace Inmobiliaria.Controllers
       ViewBag.Inmueble = repositorioInmueble.ObtenerPorId(contrato.InmuebleId);
       ViewBag.Propietario = repositorioPropietario.ObtenerPorId(ViewBag.Inmueble.PropietarioId);
 
-      
-    int totalMeses = ((contrato.FechaFin.Year - contrato.FechaInicio.Year) * 12) +
-                     (contrato.FechaFin.Month - contrato.FechaInicio.Month);
 
-    int mesesCumplidos = ((DateTime.Today.Year - contrato.FechaInicio.Year) * 12) +
-                         (DateTime.Today.Month - contrato.FechaInicio.Month);
+      int totalMeses = ((contrato.FechaFin.Year - contrato.FechaInicio.Year) * 12) +
+                       (contrato.FechaFin.Month - contrato.FechaInicio.Month);
 
-    mesesCumplidos = Math.Min(mesesCumplidos, totalMeses);
-    //Traigo todos los pagos del contrato
-    var pagosAbonados = repositorioPago.ObtenerCantidadPagosAbonados(contrato.Id);
-    int pagosPendientes = Math.Max(mesesCumplidos - pagosAbonados, 0);
+      int mesesCumplidos = ((DateTime.Today.Year - contrato.FechaInicio.Year) * 12) +
+                           (DateTime.Today.Month - contrato.FechaInicio.Month);
 
-    // Verifico si hay pagos pendientes
-    bool tienePagosPendientes = pagosAbonados < mesesCumplidos;
+      mesesCumplidos = Math.Min(mesesCumplidos, totalMeses);
+      //Traigo todos los pagos del contrato
+      var pagosAbonados = repositorioPago.ObtenerCantidadPagosAbonados(contrato.Id);
+      int pagosPendientes = Math.Max(mesesCumplidos - pagosAbonados, 0);
 
-    if (tienePagosPendientes)
-    {
+      // Verifico si hay pagos pendientes
+      bool tienePagosPendientes = pagosAbonados < mesesCumplidos;
+
+      if (tienePagosPendientes)
+      {
         TempData["ErrorMessage"] = "El contrato tiene pagos pendientes.";
         //return RedirectToAction("Detalles", new { id = contrato.Id });
-    }
+      }
 
       var vm = new ContratoRevocarViewModel
-    {
-      Id = contrato.Id,
-      InquilinoNombre = contrato.Inquilino.Nombre + " " + contrato.Inquilino.Apellido,
-      InmuebleDireccion = contrato.Inmueble.Direccion,
-      FechaInicio = contrato.FechaInicio,
-      FechaFin = contrato.FechaFinAnt ?? contrato.FechaFin,
-      FechaFinAnt = contrato.FechaFinAnt,
-      Precio = contrato.Precio,
-      TotalMeses = totalMeses,
-      MesesCumplidos = mesesCumplidos,
-      MesesPagados = pagosAbonados,          
-      PagosPendientes = pagosPendientes
-    };
+      {
+        Id = contrato.Id,
+        InquilinoNombre = contrato.Inquilino.Nombre + " " + contrato.Inquilino.Apellido,
+        InmuebleDireccion = contrato.Inmueble.Direccion,
+        FechaInicio = contrato.FechaInicio,
+        FechaFin = contrato.FechaFinAnt ?? contrato.FechaFin,
+        FechaFinAnt = contrato.FechaFinAnt,
+        Precio = contrato.Precio,
+        TotalMeses = totalMeses,
+        MesesCumplidos = mesesCumplidos,
+        MesesPagados = pagosAbonados,
+        PagosPendientes = pagosPendientes
+      };
 
       if (TempData.ContainsKey("Mensaje"))
         ViewBag.Mensaje = TempData["Mensaje"];
@@ -309,7 +312,7 @@ namespace Inmobiliaria.Controllers
       return View();
     }
 
-    // [Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Empleado")]
     public ActionResult CreateByInmId(int id)
     {
       TempData.Remove("returnUrl");
@@ -367,7 +370,9 @@ namespace Inmobiliaria.Controllers
           }
           else
           {
-            contrato.UsuarioAlta = 1; // TODO: ver usuario logueado
+            int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int userId);              
+            contrato.UsuarioAlta = userId;
+
             res = repositorio.Alta(contrato);
             if (res > 0)
             {
@@ -482,7 +487,6 @@ namespace Inmobiliaria.Controllers
     {
       try
       {
-
         repositorio.Baja(id);
         TempData["Mensaje"] = "Eliminación realizada correctamente";
         return RedirectToAction(nameof(Index));
@@ -652,6 +656,8 @@ namespace Inmobiliaria.Controllers
         // Actualizar contrato
         contrato.FechaFinAnt = fechaFinAnt;
         contrato.Estado = "Revocado";
+        int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int userId);
+        contrato.UsuarioBaja = userId;
         repositorio.Modificacion(contrato);
 
         // Crear registro de pago de multa
@@ -665,11 +671,11 @@ namespace Inmobiliaria.Controllers
           Estado = estadoPago, // Puede ser Pendiente, Abonado, Anulado
           Concepto = "Pago multa por revocación de contrato"
         };
-      
+
         var pagoId = repositorioPago.Alta(pago);
         return RedirectToAction("CreatePagoFromRevocar", "Pagos", new { id = pagoId });
-        
-        
+
+
 
         // return RedirectToAction("Index");
       }

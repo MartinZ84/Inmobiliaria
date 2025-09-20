@@ -189,7 +189,7 @@ public ActionResult Index(string? dni = null, string? nombre = null,
     }
 
     // GET: Inquilinos/Delete/5
-    [Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Administrador")]
     public ActionResult Delete(int id)
     {
       try
@@ -211,7 +211,7 @@ public ActionResult Index(string? dni = null, string? nombre = null,
     // POST: Inquilinos/Delete/5
     [HttpPost]
     [ValidateAntiForgeryToken]
-    [Authorize(Policy = "Empleado")]
+    [Authorize(Policy = "Administrador")]
     public ActionResult Delete(int id, Inquilino i)
     {
       try

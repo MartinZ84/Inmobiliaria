@@ -78,6 +78,11 @@ else
             <th>@Html.DisplayNameFor(model => model.Concepto)</th>
             <th>@Html.DisplayNameFor(model => model.Estado)</th>
             <th>@Html.DisplayNameFor(model => model.ContratoId)</th>
+            @if (User.IsInRole("Admin"))
+            {
+                <th>Usuario Alta</th>
+                <th>Usuario Baja</th>
+            }
             <th>Acciones</th>
         </tr>
     </thead>
@@ -92,6 +97,11 @@ else
                 <td>@Html.DisplayFor(modelItem => item.Concepto)</td>
                 <td>@Html.DisplayFor(modelItem => item.Estado)</td>
                 <td>@Html.DisplayFor(modelItem => item.ContratoId)</td>
+                @if (User.IsInRole("Admin"))
+                {
+                    <td>@Html.DisplayFor(modelItem => item.usuarioAlta)</td>
+                    <td>@Html.DisplayFor(modelItem => item.usuarioBaja)</td>
+                }
                 <td>
                     <div class="dropdown">
                         <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-bs-toggle="dropdown">

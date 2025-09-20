@@ -76,6 +76,15 @@
             <dd class="col-sm-10">
                 @ViewBag.Propietario.Nombre @ViewBag.Propietario.Apellido. DNI: @ViewBag.Propietario.Dni
             </dd>
+            @if (User.IsInRole("Admin"))
+            {
+
+                <dt class="col-sm-2">Usuario Alta</dt>
+                <dd class="col-sm-10">@Html.DisplayFor(model => model.usuarioAlta)</dd>
+
+                <dt class="col-sm-2">Usuario Baja</dt>
+                <dd class="col-sm-10">@Html.DisplayFor(model => model.usuarioBaja)</dd>
+            }
         </dl>
     </div>
     <div>

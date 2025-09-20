@@ -19,6 +19,7 @@ namespace Inmobiliaria.Models.ViewModels
         public DateTime? FechaDesde { get; set; }
         public DateTime? FechaHasta { get; set; }    
         public int? Dias { get; set; }
+        
 
         // Paginación
         public int Pagina { get; set; } = 1;

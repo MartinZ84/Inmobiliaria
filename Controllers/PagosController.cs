@@ -9,6 +9,7 @@ using Inmobiliaria.Models;
 using Inmobiliaria.Models.Repositorio;
 using Inmobiliaria.Models.Entidades;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using System.Security.Claims;
 
 namespace Inmobiliaria.Controllers
 {
@@ -142,6 +143,8 @@ namespace Inmobiliaria.Controllers
         pago.ContratoId = pago.ContratoId;
         pago.Concepto = pago.Concepto;
         pago.Estado = pago.Estado;
+        int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int userId);              
+            pago.usuarioAlta = userId;
         if (pago.FechaPago > DateTime.Now)
         {
           TempData["ErrorMessage"] = "La fecha de pago no puede ser mayor a la fecha actual.";
@@ -224,7 +227,13 @@ namespace Inmobiliaria.Controllers
       try
       {
         pago = repositorio.ObtenerPorId(id);
-        repositorio.Baja(id);
+        var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdClaim))
+        {
+          TempData["Error"] = "No se pudo obtener el identificador de usuario.";
+          return View(pago);
+        }
+        repositorio.Baja(id, int.Parse(userIdClaim));
         TempData["Mensaje"] = "Eliminación realizada correctamente";
         return RedirectToAction
         ("Index", new { id = pago.ContratoId });

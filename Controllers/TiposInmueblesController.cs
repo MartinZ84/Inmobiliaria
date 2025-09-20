@@ -81,7 +81,7 @@ namespace Inmobiliaria.Controllers{
                 return RedirectToAction(nameof(Create));
             }
         }
-        [Authorize(Policy = "Administrador")]
+        [Authorize(Policy = "Empleado")]
         public ActionResult Edit(int id)
         {
             try
@@ -106,7 +106,7 @@ namespace Inmobiliaria.Controllers{
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Policy = "Administrador")]
+        [Authorize(Policy = "Empleado")]
         public async Task<ActionResult> Edit(int id, TipoInmueble tip)
         {
             try

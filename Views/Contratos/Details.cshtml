@@ -3,22 +3,23 @@
 @model Inmobiliaria.Models.ViewModels.ContratoRevocarViewModel
 @{
     ViewData["Title"] = "Detalles";
-   
-    var Inquilino= ViewBag.Inquilino;
-    var Inmueble= ViewBag.Inmueble;
-    var Propietario= ViewBag.Propietario;
+
+    var Inquilino = ViewBag.Inquilino;
+    var Inmueble = ViewBag.Inmueble;
+    var Propietario = ViewBag.Propietario;
 }
 
 @* <h1>Details</h1> *@
-<h4 class="mt-4">Detalles del contrato N°    @Html.DisplayFor(model => model.Id)</h4>
-    <hr />
+<h4 class="mt-4">Detalles del contrato N° @Html.DisplayFor(model => model.Id)</h4>
+<hr />
 <div>
     <dl class="row">
         <dt class="col-sm-2">Inmueble</dt>
         <dd class="col-sm-10">Codigo: @ViewBag.Inmueble.Id. Direccion: @ViewBag.Inmueble.Direccion</dd>
 
         <dt class="col-sm-2">Propietario del inmueble</dt>
-        <dd class="col-sm-10">@ViewBag.Propietario.Nombre @ViewBag.Propietario.Apellido. DNI: @ViewBag.Propietario.Dni</dd>
+        <dd class="col-sm-10">@ViewBag.Propietario.Nombre @ViewBag.Propietario.Apellido. DNI: @ViewBag.Propietario.Dni
+        </dd>
 
         <dt class="col-sm-2">Inquilino</dt>
         <dd class="col-sm-10">@ViewBag.Inquilino.Nombre @ViewBag.Inquilino.Apellido. DNI: @ViewBag.Inquilino.Dni</dd>
@@ -44,14 +45,22 @@
         <dt class="col-sm-2">Meses pendientes</dt>
         <dd class="col-sm-10">@Html.DisplayFor(model => model.PagosPendientes)</dd>
 
-       
+        @if (User.IsInRole("Admin"))
+        {
+
+            <dt class="col-sm-2">Usuario Alta</dt>
+            <dd class="col-sm-10">@Html.DisplayFor(model => model.UsuarioAlta)</dd>
+
+            <dt class="col-sm-2">Usuario Baja</dt>
+            <dd class="col-sm-10">@Html.DisplayFor(model => model.UsuarioBaja)</dd>
+        }
     </dl>
 </div>
 
 <div>
-    @Html.ActionLink("Editar", "Edit", new {id = Model.Id }, new {@class="btn btn-success"}) |
+    @Html.ActionLink("Editar", "Edit", new { id = Model.Id }, new { @class = "btn btn-success" }) |
 
-    @Html.ActionLink("Pagos", "Index","Pagos", new {  id = Model.Id }, new {@class="btn btn-info"}) | 
+    @Html.ActionLink("Pagos", "Index", "Pagos", new { id = Model.Id }, new { @class = "btn btn-info" }) |
     <a asp-action="Index" class="btn btn-secondary">Volver al Listado</a>
 
 </div>
