@@ -45,7 +45,7 @@
         <dt class="col-sm-2">Meses pendientes</dt>
         <dd class="col-sm-10">@Html.DisplayFor(model => model.PagosPendientes)</dd>
 
-        @if (User.IsInRole("Admin"))
+        @if (User.IsInRole("Administrador"))
         {
 
             <dt class="col-sm-2">Usuario Alta</dt>

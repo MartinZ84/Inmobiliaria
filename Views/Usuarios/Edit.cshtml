@@ -14,7 +14,7 @@
             </a>
         </div>
     </div>
-
+@await Html.PartialAsync("_AutoDismissAlert")
     <form asp-action="Edit" enctype="multipart/form-data">
         @Html.AntiForgeryToken()
         <input asp-for="Id" type="hidden" />
@@ -67,6 +67,7 @@
                                  class="rounded-circle shadow-sm mb-3"
                                  style="width: 140px; height: 140px; object-fit: cover;" />
                         </div>
+
 
                         <div class="mb-3">
                             <label class="form-label fw-bold">Cambiar Avatar</label>

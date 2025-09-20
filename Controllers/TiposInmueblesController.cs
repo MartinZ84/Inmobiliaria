@@ -36,7 +36,7 @@ namespace Inmobiliaria.Controllers{
                 return View(new List<TipoInmueble>());
             }
         }
-        [Authorize(Policy = "Administrador")]
+        [Authorize(Policy = "Empleado")]
         public ActionResult Create()
         {
             var tipos = repositorio.GetTipos();
@@ -45,7 +45,7 @@ namespace Inmobiliaria.Controllers{
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [Authorize(Policy = "Administrador")]
+        [Authorize(Policy = "Empleado")]
         public async Task<ActionResult> Create(TipoInmueble tip)
         {
             try

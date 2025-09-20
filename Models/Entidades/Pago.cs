@@ -29,10 +29,16 @@ public class Pago
   public string? Concepto { get; set; }
 
   [Display(Name = "Usuario Alta")]
-  public int? usuarioAlta{ get; set; }
+  public int? usuarioIdAlta{ get; set; }
 
   [Display(Name = "Usuario Baja")]
-  public int? usuarioBaja { get; set; }
+  public int? usuarioIdBaja { get; set; }
+
+    [Display(Name = "Usuario Alta")]
+  public string? UsuarioAlta{ get; set; }
+
+  [Display(Name = "Usuario Baja")]
+  public string? UsuarioBaja { get; set; }
 
   [Display(Name = "Estado")]
   public string? Estado { get; set; }

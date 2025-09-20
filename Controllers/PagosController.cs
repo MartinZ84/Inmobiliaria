@@ -20,6 +20,7 @@ namespace Inmobiliaria.Controllers
     RepositorioInmueble repoInmueble;
     RepositorioInquilino repoInquilino;
     RepositorioPropietario repoPropietario;
+    RepositorioUsuario repoUsuario;
     public PagosController(IConfiguration config)
     {
 
@@ -28,6 +29,7 @@ namespace Inmobiliaria.Controllers
       repoInmueble = new RepositorioInmueble(config);
       repoInquilino = new RepositorioInquilino(config);
       repoPropietario = new RepositorioPropietario(config);
+      repoUsuario = new RepositorioUsuario(config);
 
     }
     // GET: Pagos
@@ -35,6 +37,22 @@ namespace Inmobiliaria.Controllers
     public ActionResult Index(int id)
     {
       var pagos = repositorio.ObtenerPagosPorContrato(id);
+      var usuarioAlta = new Usuario();
+      var usuarioBaja = new Usuario();
+      foreach (var pago in pagos)
+      {
+        pago.Contrato = repoContrato.ObtenerPorId(pago.ContratoId);
+        usuarioAlta   = pago.usuarioIdAlta.HasValue ? repoUsuario.ObtenerPorId(pago.usuarioIdAlta.Value) : null;
+        if(usuarioAlta != null)
+        {
+          pago.UsuarioAlta = usuarioAlta.Nombre + " " + usuarioAlta.Apellido;
+        }
+        usuarioBaja = pago.usuarioIdBaja.HasValue ? repoUsuario.ObtenerPorId(pago.usuarioIdBaja.Value) : null;
+        if (usuarioBaja != null)
+        {
+          pago.UsuarioBaja = usuarioBaja.Nombre + " " + usuarioBaja.Apellido;
+        }
+      }
       var contrato = repoContrato.ObtenerPorId(id);
       if (contrato == null) return NotFound();
       int totalMeses = ((contrato.FechaFin.Year - contrato.FechaInicio.Year) * 12) +
@@ -64,6 +82,20 @@ namespace Inmobiliaria.Controllers
       ViewBag.Inquilino = repoInquilino.ObtenerPorId(ViewBag.Contrato.InquilinoId);
       ViewBag.Inmueble = repoInmueble.ObtenerPorId(ViewBag.Contrato.InmuebleId);
       ViewBag.Propietario = repoPropietario.ObtenerPorId(ViewBag.Inmueble.PropietarioId);
+      var usuarioAlta = new Usuario();
+      var usuarioBaja = new Usuario();     
+     
+        usuarioAlta   = pago.usuarioIdAlta.HasValue ? repoUsuario.ObtenerPorId(pago.usuarioIdAlta.Value) : null;
+        if(usuarioAlta != null)
+        {
+          pago.UsuarioAlta = usuarioAlta.Nombre + " " + usuarioAlta.Apellido;
+        }
+        usuarioBaja = pago.usuarioIdBaja.HasValue ? repoUsuario.ObtenerPorId(pago.usuarioIdBaja.Value) : null;
+        if (usuarioBaja != null)
+        {
+          pago.UsuarioBaja = usuarioBaja.Nombre + " " + usuarioBaja.Apellido;
+        }
+      
       if (TempData.ContainsKey("Mensaje"))
         ViewBag.Mensaje = TempData["Mensaje"];
       if (TempData.ContainsKey("Error"))
@@ -144,7 +176,7 @@ namespace Inmobiliaria.Controllers
         pago.Concepto = pago.Concepto;
         pago.Estado = pago.Estado;
         int.TryParse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value, out int userId);              
-            pago.usuarioAlta = userId;
+            pago.usuarioIdAlta = userId;
         if (pago.FechaPago > DateTime.Now)
         {
           TempData["ErrorMessage"] = "La fecha de pago no puede ser mayor a la fecha actual.";

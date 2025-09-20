@@ -122,7 +122,8 @@
                 <th>Fecha Fin</th>
                 <th>Precio</th>
                 <th>Estado</th>
-                @if(User.IsInRole("Admin"))                {
+                @if(User.IsInRole("Administrador"))
+                {
                     <th>Usuario Alta</th>
                     <th>Usuario Baja</th>
                 }
@@ -142,9 +143,9 @@
                         <td>@contrato.FechaFin.ToShortDateString()</td>
                         <td>@contrato.Precio.ToString("C")</td>
                         <td>@contrato.Estado</td>
-                        @if(User.IsInRole("Admin"))                        {
-                            <td>@(contrato.UsuarioAlta.HasValue ? contrato.UsuarioAlta.ToString() : "")</td>
-                            <td>@(contrato.UsuarioBaja.HasValue ? contrato.UsuarioBaja.ToString() : "")</td>
+                        @if(User.IsInRole("Administrador"))                        {
+                            <td>@(contrato.UsuarioAlta)</td>
+                            <td>@(contrato.UsuarioBaja)</td>
                         }
                         <td>
                             <div class="dropdown">
