@@ -318,4 +318,41 @@ public class RepositorioInquilino : RepositorioBase, IRepositorioInquilino
 		return res;
 	}
 	
+	public IList<Inquilino> ObtenerPorNombre(string nombre)
+	{
+    IList<Inquilino> inquilinos = new List<Inquilino>();
+
+    using (MySqlConnection connection = new MySqlConnection(connectionString))
+    {
+        string sql = @"SELECT Id, Nombre, Apellido, Dni, Telefono, Email 
+                       FROM Inquilinos 
+                       WHERE Nombre LIKE @nombre OR Apellido LIKE @nombre";
+
+        using (MySqlCommand command = new MySqlCommand(sql, connection))
+        {
+            command.Parameters.AddWithValue("@nombre", $"%{nombre}%");
+            connection.Open();
+            var reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                Inquilino p = new Inquilino
+                {
+                    Id = reader.GetInt32(nameof(Inquilino.Id)),
+                    Nombre = reader.GetString(nameof(Inquilino.Nombre)),
+                    Apellido = reader.GetString(nameof(Inquilino.Apellido)),
+                    Dni = reader.GetString(nameof(Inquilino.Dni)),
+                    Telefono = reader.GetString(nameof(Inquilino.Telefono)),
+                    Email = reader.GetString(nameof(Inquilino.Email))
+                };
+                inquilinos.Add(p);
+            }
+
+            connection.Close();
+        }
+    }
+
+    return inquilinos;
+}
+
 }

@@ -531,6 +531,20 @@ namespace Inmobiliaria.Controllers
             return imagenesGuardadas;
         }
 
+        [HttpGet]
+        public JsonResult Buscar(string q)
+        {
+            var inmub = repositorio.ObtenerPorDireccion(q);
+            var datos = inmub.Select(x => new {
+                id = x.Id,
+                Direccion = x.Direccion,
+                Uso = x.Uso
+            });
+            return Json(new { datos });
+        }
+
+
+
         private void EliminarImagenesDelServidor(IList<string> imagenesAEliminar)
         {
             if (imagenesAEliminar == null || !imagenesAEliminar.Any())

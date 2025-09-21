@@ -50,24 +50,19 @@
                 <span asp-validation-for="Estado" class="text-danger"></span>
             </div>
 
-           <div class="form-group">
-               <label asp-for="InquilinoId" class="control-label"></label>
-               <select asp-for="InquilinoId" class="form-select"
-                       asp-items="@(new SelectList(ViewBag.Inquilinos ?? new List<object>(), "Id", "NombreCompleto", Model?.InquilinoId))">
-                   <option value="">Seleccionar inquilino</option>
-               </select>
-               <span asp-validation-for="InquilinoId" class="text-danger"></span>
-           </div>
+        <div class="form-group">
+          <label for="InquilinoText">Inquilino</label>
+          <select id="InquilinoText" class="form-control"></select>
+          <input type="hidden" id="InquilinoId" name="InquilinoId" />
+          <span asp-validation-for="InquilinoId" class="text-danger"></span>
+        </div>
 
-
-            <div class="form-group">
-            <label asp-for="InmuebleId" class="control-label"></label>
-            <select asp-for="InmuebleId" class="form-select"
-                    asp-items="@(new SelectList(ViewBag.Inmuebles ?? new List<object>(), "Id", "Direccion", Model?.InmuebleId))">
-                <option value="">Seleccionar inmueble</option>
-            </select>
-            <span asp-validation-for="InmuebleId" class="text-danger"></span>
-            </div>
+        <div class="form-group">
+          <label for="InmuebleText">Inmueble</label>
+          <select id="InmuebleText" class="form-control"></select>
+          <input type="hidden" id="InmuebleId" name="InmuebleId" />
+          <span asp-validation-for="InmuebleId" class="text-danger"></span>
+        </div>
 
 <br>
           
@@ -217,6 +212,59 @@ window.onload = function () {
         });
 
 
+$(document).ready(function () {
+    $('#InquilinoText').select2({
+        placeholder: "Buscar inquilino...",
+        minimumInputLength: 3,
+        ajax: {
+            url: '/Inquilinos/Buscar',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return { q: params.term };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.datos.map(function (item) {
+                        return {
+                            id: item.id,
+                            text: item.nombre + " " + item.apellido
+                        };
+                    })
+                };
+            }
+        }
+    }).on('select2:select', function (e) {
+        var data = e.params.data;
+        $('#InquilinoId').val(data.id);
+    });
+
+    $('#InmuebleText').select2({
+        placeholder: "Buscar inmueble...",
+        minimumInputLength: 3,
+        ajax: {
+            url: '/Inmuebles/Buscar',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return { q: params.term };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.datos.map(function (item) {
+                        return {
+                            id: item.id,
+                            text: item.Direccion + " " + item.Uso
+                        };
+                    })
+                };
+            }
+        }
+    }).on('select2:select', function (e) {
+        var data = e.params.data; 
+        $('#InmuebleId').val(data.id);
+    });
+});
 </script>
 
 @section Scripts {

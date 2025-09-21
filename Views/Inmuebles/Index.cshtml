@@ -423,6 +423,19 @@
 </script>
 
 <script>
+
+function buscar(q) {
+    return $.ajax({
+        url: `@Url.Action("Buscar", "Inmuebles")/${q}`,
+        method: "GET"
+    }).done(res => {
+        console.log("Búsqueda: ", res);
+    }).fail(res => {
+        console.log("Error: ", res);
+    });
+}
+
+
     $(document).ready(function () {
         $('#PropietarioId').select2({
             placeholder: "Buscar propietario...",
