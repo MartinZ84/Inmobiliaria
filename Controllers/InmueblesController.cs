@@ -537,8 +537,8 @@ namespace Inmobiliaria.Controllers
             var inmub = repositorio.ObtenerPorDireccion(q);
             var datos = inmub.Select(x => new {
                 id = x.Id,
-                Direccion = x.Direccion,
-                Uso = x.Uso
+                direccion = x.Direccion,
+             
             });
             return Json(new { datos });
         }
