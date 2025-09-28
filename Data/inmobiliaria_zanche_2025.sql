@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 20-09-2025 a las 20:42:21
+-- Tiempo de generación: 28-09-2025 a las 19:22:44
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -57,8 +57,8 @@ INSERT INTO `contratos` (`id`, `fechaInicio`, `fechaFin`, `estado`, `precio`, `i
 (80, '2025-09-11', '2027-09-11', 'Vigente', 12347878, 24, 27, NULL, 3, NULL),
 (81, '2026-09-23', '2027-09-23', 'Vigente', 55500000, 3, 26, NULL, 1, NULL),
 (83, '2025-09-20', '2027-09-20', 'Vigente', 89999999, 7, 13, '2027-09-20', 5, NULL),
-(84, '2026-09-23', '2027-09-23', 'Vigente', 787999, 3, 26, '2027-09-23', 5, NULL),
-(85, '2025-09-20', '2027-09-20', 'Vigente', 65788, 3, 29, '2027-09-20', 5, NULL);
+(84, '2026-09-23', '2027-09-23', 'Vigente', 787888, 3, 26, NULL, 5, NULL),
+(86, '2025-09-28', '2027-09-28', 'Vigente', 89999999, 21, 1, '2027-09-28', 5, NULL);
 
 -- --------------------------------------------------------
 
@@ -127,7 +127,7 @@ INSERT INTO `inquilinos` (`id`, `nombre`, `apellido`, `dni`, `telefono`, `email`
 (13, 'Carla', 'Peterson', '1234567', '45468888', 'juna@palomino.com'),
 (20, 'Pablo', 'Podesta', '6776576', '5844558748', 'mirco@gmail.com'),
 (21, 'Sofia', 'Lorens', '47874554', '0000', 'sofia@lorenz.com.ar'),
-(24, 'Cluadio', 'Coggi', '12435435', '24243213', 'claudio@gov.com');
+(24, 'Claudio', 'Coggi', '12435435', '24243213', 'claudio@gov.com');
 
 -- --------------------------------------------------------
 
@@ -208,7 +208,7 @@ INSERT INTO `propietarios` (`id`, `nombre`, `apellido`, `dni`, `telefono`, `emai
 (11, 'Jaime', 'Guido', '10545221', '1577858788', 'jaime@mail.com'),
 (13, 'Carlos', 'Fernandez', '28990654', '45455444', 'carlos@fernandez.com'),
 (14, 'Pablo', 'Granados', '45666878', '0', 'pablo@granados.com'),
-(34, 'juan', 'Salvo', '32524564', '325246', 'retete@gmail.com');
+(34, 'Juan', 'Salvo', '32524564', '325246', 'juans@gmail.com');
 
 -- --------------------------------------------------------
 
@@ -257,7 +257,8 @@ INSERT INTO `usuarios` (`id`, `nombre`, `apellido`, `avatar`, `email`, `clave`, 
 (2, 'Pablo', 'Perez', '/Uploads\\avatar_2.png', 'pablo@perez.com', 'Es8xLXaQWGPhWN3ndWBEt8ZN7E8T+pDeqi210bMoJsI=', 3),
 (3, 'Mauro', 'Rol', '/Uploads/avatar_3.jpg', 'maurorol@gmail.com', 'GjzAhuy78NH4O47XGFAHPsEk/lJVCR72X7szOdJVPJA=', 3),
 (5, 'Dora', 'Gutierrez', '/Uploads/avatar_5.jpg', 'dora@gmail.com', 'GjzAhuy78NH4O47XGFAHPsEk/lJVCR72X7szOdJVPJA=', 2),
-(7, 'Francisco Solano', 'Lopez', '/Uploads/avatar_7.jpg', 'francisco@ulp.edu', 'Psz07X3Jwky8U64oY9eZW6TiPo7XEAIrJVv6GCCmPzw=', 3);
+(7, 'Francisco Solano', 'Lopez', '/Uploads/avatar_7.jpg', 'francisco@ulp.edu', 'Psz07X3Jwky8U64oY9eZW6TiPo7XEAIrJVv6GCCmPzw=', 3),
+(10, 'admin', 'admin', '/Uploads/avatar_10.png', 'admin@admin', 'GjzAhuy78NH4O47XGFAHPsEk/lJVCR72X7szOdJVPJA=', 2);
 
 --
 -- Índices para tablas volcadas
@@ -322,7 +323,7 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `contratos`
 --
 ALTER TABLE `contratos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=86;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=87;
 
 --
 -- AUTO_INCREMENT de la tabla `inmuebles`
@@ -346,7 +347,7 @@ ALTER TABLE `pagos`
 -- AUTO_INCREMENT de la tabla `propietarios`
 --
 ALTER TABLE `propietarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=37;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT de la tabla `tiposinmuebles`
@@ -358,7 +359,7 @@ ALTER TABLE `tiposinmuebles`
 -- AUTO_INCREMENT de la tabla `usuarios`
 --
 ALTER TABLE `usuarios`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- Restricciones para tablas volcadas
