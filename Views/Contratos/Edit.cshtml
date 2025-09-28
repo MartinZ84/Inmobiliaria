@@ -3,8 +3,8 @@
 
 @{
     ViewData["Title"] = "Contrato - Editar";
-    var Inquilinos= (IList<Inquilino>)ViewBag.Inquilinos;
-    var Inmuebles= (IList<Inmueble>)ViewBag.Inmuebles; 
+    var Inquilinos= (Inquilino)ViewBag.Inquilinos;
+    var Inmuebles= (Inmueble)ViewBag.Inmuebles; 
 }
 
 
@@ -53,10 +53,11 @@
                 <label asp-for="InquilinoId" class="control-label"></label>
                 @* <input asp-for="InquilinoId" class="form-control" /> *@
                 <select class="form-select" id="InquilinoId" disabled>
-                    @foreach (var item in Inquilinos)
+                    <option value="@Inquilinos.Id">@(Inquilinos.Id + " - " + Inquilinos.Nombre + " " + Inquilinos.Apellido)</option>
+                    @* @foreach (var item in Inquilinos)
                     {
                         @:<option @(item.Id==Model.InquilinoId ? "selected" : "") value="@item.Id">@item.Nombre @item.Apellido</option>
-                    }
+                    } *@
                 </select>
                 <input type="hidden" name="InquilinoId" value="@Model.InquilinoId" />
                 <span asp-validation-for="InquilinoId" class="text-danger"></span>
@@ -65,10 +66,11 @@
                 <label asp-for="InmuebleId" class="control-label"></label>
                 @* <input asp-for="InmuebleId" class="form-control" /> *@
                 <select class="form-select" name="InmuebleId" id="InmuebleId" disabled>
-                    @foreach (var item in Inmuebles)
+                   <option value="@Inmuebles.Id">@(Inmuebles.Id + " - " + Inmuebles.Direccion)</option>
+                    @* @foreach (var item in Inmuebles)
                     {
                         @:<option @(item.Id==Model.InmuebleId ? "selected" : "") value="@item.Id">@(item.Id + " " + item.Direccion)</option>
-                    }
+                    } *@
                 </select>
                 <input type="hidden" name="InmuebleId" value="@Model.InmuebleId" />
                 <span asp-validation-for="InmuebleId" class="text-danger"></span>

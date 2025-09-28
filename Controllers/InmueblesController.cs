@@ -192,7 +192,7 @@ namespace Inmobiliaria.Controllers
             ViewBag.Tipos = tipos;
             ViewBag.Usos = InmuebleSelectLists.GetUsos();
             // ViewBag.Estados = InmuebleSelectLists.GetEstados();
-            ViewBag.Propietarios = repositorioPropietario.ObtenerTodos();
+            //ViewBag.Propietarios = repositorioPropietario.ObtenerTodos();
 
             return View();
         }
