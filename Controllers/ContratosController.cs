@@ -340,9 +340,9 @@ namespace Inmobiliaria.Controllers
     {
       var contrato = repositorio.ObtenerPorId(id);
 
-      ViewBag.Inquilinos = repositorioInquilino.ObtenerTodos();
-      ViewBag.Inmuebles = repositorioInmueble.ObtenerTodos();
-      
+      ViewBag.Inquilinos = repositorioInquilino.ObtenerPorId(contrato.InquilinoId);//repositorioInquilino.ObtenerTodos();
+      ViewBag.Inmuebles = repositorioInmueble.ObtenerPorId(contrato.InmuebleId);//repositorioInmueble.ObtenerTodos();
+
       if (TempData.ContainsKey("Mensaje"))
         ViewBag.Mensaje = TempData["Mensaje"];
       if (TempData.ContainsKey("Error"))

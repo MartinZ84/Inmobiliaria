@@ -370,6 +370,8 @@ private void GuardarAvatar(Usuario usuario)
                     var e = repositorio.ObtenerPorEmail(login.Usuario);
                     if (e == null || e.Clave != hashed)
                     {
+                        TempData["ErrorMessage"] = "Email o clave incorrectos";
+                        TempData["AlertType"] = "danger";
                         ModelState.AddModelError("", "El email o la clave no son correctos");
                         TempData["returnUrl"] = returnUrl;
                         return View();

@@ -192,7 +192,7 @@ namespace Inmobiliaria.Controllers
             ViewBag.Tipos = tipos;
             ViewBag.Usos = InmuebleSelectLists.GetUsos();
             // ViewBag.Estados = InmuebleSelectLists.GetEstados();
-            ViewBag.Propietarios = repositorioPropietario.ObtenerTodos();
+            //ViewBag.Propietarios = repositorioPropietario.ObtenerTodos();
 
             return View();
         }
@@ -530,6 +530,20 @@ namespace Inmobiliaria.Controllers
 
             return imagenesGuardadas;
         }
+
+        [HttpGet]
+        public JsonResult Buscar(string q)
+        {
+            var inmub = repositorio.ObtenerPorDireccion(q);
+            var datos = inmub.Select(x => new {
+                id = x.Id,
+                direccion = x.Direccion,
+             
+            });
+            return Json(new { datos });
+        }
+
+
 
         private void EliminarImagenesDelServidor(IList<string> imagenesAEliminar)
         {

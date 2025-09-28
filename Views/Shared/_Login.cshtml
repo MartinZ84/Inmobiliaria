@@ -58,6 +58,7 @@
 
 @model Inmobiliaria.Models.ViewModels.LoginViewModel
 
+
 <div class="d-flex justify-content-center align-items-center vh-100" style="background-color: #f8f9fa;">
     <div class="card shadow-lg rounded-3" style="width: 100%; max-width: 400px;">
         <div class="card-header text-center bg-primary text-white">
@@ -78,6 +79,7 @@
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>
             }
+            @await Html.PartialAsync("_AutoDismissAlert")
 
             <form asp-controller="Usuarios" asp-action="Login" method="post">
                 <div class="mb-3">

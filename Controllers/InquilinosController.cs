@@ -228,6 +228,19 @@ public ActionResult Index(string? dni = null, string? nombre = null,
         return View(inq);
       }
     }
+
+    [HttpGet]
+    public JsonResult Buscar(string q)
+    {
+      var inquilinos = repositorio.ObtenerPorNombre(q);
+      var datos = inquilinos.Select(x => new {
+        id = x.Id,
+        nombre = x.Nombre,
+        apellido = x.Apellido
+      });
+      return Json(new { datos });
+    }
+
      public ActionResult Buscar(string? dni, string? nombre, string? apellido, string? email)
     {
       try

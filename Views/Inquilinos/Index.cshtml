@@ -311,6 +311,18 @@
 
 <script>
 
+function buscar(q) {
+    return $.ajax({
+        url: `@Url.Action("Buscar", "Inquilinos")/${q}`,
+        method: "GET"
+    }).done(res => {
+        console.log("Búsqueda: ", res);
+    }).fail(res => {
+        console.log("Error: ", res);
+    });
+}
+
+
 // Funcionalidad adicional para los filtros
 $(document).ready(function() {
     // Botón limpiar filtros

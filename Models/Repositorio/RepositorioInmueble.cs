@@ -84,6 +84,40 @@ namespace Inmobiliaria.Models.Repositorio
             return inmueble;
         }
 
+	public IList<Inmueble> ObtenerPorDireccion(string dir)
+	{
+    IList<Inmueble> inmuebles = new List<Inmueble>();
+
+    using (MySqlConnection connection = new MySqlConnection(connectionString))
+    {
+        string sql = @"SELECT Id, Direccion
+                       FROM Inmuebles 
+                       WHERE Direccion LIKE @direccion"; 
+
+        using (MySqlCommand command = new MySqlCommand(sql, connection))
+        {
+            command.Parameters.AddWithValue("@direccion", $"%{dir}%");
+            connection.Open();
+            var reader = command.ExecuteReader();
+
+            while (reader.Read())
+            {
+                Inmueble inm = new Inmueble
+                {
+                    Id = reader.GetInt32(nameof(Inmueble.Id)),
+                    Direccion = reader.GetString(nameof(Inmueble.Direccion)),
+                  
+                };
+                inmuebles.Add(inm);
+            }
+
+            connection.Close();
+        }
+    }
+
+    return inmuebles;
+}
+
         public int Alta(Inmueble inmueble)
         {
             int id = 0;
