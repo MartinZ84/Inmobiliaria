@@ -3,7 +3,7 @@
 
 @{
     ViewData["Title"] = "Nuevo contrato";
-    var inmueble= @ViewBag.Inmuebles.Id +"-" + @ViewBag.Inmuebles.Direccion;
+    var inmueble = @ViewBag.Inmuebles.Id + "-" + @ViewBag.Inmuebles.Direccion;
 }
 
 
@@ -20,15 +20,14 @@
             </div> *@
             <div class="form-group">
                 <label asp-for="FechaInicio" class="control-label"></label>
-           
-                <input type="date" name="FechaInicio" id="fechaInicio" value="" 
-                  min="" max="" class="form-control" />
+
+                <input type="date" name="FechaInicio" id="fechaInicio" value="" min="" max="" class="form-control" />
                 <span asp-validation-for="FechaInicio" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <label asp-for="FechaFin" class="control-label"></label>
-              
-                 <input type="date" name="FechaFin" id="fechaFin" value="" class="form-control" />
+
+                <input type="date" name="FechaFin" id="fechaFin" value="" class="form-control" />
                 <span asp-validation-for="FechaFin" class="text-danger"></span>
             </div>
             <div class="form-group">
@@ -36,42 +35,50 @@
                 <input asp-for="Precio" class="form-control" />
                 <span asp-validation-for="Precio" class="text-danger"></span>
             </div>
-          <div class="form-group">
+            <div class="form-group">
                 <label asp-for="Estado" class="control-label"></label>
-                <select class="form-select"  Disable name="Estado">
-                  <option value="" disabled selected>Seleccionar estado  </option>
-                  <option value="Vigente">Vigente</option>
-                  <option value="No vigente">No vigente</option>
+                <select class="form-select" Disable name="Estado">
+                    <option value="" disabled selected>Seleccionar estado </option>
+                    <option value="Vigente">Vigente</option>
+                    <option value="No vigente">No vigente</option>
                 </select>
 
                 <span asp-validation-for="Estado" class="text-danger"></span>
             </div>
 
-             <div class="form-group">
-                <label asp-for="InquilinoId" class="control-label"></label>            
+            @* <div class="form-group">
+                <label asp-for="InquilinoId" class="control-label"></label>
                 <select class="form-select" name="InquilinoId">
-                  <option value="" disabled selected>Seleccionar inquilino  </option>
-                    @foreach (var item in 
-                    (IList<Inquilino>)ViewBag.Inquilino)
+                    <option value="" disabled selected>Seleccionar inquilino </option>
+                    @foreach (var item in
+                                        (IList<Inquilino>)ViewBag.Inquilino)
                     {
                         <option value="@item.Id">@(item.Nombre + " " + item.Apellido)</option>
                     }
                 </select>
                 <span asp-validation-for="InquilinoId" class="text-danger"></span>
+            </div> *@
+
+            <div class="form-group">
+                <label for="InquilinoText">Inquilino</label>
+                <select id="InquilinoText" class="form-select"></select>
+                <input type="hidden" id="InquilinoId" name="InquilinoId" />
+                <span asp-validation-for="InquilinoId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="InmuebleId" class="control-label"></label>   
-                <input asp-for ="InmuebleId" class="form-control" value=@ViewBag.Inmuebles.Id hidden/>        
-                <input  name="Inmueble" value="@ViewBag.Inmuebles.Id - @ViewBag.Inmuebles.Direccion"  class="form-control" readonly />
-                
+                <label asp-for="InmuebleId" class="control-label"></label>
+                <input asp-for="InmuebleId" class="form-control" value=@ViewBag.Inmuebles.Id hidden />
+                <input name="Inmueble" value="@ViewBag.Inmuebles.Id - @ViewBag.Inmuebles.Direccion" class="form-control"
+                    readonly />
+
                 <span asp-validation-for="InmuebleId" class="text-danger"></span>
-           
-<br>
-          
-            <div class="form-group">
-                <input type="submit" value="Crear" class="btn btn-primary" /> |  
-                 <a asp-controller="Inmuebles" asp-action="Index" class="btn btn-secondary"> Volver Inmuebles</a>
-            </div>
+
+                <br>
+
+                <div class="form-group">
+                    <input type="submit" value="Crear" class="btn btn-primary" /> |
+                    <a asp-controller="Inmuebles" asp-action="Index" class="btn btn-secondary"> Volver Inmuebles</a>
+                </div>
         </form>
     </div>
 </div>
@@ -79,31 +86,82 @@
 
 
 <script>
-  
 
-window.onload = function () {
-  var fecha = new Date(); //Fecha actual
-  var mes = fecha.getMonth() + 1; //obteniendo mes
-  var dia = fecha.getDate(); //obteniendo dia
-  var ano = fecha.getFullYear(); //obteniendo año
-  if (dia < 10) dia = "0" + dia; //agrega cero si el menor de 10
-  if (mes < 10) mes = "0" + mes; //agrega cero si el menor de 10
-  document.getElementById("fechaInicio").value = ano + "-" + mes + "-" + dia;
-  document.getElementById("fechaInicio").min = ano + "-" + mes + "-" + dia;
 
-  //sumar 2 años a la fecha actual
-  var fecha2 = new Date(); //Fecha actual
-  var mes2 = fecha2.getMonth() + 1; //obteniendo mes
-  var dia2 = fecha2.getDate(); //obteniendo dia
-  var ano2 = fecha2.getFullYear() + 2; //obteniendo año
-  if (dia2 < 10) dia2 = "0" + dia2; //agrega cero si el menor de 10
-  if (mes2 < 10) mes2 = "0" + mes2; //agrega cero si el menor de 10
-  document.getElementById("fechaFin").value = ano2 + "-" + mes2 + "-" + dia2;
-   document.getElementById("fechaFin").max = ano2 + "-" + mes2 + "-" + dia2;
-     document.getElementById("fechaFin").min =  ano + "-" + mes + "-" + dia;
-};
+    window.onload = function () {
+        var fecha = new Date(); //Fecha actual
+        var mes = fecha.getMonth() + 1; //obteniendo mes
+        var dia = fecha.getDate(); //obteniendo dia
+        var ano = fecha.getFullYear(); //obteniendo año
+        if (dia < 10) dia = "0" + dia; //agrega cero si el menor de 10
+        if (mes < 10) mes = "0" + mes; //agrega cero si el menor de 10
+        document.getElementById("fechaInicio").value = ano + "-" + mes + "-" + dia;
+        document.getElementById("fechaInicio").min = ano + "-" + mes + "-" + dia;
+
+        //sumar 2 años a la fecha actual
+        @* var fecha2 = new Date(); //Fecha actual
+        var mes2 = fecha2.getMonth() + 1; //obteniendo mes
+        var dia2 = fecha2.getDate(); //obteniendo dia
+        var ano2 = fecha2.getFullYear() + 2; //obteniendo año
+        if (dia2 < 10) dia2 = "0" + dia2; //agrega cero si el menor de 10
+        if (mes2 < 10) mes2 = "0" + mes2; //agrega cero si el menor de 10
+        document.getElementById("fechaFin").value = ano2 + "-" + mes2 + "-" + dia2;
+        document.getElementById("fechaFin").max = ano2 + "-" + mes2 + "-" + dia2;
+        document.getElementById("fechaFin").min = ano + "-" + mes + "-" + dia; *@
+    };
+
+    
+$(document).ready(function () {
+    $('#InquilinoText').select2({
+        placeholder: "Buscar inquilino...",
+        minimumInputLength: 3,
+         language: {
+                errorLoading: () => 'No se pudieron cargar los resultados.',
+                inputTooLong: args => {
+                    const over = args.input.length - args.maximum;
+                    return `Por favor, borre ${over} caracter${over > 1 ? 'es' : ''}`;
+                },
+                inputTooShort: args => {
+                    const remaining = args.minimum - args.input.length;
+                    return `Por favor, introduzca ${remaining} caracter${remaining > 1 ? 'es' : ''}`;
+                },
+                loadingMore: () => 'Cargando más resultados…',
+                maximumSelected: args => `Sólo puede seleccionar ${args.maximum} elemento${args.maximum > 1 ? 's' : ''}`,
+                noResults: () => 'No se encontraron resultados',
+                searching: () => 'Buscando…',
+                removeAllItems: () => 'Eliminar todos los elementos'
+            },
+        ajax: {
+            url: '/Inquilinos/Buscar',
+            dataType: 'json',
+            delay: 250,
+            data: function (params) {
+                return { q: params.term };
+            },
+            processResults: function (data) {
+                return {
+                    results: data.datos.map(function (item) {
+                        return {
+                            id: item.id,
+                            text: item.nombre + " " + item.apellido
+                        };
+                    })
+                };
+            }
+        }
+    }).on('select2:select', function (e) {
+        var data = e.params.data;
+        $('#InquilinoId').val(data.id);
+    });
+
+
+});
 </script>
 
+
+
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
 }
