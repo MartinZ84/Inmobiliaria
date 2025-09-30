@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 28-09-2025 a las 19:22:44
+-- Tiempo de generación: 01-10-2025 a las 00:43:44
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -54,11 +54,13 @@ INSERT INTO `contratos` (`id`, `fechaInicio`, `fechaFin`, `estado`, `precio`, `i
 (67, '2025-09-02', '2027-09-02', 'Vigente', 345235, 7, 23, '2027-09-02', 1, NULL),
 (68, '2025-09-05', '2025-10-05', 'Revocado', 5000000, 9, 1, '2025-09-09', 1, NULL),
 (74, '2025-09-05', '2025-11-05', 'Vigente', 1299900, 3, 20, '2025-11-05', 1, NULL),
-(80, '2025-09-11', '2027-09-11', 'Vigente', 12347878, 24, 27, NULL, 3, NULL),
-(81, '2026-09-23', '2027-09-23', 'Vigente', 55500000, 3, 26, NULL, 1, NULL),
+(80, '2025-09-11', '2027-09-11', 'Vigente', 12347878, 24, 27, '2027-09-23', 3, NULL),
+(81, '2026-09-23', '2027-09-23', 'Vigente', 55500000, 3, 26, '2027-09-23', 1, NULL),
 (83, '2025-09-20', '2027-09-20', 'Vigente', 89999999, 7, 13, '2027-09-20', 5, NULL),
-(84, '2026-09-23', '2027-09-23', 'Vigente', 787888, 3, 26, NULL, 5, NULL),
-(86, '2025-09-28', '2027-09-28', 'Vigente', 89999999, 21, 1, '2027-09-28', 5, NULL);
+(84, '2026-09-23', '2027-09-23', 'Vigente', 787888, 3, 26, '2027-09-23', 5, NULL),
+(86, '2025-09-28', '2027-09-28', 'Vigente', 89999999, 21, 1, '2027-09-28', 5, NULL),
+(87, '2025-09-30', '2025-09-30', 'Vigente', 500000, 24, 30, '2025-09-30', 10, NULL),
+(88, '2025-10-01', '2025-10-16', 'Vigente', 89999999, 7, 30, '2025-10-16', 10, NULL);
 
 -- --------------------------------------------------------
 
@@ -99,7 +101,8 @@ INSERT INTO `inmuebles` (`id`, `direccion`, `ambientes`, `superficie`, `tipInmId
 (26, 'Junin 545 Capital', 5, 40, 2, 'Residencial', 46666000, 88, 8707, 1, 1, NULL),
 (27, 'Ruta 7 km 800 puerta 6', 10, 5000, 3, 'Comercial', 86000000, 545, 87451, 1, 1, '/uploads/inmuebles/67938a3e-2818-41a4-b739-cb342177677b_casagob.jpg'),
 (28, 'Lopez 4545, San Martin', 5, 20, 1, 'Residencial', 4656878, 346, 564, 3, 34, '/uploads/inmuebles/bfa3326c-82bb-45ec-8244-fa167e89212e_sudamerica.png'),
-(29, 'hghgh 5678, Ciudad de San Luis', 5, 98, 2, 'Comercial', 87, 365437, 7656765, 3, 34, NULL);
+(29, 'hghgh 5678, Ciudad de San Luis', 5, 98, 2, 'Comercial', 87, 365437, 7656765, 3, 34, NULL),
+(30, 'Roca 123 San Luis', 3, 50, 1, 'Residencial', 500000, 31, 53, 1, 11, '/uploads/inmuebles/10f4fa8a-818a-4db7-9696-21134a230491_casaAlquiler.jpg');
 
 -- --------------------------------------------------------
 
@@ -323,13 +326,13 @@ ALTER TABLE `usuarios`
 -- AUTO_INCREMENT de la tabla `contratos`
 --
 ALTER TABLE `contratos`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=87;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=89;
 
 --
 -- AUTO_INCREMENT de la tabla `inmuebles`
 --
 ALTER TABLE `inmuebles`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=30;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=31;
 
 --
 -- AUTO_INCREMENT de la tabla `inquilinos`
