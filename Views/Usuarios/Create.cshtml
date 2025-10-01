@@ -66,9 +66,10 @@
                         <div class="mb-3">
                             <label class="form-label fw-bold">Rol</label>
                             <select class="form-select" name="Rol">
-                                @foreach (var kvp in (IDictionary<int, string>)ViewBag.Roles)
-                                {
+                                @if(ViewBag.Roles != null){
+                                    foreach (var kvp in (IDictionary<int, string>)ViewBag.Roles){
                                     <option value="@kvp.Key">@kvp.Value</option>
+                                    }
                                 }
                             </select>
                             <span asp-validation-for="Rol" class="text-danger small"></span>

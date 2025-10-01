@@ -262,7 +262,7 @@ namespace Inmobiliaria.Models.Repositorio
 				Id = reader.GetInt32("id"),
 				Nombre = reader.GetString("nombre"),
 				Apellido = reader.GetString("apellido"),
-				Avatar = reader.GetString("avatar"),
+       		    Avatar = reader.IsDBNull(reader.GetOrdinal("avatar")) ? null : reader.GetString("avatar"),
 				Email = reader.GetString("email"),
 				Clave = reader.GetString("clave"),
 				Rol = reader.GetInt32("rol"),

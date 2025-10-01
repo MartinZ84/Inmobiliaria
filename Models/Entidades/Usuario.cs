@@ -16,14 +16,22 @@ namespace Inmobiliaria.Models
 		[Key]
 		[Display(Name = "Código")]
 		public int Id { get; set; }
-		[Required]
+
+  		[RegularExpression(@"^[A-Za-zÁÉÍÓÚáéíóúÑñ]{3,}$", ErrorMessage = "El Nombre debe tener 3 letras minimo y no puede contener numeros o simbolos")]
+  		[Required(ErrorMessage = "El Nombre es requerido")]
 		public string? Nombre { get; set; }
-		[Required]
+
+		[RegularExpression(@"^[A-Za-zÁÉÍÓÚáéíóúÑñ]{3,}$", ErrorMessage = "El Apellido debe tener 3 letras minimo y no puede contener numeros o simbolos")]
+        [Required(ErrorMessage = "El apellido es requerido")]
 		public string? Apellido { get; set; }
+
 		[Required, EmailAddress]
 		public string? Email { get; set; }
-		[Required, DataType(DataType.Password)]
-		public string Clave { get; set; }
+
+		[RegularExpression(@".{8,20}", ErrorMessage = "La contraseña debe tener entre 8 y 20 caracteres.")]
+		[Required(ErrorMessage = "la clave es requerida"), DataType(DataType.Password)]
+		public string? Clave { get; set; }
+
 		public string? Avatar { get; set; }
 		[NotMapped]//Para EF
 		public IFormFile? AvatarFile { get; set; }
