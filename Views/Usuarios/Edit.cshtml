@@ -15,7 +15,7 @@
         </div>
     </div>
 @await Html.PartialAsync("_AutoDismissAlert")
-    <form asp-action="Edit" enctype="multipart/form-data">
+    <form asp-action="Edit" id="formi" enctype="multipart/form-data">
         @Html.AntiForgeryToken()
         <input asp-for="Id" type="hidden" />
 
@@ -85,7 +85,7 @@
                         <h5 class="card-title mb-4 fw-bold text-primary">Cambiar Contraseña</h5>
 
                         <div class="form-floating mb-3">
-                            <input asp-for="Clave" class="form-control" placeholder="" data-val="false" />
+                            <input asp-for="Clave" class="form-control" id="Clave" placeholder="" data-val="false" />
                             <label for="Clave">Nueva contraseña</label>
                             <span asp-validation-for="Clave" class="text-danger small"></span>
                         </div>
@@ -117,6 +117,17 @@
                     avatarPreview.src = e.target.result;
                 }
                 reader.readAsDataURL(file);
+            }
+        });
+        const pass = document.getElementById('Clave');
+        document.getElementById('formi').addEventListener('submit', function(event) {
+            if (pass.value.length > 0 && pass.value.length < 6) {
+                event.preventDefault();
+                alert('La contraseña debe tener al menos 6 caracteres o estar vacio para no cambiarla');
+            }
+            if (pass.value.length == 0) {
+                pass.value = '';
+                pass.disabled = true;
             }
         });
     </script>
